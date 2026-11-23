@@ -1,0 +1,123 @@
+{
+  "schema": "flight_delay/final-test-lock/v1",
+  "created_utc": "2026-11-22T10:50:48.968766+00:00",
+  "status": "started: development checks passed; final-test data is read after this file is written",
+  "command": "python -m flight_delay.modeling.run_final_test --final",
+  "manifest": {
+    "path": "experiments/son-test-dondurma.json",
+    "sha256": "7bd24d2515d775f7bd558431eb2882e44c01aed5508aa3828d35369029e03721"
+  },
+  "git": {
+    "head": "25ebfb622117a37c7a56ed22317eaa1f73725971",
+    "dirty": false,
+    "manifest_commit": "4682712dcce7992c10d1b37669442183ec62f20b",
+    "code_changes_since_manifest_commit": []
+  },
+  "pre_registration": {
+    "path": "experiments/son-test-on-kayit.md",
+    "sha256": "1270957e95643cac1faa1d306e84144b525ace58fa51eed862d53fd13d423c12"
+  },
+  "entries": {
+    "arr_del15/T2": {
+      "run_id": "run-20261121T082853Z",
+      "contract": "T2",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "models": {
+        "arr_del15-lgbm": "d7d6bd79f24af85ebbd2b849c2f5ed00dab91a30ef209aca1eb79d47f7446c55"
+      }
+    },
+    "arr_del15/plan_matched": {
+      "run_id": "run-20261121T080035Z",
+      "contract": "plan",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "models": {
+        "arr_del15-lgbm": "a6bd4932fd9fe5b5b62c9bdb4dbbf681b64531248aed5044434b027315b7c179"
+      }
+    },
+    "arr_delay/T2_matched": {
+      "run_id": "run-20261121T082853Z",
+      "contract": "T2",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "models": {
+        "arr_delay_q010-lgbm": "016bf5407246af58753fe38ab02c43fe3dd69d4f22c53d418ddba38eb92c1d12",
+        "arr_delay_q050-lgbm": "e13e484e259ec2d3cc9d086be40bc6a747eca41701f3f85aa4e7c25b11d89d1f",
+        "arr_delay_q080-lgbm": "5ae878ab5ae4fd5934939553ee610050622f01120f8f4a11f22689f7922cb5a5",
+        "arr_delay_q090-lgbm": "b7f899e9a52b89edf03a84bd2ad309e2cc5fc62644f3f990671ac5aa5bbda73b",
+        "arr_delay_q095-lgbm": "fde1e72ca127c4a50d6bc383df3f82a6c716a83952ea68548b813a1a6b1b859e"
+      }
+    },
+    "arr_delay/plan": {
+      "run_id": "run-20261121T080035Z",
+      "contract": "plan",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "models": {
+        "arr_delay_q010-lgbm": "ae9fe4d03511fdb0f27ca66b7a0ef560bc819befbbb063ca5774f15dedcd82ec",
+        "arr_delay_q050-lgbm": "84093c91ca56515a15d9260ed1247d65e2b88a17636a3b8036d8c3f63e935124",
+        "arr_delay_q080-lgbm": "a8b0ff735dbeca3c0af3ca7654faeddd6cfab433fcf8492ba086dc11e53e0b11",
+        "arr_delay_q090-lgbm": "75e053e47e3b4b1273cb93d88d22757508c270c978a72629cda5602b0ff361b3",
+        "arr_delay_q095-lgbm": "dd8c32a48b14a0e3a3830cb2a8f93b5dc19dd9cc166f038a6277ac1496e60175"
+      }
+    },
+    "cancelled/T2": {
+      "run_id": "run-20261120T174502Z",
+      "contract": "T2",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "models": {
+        "cancelled-lgbm": "353a4004b69a285160fa8076068432294cf33401989ad5221986ca23e14018aa"
+      }
+    },
+    "cancelled/T2_calendar": {
+      "run_id": "run-20261120T175822Z",
+      "contract": "T2",
+      "dropped_features": [],
+      "models": {
+        "cancelled-lgbm": "8bcdc8a7607c95c615d6dd8a73a754e3f46d9ea91d1f5936947422a22597a796"
+      }
+    },
+    "cancelled/plan": {
+      "run_id": "run-20261121T080035Z",
+      "contract": "plan",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "models": {
+        "cancelled-lgbm": "671631a03758be02ca26a72ce2d3c75adcf17368ae053162efb6d1ad1eed392d"
+      }
+    }
+  },
+  "note": "Written once (plan 1.5). If the run fails after this point, do not delete this file: the decision goes to the user."
+}

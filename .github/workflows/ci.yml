@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: deliverables/pyproject.toml
+      - name: Install
+        run: python -m pip install -e "deliverables[dev,modeling,optimization]"
+      - name: Ruff
+        working-directory: deliverables
+        run: |
+          python -m ruff check src tests
+          python -m ruff format --check src tests
+      - name: Mypy
+        working-directory: deliverables
+        run: python -m mypy src/flight_delay
+      - name: Tests
+        run: python -m pytest deliverables/tests -q

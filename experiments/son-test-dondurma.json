@@ -1,0 +1,358 @@
+{
+  "schema": "flight_delay/final-test-manifest/v1",
+  "created_utc": "2026-11-22T10:25:03.892350+00:00",
+  "git_commit": "4682712dcce7992c10d1b37669442183ec62f20b",
+  "pre_registration": {
+    "path": "experiments/son-test-on-kayit.md",
+    "sha256": "1270957e95643cac1faa1d306e84144b525ace58fa51eed862d53fd13d423c12"
+  },
+  "entries": {
+    "arr_del15/T2": {
+      "run_id": "run-20261121T082853Z",
+      "target": "arr_del15",
+      "contract": "T2",
+      "results": {
+        "path": "experiments/models/run-20261121T082853Z/model-results.json",
+        "sha256": "70c3ad3560a7540a538802e60fcdc83bbbf160e2034303e6d37bcfc1b0863749"
+      },
+      "spec": {
+        "path": "deliverables/models/run-20261121T082853Z/model-spec.json",
+        "sha256": "92bfd8ec33aaa7645e0d7f0468416c7e637f6e0ed87a587094a9f80323d905b8"
+      },
+      "models": {
+        "arr_del15-lgbm": {
+          "path": "deliverables/models/run-20261121T082853Z/arr_del15-lgbm.txt",
+          "sha256": "d7d6bd79f24af85ebbd2b849c2f5ed00dab91a30ef209aca1eb79d47f7446c55",
+          "best_iteration": 1409
+        }
+      },
+      "contract_sha256": "b3ea6b364a0eec82024d601ebc8e526cbaf9fda9bf9ee3c01669dc79a4279e11",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "data_fingerprint_digest": "5a964eddc4fef5a89f00c98b9016ac480e0103bf3d71fa06ca8d3070e501e705",
+      "calibrator": {
+        "file": {
+          "path": "experiments/models/run-20261121T082853Z/calibration/cal-20261121T095013Z/calibrators.json",
+          "sha256": "f77ea00a24544684abc6651f15cacc334a257bd0674f774bad7af12f2ecfb430"
+        },
+        "key": "arr_del15/LightGBM",
+        "b1_key": "arr_del15/B1",
+        "method": "platt"
+      },
+      "f1_threshold": 0.2036809335039471,
+      "b1_f1_threshold": 0.17239875069205438
+    },
+    "arr_del15/plan_matched": {
+      "run_id": "run-20261121T080035Z",
+      "target": "arr_del15",
+      "contract": "plan",
+      "results": {
+        "path": "experiments/models/run-20261121T080035Z/model-results.json",
+        "sha256": "3584a638bcd3514fb06457c2e4ddf278791ad88a65c0fe88127502aaaca78c68"
+      },
+      "spec": {
+        "path": "deliverables/models/run-20261121T080035Z/model-spec.json",
+        "sha256": "20cae660a9d81ae6ac03cd057b5bd39b13c986cdb49230c715315cc17249a723"
+      },
+      "models": {
+        "arr_del15-lgbm": {
+          "path": "deliverables/models/run-20261121T080035Z/arr_del15-lgbm.txt",
+          "sha256": "a6bd4932fd9fe5b5b62c9bdb4dbbf681b64531248aed5044434b027315b7c179",
+          "best_iteration": 332
+        }
+      },
+      "contract_sha256": "73927af93df3a13bbde283c60f3e039b78db8944dfa190ffd8315fb14250475e",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "data_fingerprint_digest": "630c4a69567f5bb0b875a2161a4ea2eb4ad166a642b278503129610504142ed0",
+      "calibrator": {
+        "file": {
+          "path": "experiments/models/run-20261121T080035Z/calibration/cal-20261121T082802Z/calibrators.json",
+          "sha256": "4d899f0d577c945a84d9fdbe0599db2b58df33dabde616fe0d12f0b036f348d0"
+        },
+        "key": "arr_del15/LightGBM",
+        "b1_key": "arr_del15/B1",
+        "method": "platt"
+      },
+      "f1_threshold": 0.16050158928278727,
+      "b1_f1_threshold": 0.17239875069205438
+    },
+    "arr_delay/plan": {
+      "run_id": "run-20261121T080035Z",
+      "target": "arr_delay",
+      "contract": "plan",
+      "results": {
+        "path": "experiments/models/run-20261121T080035Z/model-results.json",
+        "sha256": "3584a638bcd3514fb06457c2e4ddf278791ad88a65c0fe88127502aaaca78c68"
+      },
+      "spec": {
+        "path": "deliverables/models/run-20261121T080035Z/model-spec.json",
+        "sha256": "20cae660a9d81ae6ac03cd057b5bd39b13c986cdb49230c715315cc17249a723"
+      },
+      "models": {
+        "arr_delay_q010-lgbm": {
+          "path": "deliverables/models/run-20261121T080035Z/arr_delay_q010-lgbm.txt",
+          "sha256": "ae9fe4d03511fdb0f27ca66b7a0ef560bc819befbbb063ca5774f15dedcd82ec",
+          "best_iteration": 1430
+        },
+        "arr_delay_q050-lgbm": {
+          "path": "deliverables/models/run-20261121T080035Z/arr_delay_q050-lgbm.txt",
+          "sha256": "84093c91ca56515a15d9260ed1247d65e2b88a17636a3b8036d8c3f63e935124",
+          "best_iteration": 719
+        },
+        "arr_delay_q080-lgbm": {
+          "path": "deliverables/models/run-20261121T080035Z/arr_delay_q080-lgbm.txt",
+          "sha256": "a8b0ff735dbeca3c0af3ca7654faeddd6cfab433fcf8492ba086dc11e53e0b11",
+          "best_iteration": 319
+        },
+        "arr_delay_q090-lgbm": {
+          "path": "deliverables/models/run-20261121T080035Z/arr_delay_q090-lgbm.txt",
+          "sha256": "75e053e47e3b4b1273cb93d88d22757508c270c978a72629cda5602b0ff361b3",
+          "best_iteration": 289
+        },
+        "arr_delay_q095-lgbm": {
+          "path": "deliverables/models/run-20261121T080035Z/arr_delay_q095-lgbm.txt",
+          "sha256": "dd8c32a48b14a0e3a3830cb2a8f93b5dc19dd9cc166f038a6277ac1496e60175",
+          "best_iteration": 217
+        }
+      },
+      "contract_sha256": "73927af93df3a13bbde283c60f3e039b78db8944dfa190ffd8315fb14250475e",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "data_fingerprint_digest": "630c4a69567f5bb0b875a2161a4ea2eb4ad166a642b278503129610504142ed0",
+      "calibrator": null,
+      "f1_threshold": null,
+      "b1_f1_threshold": null
+    },
+    "arr_delay/T2_matched": {
+      "run_id": "run-20261121T082853Z",
+      "target": "arr_delay",
+      "contract": "T2",
+      "results": {
+        "path": "experiments/models/run-20261121T082853Z/model-results.json",
+        "sha256": "70c3ad3560a7540a538802e60fcdc83bbbf160e2034303e6d37bcfc1b0863749"
+      },
+      "spec": {
+        "path": "deliverables/models/run-20261121T082853Z/model-spec.json",
+        "sha256": "92bfd8ec33aaa7645e0d7f0468416c7e637f6e0ed87a587094a9f80323d905b8"
+      },
+      "models": {
+        "arr_delay_q010-lgbm": {
+          "path": "deliverables/models/run-20261121T082853Z/arr_delay_q010-lgbm.txt",
+          "sha256": "016bf5407246af58753fe38ab02c43fe3dd69d4f22c53d418ddba38eb92c1d12",
+          "best_iteration": 5000
+        },
+        "arr_delay_q050-lgbm": {
+          "path": "deliverables/models/run-20261121T082853Z/arr_delay_q050-lgbm.txt",
+          "sha256": "e13e484e259ec2d3cc9d086be40bc6a747eca41701f3f85aa4e7c25b11d89d1f",
+          "best_iteration": 4486
+        },
+        "arr_delay_q080-lgbm": {
+          "path": "deliverables/models/run-20261121T082853Z/arr_delay_q080-lgbm.txt",
+          "sha256": "5ae878ab5ae4fd5934939553ee610050622f01120f8f4a11f22689f7922cb5a5",
+          "best_iteration": 2320
+        },
+        "arr_delay_q090-lgbm": {
+          "path": "deliverables/models/run-20261121T082853Z/arr_delay_q090-lgbm.txt",
+          "sha256": "b7f899e9a52b89edf03a84bd2ad309e2cc5fc62644f3f990671ac5aa5bbda73b",
+          "best_iteration": 1181
+        },
+        "arr_delay_q095-lgbm": {
+          "path": "deliverables/models/run-20261121T082853Z/arr_delay_q095-lgbm.txt",
+          "sha256": "fde1e72ca127c4a50d6bc383df3f82a6c716a83952ea68548b813a1a6b1b859e",
+          "best_iteration": 732
+        }
+      },
+      "contract_sha256": "b3ea6b364a0eec82024d601ebc8e526cbaf9fda9bf9ee3c01669dc79a4279e11",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "data_fingerprint_digest": "5a964eddc4fef5a89f00c98b9016ac480e0103bf3d71fa06ca8d3070e501e705",
+      "calibrator": null,
+      "f1_threshold": null,
+      "b1_f1_threshold": null
+    },
+    "cancelled/plan": {
+      "run_id": "run-20261121T080035Z",
+      "target": "cancelled",
+      "contract": "plan",
+      "results": {
+        "path": "experiments/models/run-20261121T080035Z/model-results.json",
+        "sha256": "3584a638bcd3514fb06457c2e4ddf278791ad88a65c0fe88127502aaaca78c68"
+      },
+      "spec": {
+        "path": "deliverables/models/run-20261121T080035Z/model-spec.json",
+        "sha256": "20cae660a9d81ae6ac03cd057b5bd39b13c986cdb49230c715315cc17249a723"
+      },
+      "models": {
+        "cancelled-lgbm": {
+          "path": "deliverables/models/run-20261121T080035Z/cancelled-lgbm.txt",
+          "sha256": "671631a03758be02ca26a72ce2d3c75adcf17368ae053162efb6d1ad1eed392d",
+          "best_iteration": 36
+        }
+      },
+      "contract_sha256": "73927af93df3a13bbde283c60f3e039b78db8944dfa190ffd8315fb14250475e",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "data_fingerprint_digest": "630c4a69567f5bb0b875a2161a4ea2eb4ad166a642b278503129610504142ed0",
+      "calibrator": {
+        "file": {
+          "path": "experiments/models/run-20261121T080035Z/calibration/cal-20261121T082802Z/calibrators.json",
+          "sha256": "4d899f0d577c945a84d9fdbe0599db2b58df33dabde616fe0d12f0b036f348d0"
+        },
+        "key": "cancelled/LightGBM",
+        "b1_key": "cancelled/B1",
+        "method": "platt"
+      },
+      "f1_threshold": 0.015341935402186925,
+      "b1_f1_threshold": 0.018073024752833924
+    },
+    "cancelled/T2": {
+      "run_id": "run-20261120T174502Z",
+      "target": "cancelled",
+      "contract": "T2",
+      "results": {
+        "path": "experiments/models/run-20261120T174502Z/model-results.json",
+        "sha256": "2df3fdacc4a9a3ba4adc94c28419171a4f54d8555cc7afcfc9c6c3142b528a8d"
+      },
+      "spec": {
+        "path": "deliverables/models/run-20261120T174502Z/model-spec.json",
+        "sha256": "af504a270b710c5fd90863e88e7fb5e23b4cd8a12800cf078eab7586e507725b"
+      },
+      "models": {
+        "cancelled-lgbm": {
+          "path": "deliverables/models/run-20261120T174502Z/cancelled-lgbm.txt",
+          "sha256": "353a4004b69a285160fa8076068432294cf33401989ad5221986ca23e14018aa",
+          "best_iteration": 73
+        }
+      },
+      "contract_sha256": "b3ea6b364a0eec82024d601ebc8e526cbaf9fda9bf9ee3c01669dc79a4279e11",
+      "dropped_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "data_fingerprint_digest": "5a964eddc4fef5a89f00c98b9016ac480e0103bf3d71fa06ca8d3070e501e705",
+      "calibrator": {
+        "file": {
+          "path": "experiments/models/run-20261120T174502Z/calibration/cal-20261120T175804Z/calibrators.json",
+          "sha256": "f602776aac386bb24e41db3c8b1729f0c0d313d99a8bccca51f87b5baefa86dd"
+        },
+        "key": "cancelled/LightGBM",
+        "b1_key": "cancelled/B1",
+        "method": "platt"
+      },
+      "f1_threshold": 0.07101468925445087,
+      "b1_f1_threshold": 0.018073024752833924
+    },
+    "cancelled/T2_calendar": {
+      "run_id": "run-20261120T175822Z",
+      "target": "cancelled",
+      "contract": "T2",
+      "results": {
+        "path": "experiments/models/run-20261120T175822Z/model-results.json",
+        "sha256": "a58dc39e174044624bcf1e42afa1550a55a5b75ef08442b68db2c733f452aee8"
+      },
+      "spec": {
+        "path": "deliverables/models/run-20261120T175822Z/model-spec.json",
+        "sha256": "b82b6a7ce8b9eb51cbd32bacf697c5ba42086856c56f20f849221ecc87830a5d"
+      },
+      "models": {
+        "cancelled-lgbm": {
+          "path": "deliverables/models/run-20261120T175822Z/cancelled-lgbm.txt",
+          "sha256": "8bcdc8a7607c95c615d6dd8a73a754e3f46d9ea91d1f5936947422a22597a796",
+          "best_iteration": 15
+        }
+      },
+      "contract_sha256": "c86a71f835d8ab1370cab723a191dac951f6d6ce431474be859bb97eebd3b677",
+      "dropped_features": [],
+      "data_fingerprint_digest": "5a964eddc4fef5a89f00c98b9016ac480e0103bf3d71fa06ca8d3070e501e705",
+      "calibrator": {
+        "file": {
+          "path": "experiments/models/run-20261120T175822Z/calibration/cal-20261120T190336Z/calibrators.json",
+          "sha256": "a188b2b5f97ac99247c5d15ed6efb7b01e5504708903689054589aaae871e33f"
+        },
+        "key": "cancelled/LightGBM",
+        "b1_key": "cancelled/B1",
+        "method": "platt"
+      },
+      "f1_threshold": 0.030615156906915242,
+      "b1_f1_threshold": 0.018073024752833924
+    }
+  },
+  "acceptance": {
+    "K3": {
+      "citl_abs_max": 0.01,
+      "slope_min": 0.9,
+      "slope_max": 1.1
+    },
+    "K5": {
+      "q080": [
+        0.78,
+        0.82
+      ],
+      "q095": [
+        0.94,
+        0.96
+      ],
+      "segment_tolerance": 0.05,
+      "segment_share_min": 0.8,
+      "segment_min_n": 500
+    },
+    "source": "rehearsal rule (pre-registration d): max(plan, rounded-up bootstrap half-width)"
+  },
+  "bootstrap": {
+    "replicates": 1000,
+    "seed": 42,
+    "level": 0.95
+  },
+  "holm_alpha": 0.05,
+  "rehearsal": {
+    "path": "experiments/son-test-prova/prova-20261122T075219Z/prova-sonuclari.json",
+    "sha256": "f4da21ed005d97f2e3aa89d60e6c3c8db79ad05f9749b43e405ba2f99ddf6d0d"
+  },
+  "leakage": {
+    "reviews": [
+      {
+        "path": "experiments/models/run-20261120T174502Z/permutation/perm-20261120T192352Z/importance-results.json",
+        "sha256": "0b124d9cf298e3cf448f4cfd3f614731e4b51773b9e866ab963a38ab6a618825"
+      },
+      {
+        "path": "experiments/models/run-20261121T082853Z/permutation/perm-20261122T072248Z/importance-results.json",
+        "sha256": "e3f2e2f672c44c59691ba01a9dd5c119335bfa7f45e1e9d4eafeea03d93e534d"
+      }
+    ],
+    "pytest": {
+      "commit": "4682712dcce7992c10d1b37669442183ec62f20b",
+      "passed": 523,
+      "failed": 0,
+      "command": "python -m pytest (deliverables/tests/unit)"
+    }
+  }
+}

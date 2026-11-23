@@ -1,0 +1,37 @@
+{
+  "months": [
+    {
+      "year": 2024,
+      "month": 8,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 619025,
+      "rows_layer": 400860,
+      "rows_dropped_missing_key": 1,
+      "dropped_missing_key_by_field": {
+        "FlightDate": 0,
+        "Reporting_Airline": 0,
+        "Flight_Number_Reporting_Airline": 1,
+        "Origin": 0,
+        "Dest": 0,
+        "CRSDepTime": 0,
+        "CRSArrTime": 0,
+        "Cancelled": 0,
+        "Diverted": 0
+      },
+      "deleted_raw": [
+        "ontime_2024_08.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_8.csv"
+      ]
+    }
+  ],
+  "has_error": false,
+  "parameters": {
+    "delete_raw": true,
+    "process": true,
+    "wait_sec": 5.0,
+    "force": true,
+    "month_count": 1
+  },
+  "unprocessed_months": []
+}

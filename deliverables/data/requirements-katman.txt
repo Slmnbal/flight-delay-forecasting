@@ -1,0 +1,5 @@
+# Veri katmanı bağımlılıkları = mevcut veri paketi + DuckDB (Python 3.12).
+# requirements-data.txt DEĞİŞTİRİLMEDİ; bu dosya onu içerir. Sürümler sabitlenmedi:
+# ilk kurulumdan sonra `pip freeze` ile kaydet.
+-r requirements-data.txt
+duckdb

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="ABD iç hat uçuşları için rötar riski ve tarife tamponu analizi; kamu verisine dayalı, havayollarıyla bağlantısız.">
+  <title>Uçuş rötarı riski ve tarife tamponları</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="./js/theme-init.js"></script>
+  <script type="module" src="./js/main.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main" id="skip-link">İçeriğe geç</a>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">
+        <h1 id="site-title">Uçuş rötarı riski ve tarife tamponları</h1>
+        <p class="disclaimer">Kamu verisine dayalı; havayollarıyla bağlantısız.</p>
+      </div>
+      <button type="button" class="btn theme-btn" id="theme-toggle">Tema: otomatik</button>
+    </div>
+    <nav aria-label="Bölümler" class="tabs">
+      <ul>
+        <li><a href="#overview" data-nav="overview">Genel bakış</a></li>
+        <li><a href="#airports" data-nav="airports">Havalimanları</a></li>
+        <li><a href="#routes" data-nav="routes">Rotalar</a></li>
+        <li><a href="#calibration" data-nav="calibration">Kalibrasyon ve kapsama</a></li>
+        <li><a href="#weather" data-nav="weather">Hava deneyi</a></li>
+        <li><a href="#errors" data-nav="errors">Hata analizi</a></li>
+        <li><a href="#about" data-nav="about">Hakkında ve sınırlar</a></li>
+        <li><a href="#sozluk" data-nav="sozluk">Sözlük</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div id="sample-banner" class="sample-banner" role="note" hidden>
+    Bu dosyalar örnek veri olarak işaretli. Sayılar gerçek sonuç değildir.
+  </div>
+
+  <main id="main" tabindex="-1">
+    <noscript>
+      <p class="error">Bu site, önceden hesaplanmış JSON dosyalarını JavaScript ile okur. Sonuçları görmek için JavaScript’i etkinleştirin.</p>
+    </noscript>
+
+    <section id="view-overview" class="view" aria-labelledby="h-overview">
+      <h2 id="h-overview" tabindex="-1">Genel bakış</h2>
+      <div data-view-body></div>
+    </section>
+
+    <section id="view-airports" class="view" aria-labelledby="h-airports" hidden>
+      <h2 id="h-airports" tabindex="-1">Havalimanları</h2>
+      <div data-view-body></div>
+    </section>
+
+    <section id="view-routes" class="view" aria-labelledby="h-routes" hidden>
+      <h2 id="h-routes" tabindex="-1">Rotalar</h2>
+      <div data-view-body></div>
+    </section>
+
+    <section id="view-calibration" class="view" aria-labelledby="h-calibration" hidden>
+      <h2 id="h-calibration" tabindex="-1">Kalibrasyon ve kapsama</h2>
+      <div data-view-body></div>
+    </section>
+
+    <section id="view-weather" class="view" aria-labelledby="h-weather" hidden>
+      <h2 id="h-weather" tabindex="-1">Hava deneyi</h2>
+      <div data-view-body></div>
+    </section>
+
+    <section id="view-errors" class="view" aria-labelledby="h-errors" hidden>
+      <h2 id="h-errors" tabindex="-1">Hata analizi</h2>
+      <div data-view-body></div>
+    </section>
+
+    <section id="view-about" class="view" aria-labelledby="h-about" hidden>
+      <h2 id="h-about" tabindex="-1">Hakkında ve sınırlar</h2>
+      <div data-view-body></div>
+    </section>
+
+    <section id="view-sozluk" class="view" aria-labelledby="h-sozluk" hidden>
+      <h2 id="h-sozluk" tabindex="-1">Sözlük</h2>
+      <div data-view-body></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Kamu verisine dayalı; havayollarıyla bağlantısız.</p>
+    <p id="footer-disclaimer"></p>
+    <p id="footer-build"></p>
+  </footer>
+</body>
+</html>

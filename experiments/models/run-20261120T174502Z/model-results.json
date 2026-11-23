@@ -1,0 +1,5677 @@
+{
+  "metadata": {
+    "run_id": "run-20261120T174502Z",
+    "created_utc": "2026-11-20T17:45:02.917664+00:00",
+    "command": "python -m flight_delay.modeling.run_models",
+    "contract": "T2",
+    "oracle": false,
+    "oracle_label": null,
+    "months_read": [
+      "2023-09",
+      "2023-10",
+      "2023-11",
+      "2023-12",
+      "2024-01",
+      "2024-02",
+      "2024-03",
+      "2024-04",
+      "2024-05",
+      "2024-06",
+      "2024-07",
+      "2024-08",
+      "2024-09",
+      "2024-10",
+      "2024-11",
+      "2024-12",
+      "2025-01",
+      "2025-02",
+      "2025-03",
+      "2025-04",
+      "2025-05",
+      "2025-06",
+      "2025-07",
+      "2025-08",
+      "2025-09",
+      "2025-10",
+      "2025-11",
+      "2025-12",
+      "2026-01",
+      "2026-02"
+    ],
+    "rows_loaded": 11322237,
+    "final_test_read": false,
+    "data_fingerprint_digest": "5a964eddc4fef5a89f00c98b9016ac480e0103bf3d71fa06ca8d3070e501e705",
+    "side_tables_missing": [
+      "scheduled_density/year=2023/month=08/part-0.parquet"
+    ],
+    "density_neighbours_skipped": [
+      "scheduled_density 2026-03 (final test) for 2026-02"
+    ],
+    "git": {
+      "commit": "c3ad8cf6d106ccd2519b73ec0e4aa049309ce8b3",
+      "dirty": true
+    },
+    "library_versions": {
+      "pandas": "3.1.1",
+      "numpy": "2.5.5",
+      "pyarrow": "26.0.1",
+      "scikit-learn": "1.9.1",
+      "lightgbm": "4.7.0",
+      "xgboost": "not installed",
+      "statsmodels": "not installed",
+      "scipy": "1.18.1",
+      "pydantic": "2.14.3",
+      "mlflow": "3.18.0",
+      "ortools": "not installed",
+      "pulp": "not installed"
+    },
+    "config": {
+      "contract": "T2",
+      "oracle_experiment": false,
+      "max_train_months": null,
+      "models": [
+        "cancelled"
+      ],
+      "tuning": true,
+      "tuning_trials": 8,
+      "tuning_budget_minutes": 45.0,
+      "tuning_folds": [
+        "K3",
+        "K4"
+      ],
+      "tuning_day_fraction": 0.25,
+      "tuning_num_boost_round": 1000,
+      "tuning_early_stopping_rounds": 50,
+      "num_boost_round": 1000,
+      "early_stopping_rounds": 1000,
+      "num_threads": 8,
+      "logistic_day_fraction": 0.15,
+      "logistic_c": 1.0,
+      "logistic_max_iter": 500,
+      "logistic_clip_quantile": 0.0,
+      "permutation": false,
+      "permutation_max_rows": 300000,
+      "permutation_repeats": 3,
+      "permutation_scheme": "rows",
+      "time_travel": true,
+      "m": 20.0,
+      "min_support": 1,
+      "min_tail": 20,
+      "n_blocks": 5,
+      "segment_min_n": 500,
+      "embargo_days": 0,
+      "seed": 42,
+      "param_overrides": {},
+      "interval_models": false,
+      "quantile_num_boost_round": null,
+      "cancel_early_stopping_metric": "binary_logloss",
+      "record_curves": true,
+      "drop_features": [
+        "month",
+        "day_of_year",
+        "day_of_month",
+        "days_to_holiday",
+        "holiday_week"
+      ],
+      "tuning_from_run": "run-20261119T182216Z"
+    },
+    "early_stopping_set": "val_a",
+    "threshold_set": "val_b",
+    "model_dir": "deliverables/models/run-20261120T174502Z",
+    "model_dir_git_ignored": true,
+    "mlflow_mode": "off"
+  },
+  "periods": {
+    "fit": {
+      "name": "train",
+      "start": "2023-09-01",
+      "end": "2025-08-31"
+    },
+    "val_a": {
+      "start": "2025-09-01",
+      "end": "2025-12-31"
+    },
+    "val_b": {
+      "start": "2026-01-01",
+      "end": "2026-02-28"
+    }
+  },
+  "features": {
+    "names": [
+      "crs_dep_hour",
+      "crs_dep_minute_of_day",
+      "crs_arr_hour",
+      "hour_block",
+      "CRSElapsedTime",
+      "Distance",
+      "DistanceGroup",
+      "Origin",
+      "Reporting_Airline",
+      "day_of_week",
+      "planned_departures_origin_hour",
+      "planned_arrivals_dest_hour",
+      "planned_departures_origin_day",
+      "origin_tmpf",
+      "origin_dwpf",
+      "origin_sknt",
+      "origin_gust",
+      "origin_vsby",
+      "origin_p01i",
+      "origin_obs_age_min",
+      "origin_ceiling_ft",
+      "origin_ifr_flag",
+      "origin_wx_ts",
+      "origin_wx_sn",
+      "origin_wx_fzra",
+      "origin_wx_ra",
+      "origin_wx_fg",
+      "origin_weather_missing",
+      "dest_tmpf",
+      "dest_dwpf",
+      "dest_sknt",
+      "dest_gust",
+      "dest_vsby",
+      "dest_p01i",
+      "dest_obs_age_min",
+      "dest_ceiling_ft",
+      "dest_ifr_flag",
+      "dest_wx_ts",
+      "dest_wx_sn",
+      "dest_wx_fzra",
+      "dest_wx_ra",
+      "dest_wx_fg",
+      "dest_weather_missing",
+      "dest_weather_available",
+      "te_route_hour_arrdel15",
+      "te_dest_hour_arrdel15",
+      "te_carrier_origin_arrdel15",
+      "hist_route_hour_p50",
+      "hist_route_hour_p80",
+      "hist_route_hour_p95",
+      "te_route_cancel",
+      "schedule_excess_min",
+      "hist_taxiout_origin_hour_median",
+      "support_n_route_hour_arrdel15",
+      "support_n_dest_hour_arrdel15",
+      "support_n_carrier_origin_arrdel15",
+      "support_n_route_hour_p80",
+      "support_n_route_cancel",
+      "support_n_route_hour_elapsed",
+      "support_n_origin_hour_taxiout"
+    ],
+    "count": 60,
+    "categorical": [
+      "Origin",
+      "Reporting_Airline"
+    ],
+    "dropped": [
+      "month",
+      "day_of_year",
+      "day_of_month",
+      "days_to_holiday",
+      "holiday_week"
+    ],
+    "contract_kind": "T2",
+    "contract_sha256": "b3ea6b364a0eec82024d601ebc8e526cbaf9fda9bf9ee3c01669dc79a4279e11"
+  },
+  "categories": {
+    "encoder": {
+      "columns": [
+        "Origin",
+        "Reporting_Airline"
+      ],
+      "min_count": 1,
+      "categories": {
+        "Origin": [
+          "ATL",
+          "AUS",
+          "BNA",
+          "BOS",
+          "BWI",
+          "CLT",
+          "DAL",
+          "DCA",
+          "DEN",
+          "DFW",
+          "DTW",
+          "EWR",
+          "FLL",
+          "IAH",
+          "JFK",
+          "LAS",
+          "LAX",
+          "LGA",
+          "MCO",
+          "MDW",
+          "MIA",
+          "MSP",
+          "ORD",
+          "PHL",
+          "PHX",
+          "SAN",
+          "SEA",
+          "SFO",
+          "SLC",
+          "TPA"
+        ],
+        "Reporting_Airline": [
+          "9E",
+          "AA",
+          "AS",
+          "B6",
+          "DL",
+          "F9",
+          "G4",
+          "HA",
+          "MQ",
+          "NK",
+          "OH",
+          "OO",
+          "UA",
+          "WN",
+          "YX"
+        ]
+      },
+      "fit_start": "2023-09-01",
+      "fit_end": "2025-08-31",
+      "n_fit": 9127110,
+      "unknown_rule": "value not in the list or missing -> NaN code (LightGBM: missing; one-hot: all zeros)"
+    },
+    "unknown": {
+      "train": {
+        "Origin": {
+          "rows": 9127110,
+          "unknown": 0,
+          "missing": 0,
+          "unknown_share": 0.0,
+          "unknown_values": [],
+          "unknown_values_total": 0
+        },
+        "Reporting_Airline": {
+          "rows": 9127110,
+          "unknown": 0,
+          "missing": 0,
+          "unknown_share": 0.0,
+          "unknown_values": [],
+          "unknown_values_total": 0
+        }
+      },
+      "val_a": {
+        "Origin": {
+          "rows": 1506008,
+          "unknown": 0,
+          "missing": 0,
+          "unknown_share": 0.0,
+          "unknown_values": [],
+          "unknown_values_total": 0
+        },
+        "Reporting_Airline": {
+          "rows": 1506008,
+          "unknown": 0,
+          "missing": 0,
+          "unknown_share": 0.0,
+          "unknown_values": [],
+          "unknown_values_total": 0
+        }
+      },
+      "val_b": {
+        "Origin": {
+          "rows": 689119,
+          "unknown": 0,
+          "missing": 0,
+          "unknown_share": 0.0,
+          "unknown_values": [],
+          "unknown_values_total": 0
+        },
+        "Reporting_Airline": {
+          "rows": 689119,
+          "unknown": 0,
+          "missing": 0,
+          "unknown_share": 0.0,
+          "unknown_values": [],
+          "unknown_values_total": 0
+        }
+      }
+    }
+  },
+  "history": {
+    "fit_end": "2025-08-31",
+    "tables": {
+      "route_hour_arrdel15": {
+        "name": "rate",
+        "levels": [
+          [],
+          [
+            "Origin"
+          ],
+          [
+            "Origin",
+            "hour_block"
+          ],
+          [
+            "Origin",
+            "Dest",
+            "hour_block"
+          ]
+        ],
+        "m": 20.0,
+        "min_support": 1,
+        "fit_end": "2025-08-31",
+        "fit_first_date": "2023-09-01",
+        "fit_last_date": "2025-08-31",
+        "n_fit": 8985342,
+        "global_mean": 0.2197112808839107
+      },
+      "dest_hour_arrdel15": {
+        "name": "rate",
+        "levels": [
+          [],
+          [
+            "Dest"
+          ],
+          [
+            "Dest",
+            "hour_block"
+          ]
+        ],
+        "m": 20.0,
+        "min_support": 1,
+        "fit_end": "2025-08-31",
+        "fit_first_date": "2023-09-01",
+        "fit_last_date": "2025-08-31",
+        "n_fit": 8985342,
+        "global_mean": 0.2197112808839107
+      },
+      "carrier_origin_arrdel15": {
+        "name": "rate",
+        "levels": [
+          [],
+          [
+            "Origin"
+          ],
+          [
+            "Origin",
+            "Reporting_Airline"
+          ]
+        ],
+        "m": 20.0,
+        "min_support": 1,
+        "fit_end": "2025-08-31",
+        "fit_first_date": "2023-09-01",
+        "fit_last_date": "2025-08-31",
+        "n_fit": 8985342,
+        "global_mean": 0.2197112808839107
+      },
+      "route_cancel": {
+        "name": "rate",
+        "levels": [
+          [],
+          [
+            "Origin"
+          ],
+          [
+            "Origin",
+            "Dest"
+          ]
+        ],
+        "m": 20.0,
+        "min_support": 1,
+        "fit_end": "2025-08-31",
+        "fit_first_date": "2023-09-01",
+        "fit_last_date": "2025-08-31",
+        "n_fit": 9127110,
+        "global_mean": 0.012896305621385083
+      },
+      "route_hour_delay": {
+        "name": "quantile",
+        "levels": [
+          [],
+          [
+            "Origin"
+          ],
+          [
+            "Origin",
+            "hour_block"
+          ],
+          [
+            "Origin",
+            "Dest",
+            "hour_block"
+          ]
+        ],
+        "alphas": [
+          0.5,
+          0.8,
+          0.95
+        ],
+        "min_tail": 20,
+        "required_counts": {
+          "q050": 40,
+          "q080": 100,
+          "q095": 400
+        },
+        "fit_end": "2025-08-31",
+        "fit_first_date": "2023-09-01",
+        "fit_last_date": "2025-08-31",
+        "n_fit": 8985342,
+        "global_quantiles": {
+          "q050": -6.0,
+          "q080": 17.0,
+          "q095": 85.0
+        }
+      },
+      "route_hour_elapsed": {
+        "name": "quantile",
+        "levels": [
+          [],
+          [
+            "Origin",
+            "Dest"
+          ],
+          [
+            "Origin",
+            "Dest",
+            "hour_block"
+          ]
+        ],
+        "alphas": [
+          0.5
+        ],
+        "min_tail": 20,
+        "required_counts": {
+          "q050": 40
+        },
+        "fit_end": "2025-08-31",
+        "fit_first_date": "2023-09-01",
+        "fit_last_date": "2025-08-31",
+        "n_fit": 8985342,
+        "global_quantiles": {
+          "q050": 136.0
+        }
+      },
+      "origin_hour_taxiout": {
+        "name": "quantile",
+        "levels": [
+          [],
+          [
+            "Origin"
+          ],
+          [
+            "Origin",
+            "hour_block"
+          ]
+        ],
+        "alphas": [
+          0.5
+        ],
+        "min_tail": 20,
+        "required_counts": {
+          "q050": 40
+        },
+        "fit_end": "2025-08-31",
+        "fit_first_date": "2023-09-01",
+        "fit_last_date": "2025-08-31",
+        "n_fit": 9009404,
+        "global_quantiles": {
+          "q050": 17.0
+        }
+      }
+    }
+  },
+  "universe": {
+    "train": {
+      "rows": 9127110,
+      "universe_arr_del15": 8985342,
+      "universe_cancelled": 9127110,
+      "universe_arr_delay": 8985342,
+      "universe_disruption": 9127110,
+      "cancelled": 117706,
+      "diverted": 24062
+    },
+    "val_a": {
+      "rows": 1506008,
+      "universe_arr_del15": 1483504,
+      "universe_cancelled": 1506008,
+      "universe_arr_delay": 1483504,
+      "universe_disruption": 1506007,
+      "cancelled": 19323,
+      "diverted": 3180
+    },
+    "val_b": {
+      "rows": 689119,
+      "universe_arr_del15": 662410,
+      "universe_cancelled": 689119,
+      "universe_arr_delay": 662410,
+      "universe_disruption": 689119,
+      "cancelled": 25274,
+      "diverted": 1435
+    }
+  },
+  "tuning": {
+    "trials_done": 0,
+    "from_run": "run-20261119T182216Z",
+    "selected": {
+      "arr_del15": {
+        "params": {
+          "bagging_fraction": 0.7,
+          "cat_smooth": 50,
+          "feature_fraction": 0.9,
+          "lambda_l2": 10.0,
+          "learning_rate": 0.03,
+          "max_bin": 63,
+          "min_child_samples": 1000,
+          "num_leaves": 127
+        },
+        "trial": 2,
+        "selected_by": "from run-20261119T182216Z"
+      }
+    }
+  },
+  "classification": {
+    "cancelled": {
+      "B1": {
+        "threshold": {
+          "chosen_on": "val_b",
+          "value": 0.018073024752833924
+        },
+        "sets": {
+          "val_a": {
+            "total": {
+              "n": 1506008.0,
+              "prevalence": 0.012830609133550419,
+              "mean_pred": 0.012742359853275022,
+              "roc_auc": 0.6165643285936497,
+              "pr_auc": 0.02247416588567996,
+              "brier": 0.012649622890543713,
+              "log_loss": 0.06861927513094104,
+              "ece": 0.0032672517048790845,
+              "calibration_in_the_large": -8.824928027539695e-05,
+              "calibration_intercept": -2.1819888159384107,
+              "calibration_slope": 0.47903247343092803,
+              "brier_skill_score": 0.0,
+              "threshold_at_threshold": 0.018073024752833924,
+              "precision_at_threshold": 0.022889646881749857,
+              "recall_at_threshold": 0.36360813538270453,
+              "f1_at_threshold": 0.043068096140054066,
+              "threshold_in_sample": 0.0
+            },
+            "segments": {
+              "Origin": [
+                {
+                  "segment": "ATL",
+                  "n": 105047,
+                  "prevalence": 0.012603882071834513,
+                  "mean_pred": 0.010245755451617765,
+                  "calibration_in_the_large": -0.002358126620216748,
+                  "brier": 0.01244869450138505,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5640013279909222,
+                  "pr_auc": 0.015971552126387498
+                },
+                {
+                  "segment": "AUS",
+                  "n": 29608,
+                  "prevalence": 0.006146987300729533,
+                  "mean_pred": 0.0092815705755301,
+                  "calibration_in_the_large": 0.0031345832748005675,
+                  "brier": 0.006113994053847961,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6767851447811347,
+                  "pr_auc": 0.012003510560828955
+                },
+                {
+                  "segment": "BNA",
+                  "n": 36152,
+                  "prevalence": 0.00710887364461164,
+                  "mean_pred": 0.011713825824468525,
+                  "calibration_in_the_large": 0.004604952179856885,
+                  "brier": 0.007062861937285368,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6711042204267419,
+                  "pr_auc": 0.017574586849116183
+                },
+                {
+                  "segment": "BOS",
+                  "n": 46877,
+                  "prevalence": 0.018175224523753652,
+                  "mean_pred": 0.014258412934469944,
+                  "calibration_in_the_large": -0.003916811589283708,
+                  "brier": 0.017724780094687434,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6568150984487406,
+                  "pr_auc": 0.03729526018702204
+                },
+                {
+                  "segment": "BWI",
+                  "n": 32027,
+                  "prevalence": 0.008274268585880663,
+                  "mean_pred": 0.01163827009616865,
+                  "calibration_in_the_large": 0.0033640015102879874,
+                  "brier": 0.00823055375900269,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5940093953496108,
+                  "pr_auc": 0.012023960562831499
+                },
+                {
+                  "segment": "CLT",
+                  "n": 61385,
+                  "prevalence": 0.007070131139529201,
+                  "mean_pred": 0.014459312705792402,
+                  "calibration_in_the_large": 0.007389181566263201,
+                  "brier": 0.007113653304862388,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6063588928085846,
+                  "pr_auc": 0.011818898686674201
+                },
+                {
+                  "segment": "DAL",
+                  "n": 23487,
+                  "prevalence": 0.010048111721377784,
+                  "mean_pred": 0.011653230926598045,
+                  "calibration_in_the_large": 0.0016051192052202613,
+                  "brier": 0.009954889096215978,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5753323713432409,
+                  "pr_auc": 0.013391249039195096
+                },
+                {
+                  "segment": "DCA",
+                  "n": 46989,
+                  "prevalence": 0.016663474430185787,
+                  "mean_pred": 0.026073499622808874,
+                  "calibration_in_the_large": 0.009410025192623087,
+                  "brier": 0.016588835760640134,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6248767458119281,
+                  "pr_auc": 0.02855469841367881
+                },
+                {
+                  "segment": "DEN",
+                  "n": 105617,
+                  "prevalence": 0.005690371815143395,
+                  "mean_pred": 0.009048187914837254,
+                  "calibration_in_the_large": 0.0033578160996938586,
+                  "brier": 0.005699330274782595,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5617816402463733,
+                  "pr_auc": 0.00825587747440209
+                },
+                {
+                  "segment": "DFW",
+                  "n": 103625,
+                  "prevalence": 0.01767913148371532,
+                  "mean_pred": 0.021132434045781252,
+                  "calibration_in_the_large": 0.003453302562065934,
+                  "brier": 0.01737400787521593,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5876379125982917,
+                  "pr_auc": 0.02337279356910961
+                },
+                {
+                  "segment": "DTW",
+                  "n": 40785,
+                  "prevalence": 0.01360794409709452,
+                  "mean_pred": 0.009208049562616871,
+                  "calibration_in_the_large": -0.004399894534477649,
+                  "brier": 0.013414033890054156,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5832594563243333,
+                  "pr_auc": 0.023053845552144063
+                },
+                {
+                  "segment": "EWR",
+                  "n": 41578,
+                  "prevalence": 0.022944826590985616,
+                  "mean_pred": 0.02325162506386741,
+                  "calibration_in_the_large": 0.00030679847288179324,
+                  "brier": 0.022373761180583145,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6053506596879044,
+                  "pr_auc": 0.037548707500154835
+                },
+                {
+                  "segment": "FLL",
+                  "n": 28749,
+                  "prevalence": 0.014539636161257783,
+                  "mean_pred": 0.012689089855576883,
+                  "calibration_in_the_large": -0.0018505463056809005,
+                  "brier": 0.014309910021643266,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6039690744022432,
+                  "pr_auc": 0.021819096316427967
+                },
+                {
+                  "segment": "IAH",
+                  "n": 39733,
+                  "prevalence": 0.005436287217174641,
+                  "mean_pred": 0.016387828229682926,
+                  "calibration_in_the_large": 0.010951541012508285,
+                  "brier": 0.005561507300966893,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6338420103302939,
+                  "pr_auc": 0.008482543066306776
+                },
+                {
+                  "segment": "JFK",
+                  "n": 34977,
+                  "prevalence": 0.02267204162735512,
+                  "mean_pred": 0.016693973701066067,
+                  "calibration_in_the_large": -0.0059780679262890525,
+                  "brier": 0.02219398553201992,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5938466784162498,
+                  "pr_auc": 0.03248866577357349
+                },
+                {
+                  "segment": "LAS",
+                  "n": 58986,
+                  "prevalence": 0.007849320177669277,
+                  "mean_pred": 0.0076273957780949985,
+                  "calibration_in_the_large": -0.00022192439957427826,
+                  "brier": 0.007788277225138702,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5908648863718604,
+                  "pr_auc": 0.011386457533960002
+                },
+                {
+                  "segment": "LAX",
+                  "n": 62856,
+                  "prevalence": 0.008097874506809214,
+                  "mean_pred": 0.006554910159998567,
+                  "calibration_in_the_large": -0.001542964346810647,
+                  "brier": 0.008060546663488127,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.4820402624603418,
+                  "pr_auc": 0.008208777153325068
+                },
+                {
+                  "segment": "LGA",
+                  "n": 46328,
+                  "prevalence": 0.029722845795199446,
+                  "mean_pred": 0.02427430396085686,
+                  "calibration_in_the_large": -0.005448541834342586,
+                  "brier": 0.028754389452854103,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6150017108114836,
+                  "pr_auc": 0.04543635001738081
+                },
+                {
+                  "segment": "MCO",
+                  "n": 51994,
+                  "prevalence": 0.010481978689848829,
+                  "mean_pred": 0.013289834235369776,
+                  "calibration_in_the_large": 0.0028078555455209476,
+                  "brier": 0.01035751135557381,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6147042024871517,
+                  "pr_auc": 0.018394659606318337
+                },
+                {
+                  "segment": "MDW",
+                  "n": 24353,
+                  "prevalence": 0.01314006487907034,
+                  "mean_pred": 0.010222312790213593,
+                  "calibration_in_the_large": -0.0029177520888567475,
+                  "brier": 0.012978348649519552,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5631413707194275,
+                  "pr_auc": 0.016760520852082437
+                },
+                {
+                  "segment": "MIA",
+                  "n": 35399,
+                  "prevalence": 0.010028531879431622,
+                  "mean_pred": 0.013941983133609706,
+                  "calibration_in_the_large": 0.003913451254178085,
+                  "brier": 0.009912408695374198,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.660381717309909,
+                  "pr_auc": 0.018669543402879293
+                },
+                {
+                  "segment": "MSP",
+                  "n": 36876,
+                  "prevalence": 0.011470875366091766,
+                  "mean_pred": 0.0070079016383445625,
+                  "calibration_in_the_large": -0.004462973727747204,
+                  "brier": 0.011351256848335786,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5677715837207132,
+                  "pr_auc": 0.016565687293420027
+                },
+                {
+                  "segment": "ORD",
+                  "n": 116456,
+                  "prevalence": 0.021441574500240434,
+                  "mean_pred": 0.012748339710418015,
+                  "calibration_in_the_large": -0.008693234789822419,
+                  "brier": 0.02102139100611314,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5780560361655549,
+                  "pr_auc": 0.030110383674707766
+                },
+                {
+                  "segment": "PHL",
+                  "n": 32498,
+                  "prevalence": 0.012646932118899624,
+                  "mean_pred": 0.017472789916097166,
+                  "calibration_in_the_large": 0.004825857797197542,
+                  "brier": 0.012525035340446394,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6208442421254805,
+                  "pr_auc": 0.01988488651592216
+                },
+                {
+                  "segment": "PHX",
+                  "n": 64968,
+                  "prevalence": 0.009958748922546484,
+                  "mean_pred": 0.005123768902849065,
+                  "calibration_in_the_large": -0.004834980019697418,
+                  "brier": 0.009883803150315925,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5613617888850423,
+                  "pr_auc": 0.012671005436640542
+                },
+                {
+                  "segment": "SAN",
+                  "n": 33036,
+                  "prevalence": 0.016254994551398474,
+                  "mean_pred": 0.009560782883124804,
+                  "calibration_in_the_large": -0.006694211668273669,
+                  "brier": 0.016004073166878883,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5707867361396537,
+                  "pr_auc": 0.0261723877096859
+                },
+                {
+                  "segment": "SEA",
+                  "n": 54050,
+                  "prevalence": 0.010157261794634597,
+                  "mean_pred": 0.008361970734086495,
+                  "calibration_in_the_large": -0.0017952910605481022,
+                  "brier": 0.010082179794279144,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5297438050712772,
+                  "pr_auc": 0.012298720470521145
+                },
+                {
+                  "segment": "SFO",
+                  "n": 48601,
+                  "prevalence": 0.008806403160428798,
+                  "mean_pred": 0.009431859915342683,
+                  "calibration_in_the_large": 0.0006254567549138848,
+                  "brier": 0.008726737622108904,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5874642376357331,
+                  "pr_auc": 0.01413729626457598
+                },
+                {
+                  "segment": "SLC",
+                  "n": 38122,
+                  "prevalence": 0.007056292954199675,
+                  "mean_pred": 0.004711899437573941,
+                  "calibration_in_the_large": -0.0023443935166257337,
+                  "brier": 0.007022933968814287,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5303313335867758,
+                  "pr_auc": 0.008408672369065994
+                },
+                {
+                  "segment": "TPA",
+                  "n": 24849,
+                  "prevalence": 0.011710732826270675,
+                  "mean_pred": 0.017334051775332295,
+                  "calibration_in_the_large": 0.00562331894906162,
+                  "brier": 0.011613766706837347,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.568512188971812,
+                  "pr_auc": 0.01658181741097063
+                }
+              ],
+              "hour_block": [
+                {
+                  "segment": "0",
+                  "n": 25195,
+                  "prevalence": 0.009843222861678904,
+                  "mean_pred": 0.01182735268926558,
+                  "calibration_in_the_large": 0.0019841298275866757,
+                  "brier": 0.009759595178151762,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6094388652330036,
+                  "pr_auc": 0.014272771744737692
+                },
+                {
+                  "segment": "1",
+                  "n": 291016,
+                  "prevalence": 0.011033757594084174,
+                  "mean_pred": 0.010359713716792215,
+                  "calibration_in_the_large": -0.0006740438772919587,
+                  "brier": 0.010925375756924925,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5573557189442523,
+                  "pr_auc": 0.01352587667513215
+                },
+                {
+                  "segment": "2",
+                  "n": 291241,
+                  "prevalence": 0.009672401893964105,
+                  "mean_pred": 0.008835147430852109,
+                  "calibration_in_the_large": -0.0008372544631119958,
+                  "brier": 0.009599057179065453,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5498989940075699,
+                  "pr_auc": 0.011417611741766847
+                },
+                {
+                  "segment": "3",
+                  "n": 254607,
+                  "prevalence": 0.011390103178624312,
+                  "mean_pred": 0.010555134598472404,
+                  "calibration_in_the_large": -0.0008349685801519076,
+                  "brier": 0.011265542742786575,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5900356003689566,
+                  "pr_auc": 0.01576914127268742
+                },
+                {
+                  "segment": "4",
+                  "n": 266271,
+                  "prevalence": 0.015018533749450747,
+                  "mean_pred": 0.013958252909272545,
+                  "calibration_in_the_large": -0.0010602808401782016,
+                  "brier": 0.014748867556896797,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6353862955581502,
+                  "pr_auc": 0.025652779883217614
+                },
+                {
+                  "segment": "5",
+                  "n": 254318,
+                  "prevalence": 0.015842370575421323,
+                  "mean_pred": 0.01732142878775107,
+                  "calibration_in_the_large": 0.001479058212329746,
+                  "brier": 0.01552630443198277,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6460440105524438,
+                  "pr_auc": 0.02986129240774112
+                },
+                {
+                  "segment": "6",
+                  "n": 123360,
+                  "prevalence": 0.017177367055771726,
+                  "mean_pred": 0.02022426933713285,
+                  "calibration_in_the_large": 0.0030469022813611225,
+                  "brier": 0.01690452060290886,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6507456089266298,
+                  "pr_auc": 0.03188502903422939
+                }
+              ],
+              "month": [
+                {
+                  "segment": "10",
+                  "n": 393123,
+                  "prevalence": 0.005596212890113273,
+                  "mean_pred": 0.012781124622381583,
+                  "calibration_in_the_large": 0.007184911732268311,
+                  "brier": 0.005627085619201502,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.710800536050694,
+                  "pr_auc": 0.01610804226421752
+                },
+                {
+                  "segment": "11",
+                  "n": 370313,
+                  "prevalence": 0.025481147029674897,
+                  "mean_pred": 0.0127805589030356,
+                  "calibration_in_the_large": -0.012700588126639297,
+                  "brier": 0.024924855429651865,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.585786167793866,
+                  "pr_auc": 0.0373853069965861
+                },
+                {
+                  "segment": "12",
+                  "n": 377327,
+                  "prevalence": 0.015188417473438158,
+                  "mean_pred": 0.012692609377502776,
+                  "calibration_in_the_large": -0.0024958080959353816,
+                  "brier": 0.014934365896819625,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6057651705766414,
+                  "pr_auc": 0.025241182227239017
+                },
+                {
+                  "segment": "9",
+                  "n": 365245,
+                  "prevalence": 0.005355309449821353,
+                  "mean_pred": 0.01271330338633432,
+                  "calibration_in_the_large": 0.007357993936512966,
+                  "brier": 0.005402288931524528,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6837059995348901,
+                  "pr_auc": 0.014823307657328264
+                }
+              ]
+            }
+          },
+          "val_b": {
+            "total": {
+              "n": 689119.0,
+              "prevalence": 0.0366758136112921,
+              "mean_pred": 0.012803078269849496,
+              "roc_auc": 0.6191792219340218,
+              "pr_auc": 0.056832379690265805,
+              "brier": 0.035700787892967316,
+              "log_loss": 0.1719473540004717,
+              "ece": 0.023872735341442602,
+              "calibration_in_the_large": -0.023872735341442606,
+              "calibration_intercept": -1.0264450245039363,
+              "calibration_slope": 0.4974331761998795,
+              "brier_skill_score": 0.0,
+              "threshold_at_threshold": 0.018073024752833924,
+              "precision_at_threshold": 0.06132464620396421,
+              "recall_at_threshold": 0.3441085700720108,
+              "f1_at_threshold": 0.10409771803726069,
+              "threshold_in_sample": 1.0
+            },
+            "segments": {
+              "Origin": [
+                {
+                  "segment": "ATL",
+                  "n": 47619,
+                  "prevalence": 0.03303303303303303,
+                  "mean_pred": 0.010276229351852365,
+                  "calibration_in_the_large": -0.022756803681180666,
+                  "brier": 0.03245092268614444,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5240098771843706,
+                  "pr_auc": 0.03743262201620462
+                },
+                {
+                  "segment": "AUS",
+                  "n": 13178,
+                  "prevalence": 0.028532402488996814,
+                  "mean_pred": 0.009286768310667402,
+                  "calibration_in_the_large": -0.01924563417832941,
+                  "brier": 0.02801661040696707,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5825170269273086,
+                  "pr_auc": 0.03958610070230119
+                },
+                {
+                  "segment": "BNA",
+                  "n": 15395,
+                  "prevalence": 0.043975316661253656,
+                  "mean_pred": 0.012052072250573287,
+                  "calibration_in_the_large": -0.03192324441068037,
+                  "brier": 0.04299080903922312,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5468000276191916,
+                  "pr_auc": 0.054162508030604475
+                },
+                {
+                  "segment": "BOS",
+                  "n": 20530,
+                  "prevalence": 0.07822698490014612,
+                  "mean_pred": 0.014396589079564561,
+                  "calibration_in_the_large": -0.06383039582058156,
+                  "brier": 0.07620204155118643,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5226225903811879,
+                  "pr_auc": 0.0827970405422058
+                },
+                {
+                  "segment": "BWI",
+                  "n": 13486,
+                  "prevalence": 0.04627020613970043,
+                  "mean_pred": 0.011699128132340178,
+                  "calibration_in_the_large": -0.034571078007360256,
+                  "brier": 0.045358737909214845,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5104125549721102,
+                  "pr_auc": 0.046931872640781754
+                },
+                {
+                  "segment": "CLT",
+                  "n": 27414,
+                  "prevalence": 0.07342963449332458,
+                  "mean_pred": 0.014774095665710392,
+                  "calibration_in_the_large": -0.05865553882761419,
+                  "brier": 0.07144488926249858,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.528491197906885,
+                  "pr_auc": 0.08104061110760381
+                },
+                {
+                  "segment": "DAL",
+                  "n": 10633,
+                  "prevalence": 0.032728298692748986,
+                  "mean_pred": 0.012123449954558869,
+                  "calibration_in_the_large": -0.020604848738190115,
+                  "brier": 0.03209267588849963,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5225417553741359,
+                  "pr_auc": 0.03458791548747233
+                },
+                {
+                  "segment": "DCA",
+                  "n": 22854,
+                  "prevalence": 0.06944079810974009,
+                  "mean_pred": 0.025905064800935584,
+                  "calibration_in_the_large": -0.0435357333088045,
+                  "brier": 0.06631747704089631,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5646780548058681,
+                  "pr_auc": 0.08902398612333194
+                },
+                {
+                  "segment": "DEN",
+                  "n": 47530,
+                  "prevalence": 0.012981274984220493,
+                  "mean_pred": 0.009217385336511218,
+                  "calibration_in_the_large": -0.0037638896477092745,
+                  "brier": 0.012762008897368473,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5979405617923532,
+                  "pr_auc": 0.02808845736787404
+                },
+                {
+                  "segment": "DFW",
+                  "n": 46248,
+                  "prevalence": 0.05786196159833939,
+                  "mean_pred": 0.02124857746767305,
+                  "calibration_in_the_large": -0.03661338413066634,
+                  "brier": 0.05588975526514188,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5156575325317598,
+                  "pr_auc": 0.060874592877776426
+                },
+                {
+                  "segment": "DTW",
+                  "n": 18640,
+                  "prevalence": 0.030418454935622317,
+                  "mean_pred": 0.008721199671174743,
+                  "calibration_in_the_large": -0.021697255264447574,
+                  "brier": 0.02981465386472495,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6354789721598405,
+                  "pr_auc": 0.05241191996576415
+                },
+                {
+                  "segment": "EWR",
+                  "n": 19221,
+                  "prevalence": 0.07096404973726653,
+                  "mean_pred": 0.02340973779853405,
+                  "calibration_in_the_large": -0.047554311938732476,
+                  "brier": 0.0682860537178443,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5098523222203373,
+                  "pr_auc": 0.07696367474112496
+                },
+                {
+                  "segment": "FLL",
+                  "n": 16858,
+                  "prevalence": 0.04365879701032151,
+                  "mean_pred": 0.01259458402727575,
+                  "calibration_in_the_large": -0.031064212983045757,
+                  "brier": 0.04262673540964151,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5670860402744292,
+                  "pr_auc": 0.054918352587198835
+                },
+                {
+                  "segment": "IAH",
+                  "n": 18632,
+                  "prevalence": 0.020985401459854013,
+                  "mean_pred": 0.016556202588751318,
+                  "calibration_in_the_large": -0.004429198871102696,
+                  "brier": 0.02050139749412924,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6085081231945516,
+                  "pr_auc": 0.033325140251088216
+                },
+                {
+                  "segment": "JFK",
+                  "n": 15480,
+                  "prevalence": 0.07906976744186046,
+                  "mean_pred": 0.01706345061609611,
+                  "calibration_in_the_large": -0.06200631682576435,
+                  "brier": 0.07671688503453493,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5228754444866237,
+                  "pr_auc": 0.08538046667264285
+                },
+                {
+                  "segment": "LAS",
+                  "n": 26581,
+                  "prevalence": 0.013844475377149092,
+                  "mean_pred": 0.007524280285925684,
+                  "calibration_in_the_large": -0.006320195091223408,
+                  "brier": 0.013663731443905872,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5850411926375728,
+                  "pr_auc": 0.022393819921791673
+                },
+                {
+                  "segment": "LAX",
+                  "n": 28502,
+                  "prevalence": 0.018139077959441443,
+                  "mean_pred": 0.0065672447106032315,
+                  "calibration_in_the_large": -0.01157183324883821,
+                  "brier": 0.01790668210511555,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5990259357648422,
+                  "pr_auc": 0.027015392753703314
+                },
+                {
+                  "segment": "LGA",
+                  "n": 21406,
+                  "prevalence": 0.07983742875829207,
+                  "mean_pred": 0.023537465646223714,
+                  "calibration_in_the_large": -0.056299963112068356,
+                  "brier": 0.07675265427869035,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.514039616515547,
+                  "pr_auc": 0.08461439169872897
+                },
+                {
+                  "segment": "MCO",
+                  "n": 27125,
+                  "prevalence": 0.03251612903225806,
+                  "mean_pred": 0.01346743507513917,
+                  "calibration_in_the_large": -0.01904869395711889,
+                  "brier": 0.03173751784271495,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5814476560988556,
+                  "pr_auc": 0.04497724946083356
+                },
+                {
+                  "segment": "MDW",
+                  "n": 9385,
+                  "prevalence": 0.015450186467767715,
+                  "mean_pred": 0.010327044980121188,
+                  "calibration_in_the_large": -0.005123141487646527,
+                  "brier": 0.015220657855710447,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5778899835796387,
+                  "pr_auc": 0.022122959473306822
+                },
+                {
+                  "segment": "MIA",
+                  "n": 19743,
+                  "prevalence": 0.03469584156409867,
+                  "mean_pred": 0.013718334599447426,
+                  "calibration_in_the_large": -0.02097750696465124,
+                  "brier": 0.0338333467611263,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5856356661531874,
+                  "pr_auc": 0.04731909117160858
+                },
+                {
+                  "segment": "MSP",
+                  "n": 15978,
+                  "prevalence": 0.01771185379897359,
+                  "mean_pred": 0.007152275746727798,
+                  "calibration_in_the_large": -0.010559578052245791,
+                  "brier": 0.017439088371426412,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6315790066157325,
+                  "pr_auc": 0.032162561296245076
+                },
+                {
+                  "segment": "ORD",
+                  "n": 50669,
+                  "prevalence": 0.024137046320235254,
+                  "mean_pred": 0.012695163925174332,
+                  "calibration_in_the_large": -0.011441882395060922,
+                  "brier": 0.0236592735383188,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5727175832674107,
+                  "pr_auc": 0.031629567742601214
+                },
+                {
+                  "segment": "PHL",
+                  "n": 13735,
+                  "prevalence": 0.06996723698580269,
+                  "mean_pred": 0.01698389251354091,
+                  "calibration_in_the_large": -0.05298334447226178,
+                  "brier": 0.06776729183167544,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5417331592023144,
+                  "pr_auc": 0.08211320595660243
+                },
+                {
+                  "segment": "PHX",
+                  "n": 32220,
+                  "prevalence": 0.015487274984481688,
+                  "mean_pred": 0.005176039188061494,
+                  "calibration_in_the_large": -0.010311235796420194,
+                  "brier": 0.015322796206862844,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5774276714584239,
+                  "pr_auc": 0.024335795793764853
+                },
+                {
+                  "segment": "SAN",
+                  "n": 14414,
+                  "prevalence": 0.0186624115443319,
+                  "mean_pred": 0.009352287373656412,
+                  "calibration_in_the_large": -0.009310124170675487,
+                  "brier": 0.01839946021294232,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5383529062379682,
+                  "pr_auc": 0.02342410414117274
+                },
+                {
+                  "segment": "SEA",
+                  "n": 22927,
+                  "prevalence": 0.013695642692022506,
+                  "mean_pred": 0.00864685851321496,
+                  "calibration_in_the_large": -0.005048784178807546,
+                  "brier": 0.013520586937405476,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6051265252133587,
+                  "pr_auc": 0.021085887372632915
+                },
+                {
+                  "segment": "SFO",
+                  "n": 21429,
+                  "prevalence": 0.01843296467403985,
+                  "mean_pred": 0.009552050965356601,
+                  "calibration_in_the_large": -0.00888091370868325,
+                  "brier": 0.018145763245033385,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5953760818830994,
+                  "pr_auc": 0.024922898709400426
+                },
+                {
+                  "segment": "SLC",
+                  "n": 18682,
+                  "prevalence": 0.013970666952146452,
+                  "mean_pred": 0.004584882846796683,
+                  "calibration_in_the_large": -0.009385784105349768,
+                  "brier": 0.013831100101672416,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6047355373396305,
+                  "pr_auc": 0.023570091454730192
+                },
+                {
+                  "segment": "TPA",
+                  "n": 12605,
+                  "prevalence": 0.030464101547005157,
+                  "mean_pred": 0.017687760034786507,
+                  "calibration_in_the_large": -0.01277634151221865,
+                  "brier": 0.029653949624704835,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5814661366704852,
+                  "pr_auc": 0.03864911442639829
+                }
+              ],
+              "hour_block": [
+                {
+                  "segment": "0",
+                  "n": 10585,
+                  "prevalence": 0.04213509683514407,
+                  "mean_pred": 0.012216803154305221,
+                  "calibration_in_the_large": -0.02991829368083885,
+                  "brier": 0.04108168965898946,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5933957453282778,
+                  "pr_auc": 0.06254681267367976
+                },
+                {
+                  "segment": "1",
+                  "n": 130128,
+                  "prevalence": 0.03883099717201525,
+                  "mean_pred": 0.01040535145419588,
+                  "calibration_in_the_large": -0.028425645717819366,
+                  "brier": 0.03799738934729527,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.610556650375498,
+                  "pr_auc": 0.05441759146612573
+                },
+                {
+                  "segment": "2",
+                  "n": 136316,
+                  "prevalence": 0.035006895742245955,
+                  "mean_pred": 0.009044470168154468,
+                  "calibration_in_the_large": -0.025962425574091487,
+                  "brier": 0.034366951346891675,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.5998030599140041,
+                  "pr_auc": 0.04642480138920471
+                },
+                {
+                  "segment": "3",
+                  "n": 117815,
+                  "prevalence": 0.03354411577473157,
+                  "mean_pred": 0.01082389326812336,
+                  "calibration_in_the_large": -0.022720222506608212,
+                  "brier": 0.03281252145029758,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6013493578083983,
+                  "pr_auc": 0.048362702503657
+                },
+                {
+                  "segment": "4",
+                  "n": 125057,
+                  "prevalence": 0.03479213478653734,
+                  "mean_pred": 0.01404209693890571,
+                  "calibration_in_the_large": -0.020750037847631627,
+                  "brier": 0.03376730076840227,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6393369634940572,
+                  "pr_auc": 0.05761495750227057
+                },
+                {
+                  "segment": "5",
+                  "n": 118519,
+                  "prevalence": 0.03736109822053848,
+                  "mean_pred": 0.017174118328449676,
+                  "calibration_in_the_large": -0.020186979892088803,
+                  "brier": 0.03600868784012695,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6660483340779568,
+                  "pr_auc": 0.06682934546548704
+                },
+                {
+                  "segment": "6",
+                  "n": 50699,
+                  "prevalence": 0.04481350716976666,
+                  "mean_pred": 0.02051040909951154,
+                  "calibration_in_the_large": -0.02430309807025512,
+                  "brier": 0.0430303107595952,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6338597170141671,
+                  "pr_auc": 0.07256001509811136
+                }
+              ],
+              "month": [
+                {
+                  "segment": "1",
+                  "n": 354304,
+                  "prevalence": 0.04830879696531792,
+                  "mean_pred": 0.012793642002615,
+                  "calibration_in_the_large": -0.03551515496270292,
+                  "brier": 0.046981245319304366,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6123316356369133,
+                  "pr_auc": 0.07110629250236448
+                },
+                {
+                  "segment": "2",
+                  "n": 334815,
+                  "prevalence": 0.024365694488000838,
+                  "mean_pred": 0.012813063805820856,
+                  "calibration_in_the_large": -0.011552630682179982,
+                  "brier": 0.023763714619724114,
+                  "brier_skill_score": 0.0,
+                  "roc_auc": 0.6345998265626539,
+                  "pr_auc": 0.04231499930245951
+                }
+              ]
+            }
+          }
+        }
+      },
+      "LightGBM": {
+        "threshold": {
+          "chosen_on": "val_b",
+          "value": 0.07101468925445087
+        },
+        "sets": {
+          "val_a": {
+            "total": {
+              "n": 1506008.0,
+              "prevalence": 0.012830609133550419,
+              "mean_pred": 0.009696092588380367,
+              "roc_auc": 0.6961855138466506,
+              "pr_auc": 0.07116393043218411,
+              "brier": 0.012335073065192348,
+              "log_loss": 0.0636005220023496,
+              "ece": 0.0031345165451700527,
+              "calibration_in_the_large": -0.003134516545170052,
+              "calibration_intercept": 0.4919593697433914,
+              "calibration_slope": 1.0473479364690124,
+              "brier_skill_score": 0.024866340133072873,
+              "threshold_at_threshold": 0.07101468925445087,
+              "precision_at_threshold": 0.1845186843464784,
+              "recall_at_threshold": 0.11090410391761114,
+              "f1_at_threshold": 0.13853961276141838,
+              "threshold_in_sample": 0.0
+            },
+            "segments": {
+              "Origin": [
+                {
+                  "segment": "ATL",
+                  "n": 105047,
+                  "prevalence": 0.012603882071834513,
+                  "mean_pred": 0.006625656303208633,
+                  "calibration_in_the_large": -0.005978225768625879,
+                  "brier": 0.012422196303535176,
+                  "brier_skill_score": 0.00212859250798747,
+                  "roc_auc": 0.6341709485172176,
+                  "pr_auc": 0.02763722088006872
+                },
+                {
+                  "segment": "AUS",
+                  "n": 29608,
+                  "prevalence": 0.006146987300729533,
+                  "mean_pred": 0.007394861691108787,
+                  "calibration_in_the_large": 0.0012478743903792545,
+                  "brier": 0.00605170148628846,
+                  "brier_skill_score": 0.010188522757933693,
+                  "roc_auc": 0.6863140767341135,
+                  "pr_auc": 0.03463810029873774
+                },
+                {
+                  "segment": "BNA",
+                  "n": 36152,
+                  "prevalence": 0.00710887364461164,
+                  "mean_pred": 0.009155700277449207,
+                  "calibration_in_the_large": 0.002046826632837567,
+                  "brier": 0.007043296188571331,
+                  "brier_skill_score": 0.0027702295312822534,
+                  "roc_auc": 0.7388946251035906,
+                  "pr_auc": 0.024313305379302444
+                },
+                {
+                  "segment": "BOS",
+                  "n": 46877,
+                  "prevalence": 0.018175224523753652,
+                  "mean_pred": 0.01063695603680188,
+                  "calibration_in_the_large": -0.007538268486951771,
+                  "brier": 0.017151505259990936,
+                  "brier_skill_score": 0.03234312818743079,
+                  "roc_auc": 0.7459192926889602,
+                  "pr_auc": 0.11895957207166241
+                },
+                {
+                  "segment": "BWI",
+                  "n": 32027,
+                  "prevalence": 0.008274268585880663,
+                  "mean_pred": 0.00895470904063996,
+                  "calibration_in_the_large": 0.0006804404547592971,
+                  "brier": 0.008227901173357297,
+                  "brier_skill_score": 0.0003222851976991681,
+                  "roc_auc": 0.6294325246853663,
+                  "pr_auc": 0.018223199253209414
+                },
+                {
+                  "segment": "CLT",
+                  "n": 61385,
+                  "prevalence": 0.007070131139529201,
+                  "mean_pred": 0.009673301966587111,
+                  "calibration_in_the_large": 0.00260317082705791,
+                  "brier": 0.006999857480533827,
+                  "brier_skill_score": 0.015996818997459195,
+                  "roc_auc": 0.7138204315667334,
+                  "pr_auc": 0.02513225098063345
+                },
+                {
+                  "segment": "DAL",
+                  "n": 23487,
+                  "prevalence": 0.010048111721377784,
+                  "mean_pred": 0.0072963003124737955,
+                  "calibration_in_the_large": -0.0027518114089039886,
+                  "brier": 0.009810500505608178,
+                  "brier_skill_score": 0.014504289220327315,
+                  "roc_auc": 0.673795696048065,
+                  "pr_auc": 0.04910460959796177
+                },
+                {
+                  "segment": "DCA",
+                  "n": 46989,
+                  "prevalence": 0.016663474430185787,
+                  "mean_pred": 0.016656839487050972,
+                  "calibration_in_the_large": -6.634943134815191e-06,
+                  "brier": 0.016291788649070778,
+                  "brier_skill_score": 0.01790644719469414,
+                  "roc_auc": 0.6791596951383634,
+                  "pr_auc": 0.05301930404999266
+                },
+                {
+                  "segment": "DEN",
+                  "n": 105617,
+                  "prevalence": 0.005690371815143395,
+                  "mean_pred": 0.007138119224033384,
+                  "calibration_in_the_large": 0.0014477474088899888,
+                  "brier": 0.005661220238620089,
+                  "brier_skill_score": 0.006686756921445491,
+                  "roc_auc": 0.49827859999972113,
+                  "pr_auc": 0.013126824072561395
+                },
+                {
+                  "segment": "DFW",
+                  "n": 103625,
+                  "prevalence": 0.01767913148371532,
+                  "mean_pred": 0.013301289997571398,
+                  "calibration_in_the_large": -0.004377841486143921,
+                  "brier": 0.016576549206106572,
+                  "brier_skill_score": 0.04589952271444153,
+                  "roc_auc": 0.7420712374934026,
+                  "pr_auc": 0.10560071227283485
+                },
+                {
+                  "segment": "DTW",
+                  "n": 40785,
+                  "prevalence": 0.01360794409709452,
+                  "mean_pred": 0.008263782819375872,
+                  "calibration_in_the_large": -0.0053441612777186485,
+                  "brier": 0.01324130114954803,
+                  "brier_skill_score": 0.012877016855772028,
+                  "roc_auc": 0.746267990585664,
+                  "pr_auc": 0.06331976630291267
+                },
+                {
+                  "segment": "EWR",
+                  "n": 41578,
+                  "prevalence": 0.022944826590985616,
+                  "mean_pred": 0.014927400701457589,
+                  "calibration_in_the_large": -0.008017425889528028,
+                  "brier": 0.02159877484626787,
+                  "brier_skill_score": 0.0346381785369122,
+                  "roc_auc": 0.6891746356420552,
+                  "pr_auc": 0.11603874146705923
+                },
+                {
+                  "segment": "FLL",
+                  "n": 28749,
+                  "prevalence": 0.014539636161257783,
+                  "mean_pred": 0.01169140504924583,
+                  "calibration_in_the_large": -0.002848231112011953,
+                  "brier": 0.014315005477833643,
+                  "brier_skill_score": -0.00035607884205224316,
+                  "roc_auc": 0.534664084635847,
+                  "pr_auc": 0.02999421865752676
+                },
+                {
+                  "segment": "IAH",
+                  "n": 39733,
+                  "prevalence": 0.005436287217174641,
+                  "mean_pred": 0.010786884602211552,
+                  "calibration_in_the_large": 0.005350597385036911,
+                  "brier": 0.005484225158407667,
+                  "brier_skill_score": 0.013895898787328775,
+                  "roc_auc": 0.5779249718124126,
+                  "pr_auc": 0.009729971461615656
+                },
+                {
+                  "segment": "JFK",
+                  "n": 34977,
+                  "prevalence": 0.02267204162735512,
+                  "mean_pred": 0.010972839326558742,
+                  "calibration_in_the_large": -0.011699202300796378,
+                  "brier": 0.021308930064937205,
+                  "brier_skill_score": 0.03987816725417881,
+                  "roc_auc": 0.7435611971884813,
+                  "pr_auc": 0.142278371395691
+                },
+                {
+                  "segment": "LAS",
+                  "n": 58986,
+                  "prevalence": 0.007849320177669277,
+                  "mean_pred": 0.0071069491826011655,
+                  "calibration_in_the_large": -0.0007423709950681113,
+                  "brier": 0.0077822115558861754,
+                  "brier_skill_score": 0.0007788204088251538,
+                  "roc_auc": 0.5681837112720335,
+                  "pr_auc": 0.014508132666122945
+                },
+                {
+                  "segment": "LAX",
+                  "n": 62856,
+                  "prevalence": 0.008097874506809214,
+                  "mean_pred": 0.006988746536634497,
+                  "calibration_in_the_large": -0.0011091279701747172,
+                  "brier": 0.008019318977373761,
+                  "brier_skill_score": 0.005114750628653408,
+                  "roc_auc": 0.5770438804330525,
+                  "pr_auc": 0.015109373620505497
+                },
+                {
+                  "segment": "LGA",
+                  "n": 46328,
+                  "prevalence": 0.029722845795199446,
+                  "mean_pred": 0.014759523232131293,
+                  "calibration_in_the_large": -0.014963322563068152,
+                  "brier": 0.027199122512776917,
+                  "brier_skill_score": 0.054087983423442565,
+                  "roc_auc": 0.7906446569343554,
+                  "pr_auc": 0.18687666119591556
+                },
+                {
+                  "segment": "MCO",
+                  "n": 51994,
+                  "prevalence": 0.010481978689848829,
+                  "mean_pred": 0.01053456589826583,
+                  "calibration_in_the_large": 5.258720841700218e-05,
+                  "brier": 0.01040785582959846,
+                  "brier_skill_score": -0.004860672829246626,
+                  "roc_auc": 0.5411291773576077,
+                  "pr_auc": 0.015434789963164228
+                },
+                {
+                  "segment": "MDW",
+                  "n": 24353,
+                  "prevalence": 0.01314006487907034,
+                  "mean_pred": 0.009254169284899118,
+                  "calibration_in_the_large": -0.003885895594171223,
+                  "brier": 0.012323876645040276,
+                  "brier_skill_score": 0.050427987577872924,
+                  "roc_auc": 0.8254679113094495,
+                  "pr_auc": 0.1933767088041925
+                },
+                {
+                  "segment": "MIA",
+                  "n": 35399,
+                  "prevalence": 0.010028531879431622,
+                  "mean_pred": 0.01257814877809056,
+                  "calibration_in_the_large": 0.0025496168986589383,
+                  "brier": 0.009995957469774946,
+                  "brier_skill_score": -0.008428705571808859,
+                  "roc_auc": 0.5570795105067111,
+                  "pr_auc": 0.01702821187139919
+                },
+                {
+                  "segment": "MSP",
+                  "n": 36876,
+                  "prevalence": 0.011470875366091766,
+                  "mean_pred": 0.007971857131373822,
+                  "calibration_in_the_large": -0.0034990182347179443,
+                  "brier": 0.011148380747355082,
+                  "brier_skill_score": 0.017872567213598756,
+                  "roc_auc": 0.7392598351489749,
+                  "pr_auc": 0.06570518323560008
+                },
+                {
+                  "segment": "ORD",
+                  "n": 116456,
+                  "prevalence": 0.021441574500240434,
+                  "mean_pred": 0.011012693852604515,
+                  "calibration_in_the_large": -0.010428880647635919,
+                  "brier": 0.019828763380378138,
+                  "brier_skill_score": 0.056734001350727925,
+                  "roc_auc": 0.8142297894426075,
+                  "pr_auc": 0.21975313110289915
+                },
+                {
+                  "segment": "PHL",
+                  "n": 32498,
+                  "prevalence": 0.012646932118899624,
+                  "mean_pred": 0.012306133375991415,
+                  "calibration_in_the_large": -0.0003407987429082087,
+                  "brier": 0.012172335273279093,
+                  "brier_skill_score": 0.028159606546445892,
+                  "roc_auc": 0.7290333375114509,
+                  "pr_auc": 0.06580403513371956
+                },
+                {
+                  "segment": "PHX",
+                  "n": 64968,
+                  "prevalence": 0.009958748922546484,
+                  "mean_pred": 0.005892623462234036,
+                  "calibration_in_the_large": -0.004066125460312447,
+                  "brier": 0.009822306425999574,
+                  "brier_skill_score": 0.0062219697601307855,
+                  "roc_auc": 0.5784408413106337,
+                  "pr_auc": 0.029561231763306075
+                },
+                {
+                  "segment": "SAN",
+                  "n": 33036,
+                  "prevalence": 0.016254994551398474,
+                  "mean_pred": 0.00924101295980658,
+                  "calibration_in_the_large": -0.007013981591591894,
+                  "brier": 0.015864561212548124,
+                  "brier_skill_score": 0.008717277962680403,
+                  "roc_auc": 0.7049879145400434,
+                  "pr_auc": 0.06033492282209904
+                },
+                {
+                  "segment": "SEA",
+                  "n": 54050,
+                  "prevalence": 0.010157261794634597,
+                  "mean_pred": 0.0077817026919796296,
+                  "calibration_in_the_large": -0.002375559102654967,
+                  "brier": 0.010045604081674793,
+                  "brier_skill_score": 0.003627758416399729,
+                  "roc_auc": 0.5583571646635889,
+                  "pr_auc": 0.017284007509963083
+                },
+                {
+                  "segment": "SFO",
+                  "n": 48601,
+                  "prevalence": 0.008806403160428798,
+                  "mean_pred": 0.009055250649513472,
+                  "calibration_in_the_large": 0.00024884748908467376,
+                  "brier": 0.008700467784737367,
+                  "brier_skill_score": 0.003010270104257917,
+                  "roc_auc": 0.5868166980340133,
+                  "pr_auc": 0.020749030705342612
+                },
+                {
+                  "segment": "SLC",
+                  "n": 38122,
+                  "prevalence": 0.007056292954199675,
+                  "mean_pred": 0.005476942232782042,
+                  "calibration_in_the_large": -0.0015793507214176324,
+                  "brier": 0.0070077521091718815,
+                  "brier_skill_score": 0.002161754575768615,
+                  "roc_auc": 0.512031133546648,
+                  "pr_auc": 0.010648280755950017
+                },
+                {
+                  "segment": "TPA",
+                  "n": 24849,
+                  "prevalence": 0.011710732826270675,
+                  "mean_pred": 0.01167433679762797,
+                  "calibration_in_the_large": -3.6396028642705566e-05,
+                  "brier": 0.011547638787628134,
+                  "brier_skill_score": 0.005693925224990237,
+                  "roc_auc": 0.582903605154947,
+                  "pr_auc": 0.02471042617628621
+                }
+              ],
+              "hour_block": [
+                {
+                  "segment": "0",
+                  "n": 25195,
+                  "prevalence": 0.009843222861678904,
+                  "mean_pred": 0.008998683810016846,
+                  "calibration_in_the_large": -0.0008445390516620584,
+                  "brier": 0.009603871592471013,
+                  "brier_skill_score": 0.015955947233278533,
+                  "roc_auc": 0.7110071739183844,
+                  "pr_auc": 0.044571101605629534
+                },
+                {
+                  "segment": "1",
+                  "n": 291016,
+                  "prevalence": 0.011033757594084174,
+                  "mean_pred": 0.00913363596280743,
+                  "calibration_in_the_large": -0.0019001216312767438,
+                  "brier": 0.010780509002873143,
+                  "brier_skill_score": 0.013259658731642143,
+                  "roc_auc": 0.6265938517631582,
+                  "pr_auc": 0.03897159750842024
+                },
+                {
+                  "segment": "2",
+                  "n": 291241,
+                  "prevalence": 0.009672401893964105,
+                  "mean_pred": 0.008715500172549046,
+                  "calibration_in_the_large": -0.0009569017214150592,
+                  "brier": 0.009456066065261181,
+                  "brier_skill_score": 0.014896370668165293,
+                  "roc_auc": 0.6499069968097396,
+                  "pr_auc": 0.038720981025248
+                },
+                {
+                  "segment": "3",
+                  "n": 254607,
+                  "prevalence": 0.011390103178624312,
+                  "mean_pred": 0.008899865904031622,
+                  "calibration_in_the_large": -0.00249023727459269,
+                  "brier": 0.010962321918598939,
+                  "brier_skill_score": 0.026915775929374663,
+                  "roc_auc": 0.6949232728584398,
+                  "pr_auc": 0.07844119252009088
+                },
+                {
+                  "segment": "4",
+                  "n": 266271,
+                  "prevalence": 0.015018533749450747,
+                  "mean_pred": 0.009834378085392809,
+                  "calibration_in_the_large": -0.005184155664057938,
+                  "brier": 0.014298791820358026,
+                  "brier_skill_score": 0.030515952143614467,
+                  "roc_auc": 0.7090442522020207,
+                  "pr_auc": 0.10223035457512528
+                },
+                {
+                  "segment": "5",
+                  "n": 254318,
+                  "prevalence": 0.015842370575421323,
+                  "mean_pred": 0.011342074067129462,
+                  "calibration_in_the_large": -0.004500296508291861,
+                  "brier": 0.015126542392507172,
+                  "brier_skill_score": 0.025747404427554854,
+                  "roc_auc": 0.7403821138088271,
+                  "pr_auc": 0.08331933534899821
+                },
+                {
+                  "segment": "6",
+                  "n": 123360,
+                  "prevalence": 0.017177367055771726,
+                  "mean_pred": 0.01143202449039237,
+                  "calibration_in_the_large": -0.005745342565379357,
+                  "brier": 0.016197024362792772,
+                  "brier_skill_score": 0.04185248767092187,
+                  "roc_auc": 0.7302469071241181,
+                  "pr_auc": 0.11032123203919676
+                }
+              ],
+              "month": [
+                {
+                  "segment": "10",
+                  "n": 393123,
+                  "prevalence": 0.005596212890113273,
+                  "mean_pred": 0.008381430539989469,
+                  "calibration_in_the_large": 0.002785217649876196,
+                  "brier": 0.0053934612760497104,
+                  "brier_skill_score": 0.04151782271707172,
+                  "roc_auc": 0.786101827074525,
+                  "pr_auc": 0.06830283972487089
+                },
+                {
+                  "segment": "11",
+                  "n": 370313,
+                  "prevalence": 0.025481147029674897,
+                  "mean_pred": 0.008306279284138572,
+                  "calibration_in_the_large": -0.017174867745536324,
+                  "brier": 0.024393285370494153,
+                  "brier_skill_score": 0.021326906415085167,
+                  "roc_auc": 0.6761820664242766,
+                  "pr_auc": 0.13893560043408684
+                },
+                {
+                  "segment": "12",
+                  "n": 377327,
+                  "prevalence": 0.015188417473438158,
+                  "mean_pred": 0.011900994369469628,
+                  "calibration_in_the_large": -0.0032874231039685294,
+                  "brier": 0.014599276540659309,
+                  "brier_skill_score": 0.02243746794978929,
+                  "roc_auc": 0.6944532371327092,
+                  "pr_auc": 0.06706653858461406
+                },
+                {
+                  "segment": "9",
+                  "n": 365245,
+                  "prevalence": 0.005355309449821353,
+                  "mean_pred": 0.010242358377727788,
+                  "calibration_in_the_large": 0.0048870489279064355,
+                  "brier": 0.005241887321875868,
+                  "brier_skill_score": 0.029691416301829587,
+                  "roc_auc": 0.7904814528193599,
+                  "pr_auc": 0.04846810561668685
+                }
+              ]
+            },
+            "delta_vs_B1": {
+              "roc_auc": 0.07962118525300088,
+              "pr_auc": 0.048689764546504144,
+              "brier": -0.0003145498253513644,
+              "log_loss": -0.005018753128591444,
+              "ece": -0.00013273515970903173,
+              "calibration_in_the_large": -0.003046267264894655
+            }
+          },
+          "val_b": {
+            "total": {
+              "n": 689119.0,
+              "prevalence": 0.0366758136112921,
+              "mean_pred": 0.015246954335730261,
+              "roc_auc": 0.8384937960847514,
+              "pr_auc": 0.41469103329114926,
+              "brier": 0.03061501798241019,
+              "log_loss": 0.12714979044203398,
+              "ece": 0.02142885927556184,
+              "calibration_in_the_large": -0.02142885927556184,
+              "calibration_intercept": 2.3054437013087057,
+              "calibration_slope": 1.352254334063845,
+              "brier_skill_score": 0.1424553969454263,
+              "threshold_at_threshold": 0.07101468925445087,
+              "precision_at_threshold": 0.509790716949855,
+              "recall_at_threshold": 0.3893724776450107,
+              "f1_at_threshold": 0.44151823769572435,
+              "threshold_in_sample": 1.0
+            },
+            "segments": {
+              "Origin": [
+                {
+                  "segment": "ATL",
+                  "n": 47619,
+                  "prevalence": 0.03303303303303303,
+                  "mean_pred": 0.015442924306739752,
+                  "calibration_in_the_large": -0.01759010872629328,
+                  "brier": 0.02603368313886025,
+                  "brier_skill_score": 0.1977521443488618,
+                  "roc_auc": 0.8576126187309471,
+                  "pr_auc": 0.4215748275515475
+                },
+                {
+                  "segment": "AUS",
+                  "n": 13178,
+                  "prevalence": 0.028532402488996814,
+                  "mean_pred": 0.009002977121964517,
+                  "calibration_in_the_large": -0.019529425367032296,
+                  "brier": 0.025995059665296805,
+                  "brier_skill_score": 0.07215543608971164,
+                  "roc_auc": 0.913450815530818,
+                  "pr_auc": 0.46692664555334773
+                },
+                {
+                  "segment": "BNA",
+                  "n": 15395,
+                  "prevalence": 0.043975316661253656,
+                  "mean_pred": 0.02317662702935573,
+                  "calibration_in_the_large": -0.020798689631897925,
+                  "brier": 0.030630438048125465,
+                  "brier_skill_score": 0.28751194190880525,
+                  "roc_auc": 0.9424522730935884,
+                  "pr_auc": 0.6591464638952608
+                },
+                {
+                  "segment": "BOS",
+                  "n": 20530,
+                  "prevalence": 0.07822698490014612,
+                  "mean_pred": 0.024134203871125873,
+                  "calibration_in_the_large": -0.05409278102902025,
+                  "brier": 0.06229065518530958,
+                  "brier_skill_score": 0.18255923440754918,
+                  "roc_auc": 0.826426354957748,
+                  "pr_auc": 0.557963363442179
+                },
+                {
+                  "segment": "BWI",
+                  "n": 13486,
+                  "prevalence": 0.04627020613970043,
+                  "mean_pred": 0.018320423429552646,
+                  "calibration_in_the_large": -0.027949782710147787,
+                  "brier": 0.03928748103057348,
+                  "brier_skill_score": 0.1338497753353045,
+                  "roc_auc": 0.8731311102273045,
+                  "pr_auc": 0.538805391293254
+                },
+                {
+                  "segment": "CLT",
+                  "n": 27414,
+                  "prevalence": 0.07342963449332458,
+                  "mean_pred": 0.026026668345817853,
+                  "calibration_in_the_large": -0.047402966147506734,
+                  "brier": 0.05238903615177438,
+                  "brier_skill_score": 0.2667210112218148,
+                  "roc_auc": 0.8888171043956185,
+                  "pr_auc": 0.6410559981759375
+                },
+                {
+                  "segment": "DAL",
+                  "n": 10633,
+                  "prevalence": 0.032728298692748986,
+                  "mean_pred": 0.014759815074033435,
+                  "calibration_in_the_large": -0.01796848361871555,
+                  "brier": 0.023370620868453686,
+                  "brier_skill_score": 0.2717771198122959,
+                  "roc_auc": 0.9652139596220364,
+                  "pr_auc": 0.6276674856336864
+                },
+                {
+                  "segment": "DCA",
+                  "n": 22854,
+                  "prevalence": 0.06944079810974009,
+                  "mean_pred": 0.03517476825418209,
+                  "calibration_in_the_large": -0.034266029855558,
+                  "brier": 0.05152839932067997,
+                  "brier_skill_score": 0.22300422724308844,
+                  "roc_auc": 0.8844747027538279,
+                  "pr_auc": 0.5436074001092996
+                },
+                {
+                  "segment": "DEN",
+                  "n": 47530,
+                  "prevalence": 0.012981274984220493,
+                  "mean_pred": 0.009634732839011876,
+                  "calibration_in_the_large": -0.003346542145208617,
+                  "brier": 0.012328389943685698,
+                  "brier_skill_score": 0.03397732732909997,
+                  "roc_auc": 0.8073598838306199,
+                  "pr_auc": 0.10812380252312476
+                },
+                {
+                  "segment": "DFW",
+                  "n": 46248,
+                  "prevalence": 0.05786196159833939,
+                  "mean_pred": 0.019080197216810316,
+                  "calibration_in_the_large": -0.03878176438152907,
+                  "brier": 0.04358064624183132,
+                  "brier_skill_score": 0.22023909328133484,
+                  "roc_auc": 0.9065125930422261,
+                  "pr_auc": 0.6504391325279051
+                },
+                {
+                  "segment": "DTW",
+                  "n": 18640,
+                  "prevalence": 0.030418454935622317,
+                  "mean_pred": 0.012334973283891966,
+                  "calibration_in_the_large": -0.01808348165173035,
+                  "brier": 0.029008362461146846,
+                  "brier_skill_score": 0.02704346014669201,
+                  "roc_auc": 0.7871281577915784,
+                  "pr_auc": 0.14859482526339352
+                },
+                {
+                  "segment": "EWR",
+                  "n": 19221,
+                  "prevalence": 0.07096404973726653,
+                  "mean_pred": 0.025652657914807666,
+                  "calibration_in_the_large": -0.04531139182245886,
+                  "brier": 0.05893634551526898,
+                  "brier_skill_score": 0.13691973241282906,
+                  "roc_auc": 0.8324458384523381,
+                  "pr_auc": 0.48797435729832683
+                },
+                {
+                  "segment": "FLL",
+                  "n": 16858,
+                  "prevalence": 0.04365879701032151,
+                  "mean_pred": 0.00982645545968746,
+                  "calibration_in_the_large": -0.03383234155063405,
+                  "brier": 0.04176864902453985,
+                  "brier_skill_score": 0.020130239317073584,
+                  "roc_auc": 0.6666326613512187,
+                  "pr_auc": 0.1942478471227631
+                },
+                {
+                  "segment": "IAH",
+                  "n": 18632,
+                  "prevalence": 0.020985401459854013,
+                  "mean_pred": 0.014164459142978272,
+                  "calibration_in_the_large": -0.006820942316875741,
+                  "brier": 0.018301901298532812,
+                  "brier_skill_score": 0.10728518366741935,
+                  "roc_auc": 0.8343692878147104,
+                  "pr_auc": 0.32166467429052253
+                },
+                {
+                  "segment": "JFK",
+                  "n": 15480,
+                  "prevalence": 0.07906976744186046,
+                  "mean_pred": 0.020136560264061094,
+                  "calibration_in_the_large": -0.058933207177799374,
+                  "brier": 0.06643894714271216,
+                  "brier_skill_score": 0.13397230462623766,
+                  "roc_auc": 0.8300466768263609,
+                  "pr_auc": 0.5377335936788019
+                },
+                {
+                  "segment": "LAS",
+                  "n": 26581,
+                  "prevalence": 0.013844475377149092,
+                  "mean_pred": 0.007228969848181738,
+                  "calibration_in_the_large": -0.006615505528967353,
+                  "brier": 0.013336624339340675,
+                  "brier_skill_score": 0.02393980779760485,
+                  "roc_auc": 0.728566942804682,
+                  "pr_auc": 0.14025914156797858
+                },
+                {
+                  "segment": "LAX",
+                  "n": 28502,
+                  "prevalence": 0.018139077959441443,
+                  "mean_pred": 0.006926584464232044,
+                  "calibration_in_the_large": -0.011212493495209398,
+                  "brier": 0.017387530099241218,
+                  "brier_skill_score": 0.028992082554814558,
+                  "roc_auc": 0.7394432082121916,
+                  "pr_auc": 0.21611778107624557
+                },
+                {
+                  "segment": "LGA",
+                  "n": 21406,
+                  "prevalence": 0.07983742875829207,
+                  "mean_pred": 0.03477186283376205,
+                  "calibration_in_the_large": -0.04506556592453002,
+                  "brier": 0.06072978776756857,
+                  "brier_skill_score": 0.20875977074281293,
+                  "roc_auc": 0.8392841424705411,
+                  "pr_auc": 0.503701808508403
+                },
+                {
+                  "segment": "MCO",
+                  "n": 27125,
+                  "prevalence": 0.03251612903225806,
+                  "mean_pred": 0.008887470623002318,
+                  "calibration_in_the_large": -0.023628658409255744,
+                  "brier": 0.030678508505106134,
+                  "brier_skill_score": 0.03336774296140821,
+                  "roc_auc": 0.7151073781644655,
+                  "pr_auc": 0.23713259427559952
+                },
+                {
+                  "segment": "MDW",
+                  "n": 9385,
+                  "prevalence": 0.015450186467767715,
+                  "mean_pred": 0.01566972439676656,
+                  "calibration_in_the_large": 0.00021953792899884542,
+                  "brier": 0.014519635218029927,
+                  "brier_skill_score": 0.04605731528335433,
+                  "roc_auc": 0.8592633228840125,
+                  "pr_auc": 0.13039211902888484
+                },
+                {
+                  "segment": "MIA",
+                  "n": 19743,
+                  "prevalence": 0.03469584156409867,
+                  "mean_pred": 0.00973578965458174,
+                  "calibration_in_the_large": -0.02496005190951693,
+                  "brier": 0.03320485312543282,
+                  "brier_skill_score": 0.018576159199704123,
+                  "roc_auc": 0.6888796627735694,
+                  "pr_auc": 0.1661902028043498
+                },
+                {
+                  "segment": "MSP",
+                  "n": 15978,
+                  "prevalence": 0.01771185379897359,
+                  "mean_pred": 0.011469237261963543,
+                  "calibration_in_the_large": -0.006242616537010045,
+                  "brier": 0.016676376256578977,
+                  "brier_skill_score": 0.0437357789927324,
+                  "roc_auc": 0.8355165888621098,
+                  "pr_auc": 0.18096101868736458
+                },
+                {
+                  "segment": "ORD",
+                  "n": 50669,
+                  "prevalence": 0.024137046320235254,
+                  "mean_pred": 0.017517420523617624,
+                  "calibration_in_the_large": -0.00661962579661763,
+                  "brier": 0.02220972636699707,
+                  "brier_skill_score": 0.06126761115357282,
+                  "roc_auc": 0.8373367343526866,
+                  "pr_auc": 0.17090176225967516
+                },
+                {
+                  "segment": "PHL",
+                  "n": 13735,
+                  "prevalence": 0.06996723698580269,
+                  "mean_pred": 0.02133427847682148,
+                  "calibration_in_the_large": -0.04863295850898121,
+                  "brier": 0.059499180631729376,
+                  "brier_skill_score": 0.12200740174895741,
+                  "roc_auc": 0.8637447993265457,
+                  "pr_auc": 0.5070767289700425
+                },
+                {
+                  "segment": "PHX",
+                  "n": 32220,
+                  "prevalence": 0.015487274984481688,
+                  "mean_pred": 0.005765155212488914,
+                  "calibration_in_the_large": -0.009722119771992773,
+                  "brier": 0.01499681250344767,
+                  "brier_skill_score": 0.021274426613412167,
+                  "roc_auc": 0.7036496940161967,
+                  "pr_auc": 0.145244817022198
+                },
+                {
+                  "segment": "SAN",
+                  "n": 14414,
+                  "prevalence": 0.0186624115443319,
+                  "mean_pred": 0.009125476997280989,
+                  "calibration_in_the_large": -0.00953693454705091,
+                  "brier": 0.017782266851643087,
+                  "brier_skill_score": 0.03354410152016818,
+                  "roc_auc": 0.7373392413413385,
+                  "pr_auc": 0.17615844113887685
+                },
+                {
+                  "segment": "SEA",
+                  "n": 22927,
+                  "prevalence": 0.013695642692022506,
+                  "mean_pred": 0.009450996501078229,
+                  "calibration_in_the_large": -0.004244646190944277,
+                  "brier": 0.01341313365922183,
+                  "brier_skill_score": 0.007947382660317026,
+                  "roc_auc": 0.583287937354112,
+                  "pr_auc": 0.049139333076596986
+                },
+                {
+                  "segment": "SFO",
+                  "n": 21429,
+                  "prevalence": 0.01843296467403985,
+                  "mean_pred": 0.009992776762017626,
+                  "calibration_in_the_large": -0.008440187912022225,
+                  "brier": 0.01757360209575233,
+                  "brier_skill_score": 0.031531390636745926,
+                  "roc_auc": 0.7244758636709944,
+                  "pr_auc": 0.15813678321781438
+                },
+                {
+                  "segment": "SLC",
+                  "n": 18682,
+                  "prevalence": 0.013970666952146452,
+                  "mean_pred": 0.0065135535670821304,
+                  "calibration_in_the_large": -0.007457113385064321,
+                  "brier": 0.013535813721040504,
+                  "brier_skill_score": 0.021349450040941242,
+                  "roc_auc": 0.7452982925326147,
+                  "pr_auc": 0.11307874032102896
+                },
+                {
+                  "segment": "TPA",
+                  "n": 12605,
+                  "prevalence": 0.030464101547005157,
+                  "mean_pred": 0.01005417355339401,
+                  "calibration_in_the_large": -0.020409927993611146,
+                  "brier": 0.028909278730370816,
+                  "brier_skill_score": 0.025112030733121293,
+                  "roc_auc": 0.7591308846793771,
+                  "pr_auc": 0.1982383102828858
+                }
+              ],
+              "hour_block": [
+                {
+                  "segment": "0",
+                  "n": 10585,
+                  "prevalence": 0.04213509683514407,
+                  "mean_pred": 0.013226848542149724,
+                  "calibration_in_the_large": -0.028908248292994345,
+                  "brier": 0.03672590026594944,
+                  "brier_skill_score": 0.1060275132107884,
+                  "roc_auc": 0.7990706091162438,
+                  "pr_auc": 0.38427229100968197
+                },
+                {
+                  "segment": "1",
+                  "n": 130128,
+                  "prevalence": 0.03883099717201525,
+                  "mean_pred": 0.014748991805201405,
+                  "calibration_in_the_large": -0.024082005366813843,
+                  "brier": 0.03305381654739181,
+                  "brier_skill_score": 0.13010295930384363,
+                  "roc_auc": 0.8257893765620699,
+                  "pr_auc": 0.4082474426961643
+                },
+                {
+                  "segment": "2",
+                  "n": 136316,
+                  "prevalence": 0.035006895742245955,
+                  "mean_pred": 0.014752635097784189,
+                  "calibration_in_the_large": -0.020254260644461765,
+                  "brier": 0.029648579468472446,
+                  "brier_skill_score": 0.1372938737216789,
+                  "roc_auc": 0.8364916664028581,
+                  "pr_auc": 0.4010310665099693
+                },
+                {
+                  "segment": "3",
+                  "n": 117815,
+                  "prevalence": 0.03354411577473157,
+                  "mean_pred": 0.014681789398577678,
+                  "calibration_in_the_large": -0.01886232637615389,
+                  "brier": 0.028013337084428144,
+                  "brier_skill_score": 0.1462607612505168,
+                  "roc_auc": 0.8520659580742693,
+                  "pr_auc": 0.4113731345279265
+                },
+                {
+                  "segment": "4",
+                  "n": 125057,
+                  "prevalence": 0.03479213478653734,
+                  "mean_pred": 0.015279517256853432,
+                  "calibration_in_the_large": -0.019512617529683904,
+                  "brier": 0.028566794457496086,
+                  "brier_skill_score": 0.15401012792152335,
+                  "roc_auc": 0.852712350771139,
+                  "pr_auc": 0.43190055523643184
+                },
+                {
+                  "segment": "5",
+                  "n": 118519,
+                  "prevalence": 0.03736109822053848,
+                  "mean_pred": 0.01655287416268564,
+                  "calibration_in_the_large": -0.020808224057852837,
+                  "brier": 0.030434104349340515,
+                  "brier_skill_score": 0.15481218075861947,
+                  "roc_auc": 0.8425309074943481,
+                  "pr_auc": 0.43529207386900853
+                },
+                {
+                  "segment": "6",
+                  "n": 50699,
+                  "prevalence": 0.04481350716976666,
+                  "mean_pred": 0.016456084360195695,
+                  "calibration_in_the_large": -0.028357422809570966,
+                  "brier": 0.03719906877353953,
+                  "brier_skill_score": 0.1355147542074252,
+                  "roc_auc": 0.8128217871563326,
+                  "pr_auc": 0.4112013759865701
+                }
+              ],
+              "month": [
+                {
+                  "segment": "1",
+                  "n": 354304,
+                  "prevalence": 0.04830879696531792,
+                  "mean_pred": 0.018021361054697024,
+                  "calibration_in_the_large": -0.030287435910620893,
+                  "brier": 0.03966721191275194,
+                  "brier_skill_score": 0.15567985388303718,
+                  "roc_auc": 0.8448545630389073,
+                  "pr_auc": 0.45435468267378915
+                },
+                {
+                  "segment": "2",
+                  "n": 334815,
+                  "prevalence": 0.024365694488000838,
+                  "mean_pred": 0.01231105421728635,
+                  "calibration_in_the_large": -0.012054640270714487,
+                  "brier": 0.021035911555589995,
+                  "brier_skill_score": 0.11478858031185146,
+                  "roc_auc": 0.8151572241628859,
+                  "pr_auc": 0.3353201599585413
+                }
+              ]
+            },
+            "delta_vs_B1": {
+              "roc_auc": 0.21931457415072964,
+              "pr_auc": 0.3578586536008834,
+              "brier": -0.005085769910557127,
+              "log_loss": -0.044797563558437725,
+              "ece": -0.0024438760658807637,
+              "calibration_in_the_large": 0.002443876065880767
+            }
+          }
+        }
+      }
+    }
+  },
+  "quantile": {},
+  "models": {
+    "cancelled-lgbm": {
+      "target": "cancelled",
+      "kind": "lightgbm",
+      "task": "cancelled",
+      "objective": "binary",
+      "alpha": null,
+      "early_stopping_metric": "binary_logloss",
+      "best_iteration": 73,
+      "best_valid_score": 0.06360052200234904,
+      "num_boost_round_cap": 1000,
+      "rounds_trained": 1000,
+      "early_stopping_rounds": 1000,
+      "hit_round_cap": true,
+      "seconds": 455.42,
+      "n_train": 9127110,
+      "n_valid": 1506008,
+      "params": {
+        "objective": "binary",
+        "metric": "binary_logloss",
+        "bagging_fraction": 0.7,
+        "cat_smooth": 50,
+        "feature_fraction": 0.9,
+        "lambda_l2": 10.0,
+        "learning_rate": 0.03,
+        "max_bin": 63,
+        "min_child_samples": 1000,
+        "num_leaves": 127,
+        "seed": 42,
+        "deterministic": true,
+        "force_row_wise": true,
+        "bagging_freq": 1,
+        "verbosity": -1,
+        "num_threads": 8
+      },
+      "valid_curves": {
+        "binary_logloss": {
+          "best_round": 73,
+          "best_value": 0.06360052200234904,
+          "points": [
+            [
+              1.0,
+              0.0681325627622086
+            ],
+            [
+              2.0,
+              0.06770354154103189
+            ],
+            [
+              3.0,
+              0.06740569846522998
+            ],
+            [
+              4.0,
+              0.06712560450189523
+            ],
+            [
+              5.0,
+              0.06690825014108545
+            ],
+            [
+              6.0,
+              0.06669471616129417
+            ],
+            [
+              7.0,
+              0.06645777723132808
+            ],
+            [
+              8.0,
+              0.0662804746451037
+            ],
+            [
+              9.0,
+              0.06609425665931302
+            ],
+            [
+              10.0,
+              0.06592590079079352
+            ],
+            [
+              11.0,
+              0.06578358219268432
+            ],
+            [
+              12.0,
+              0.06560837384390243
+            ],
+            [
+              13.0,
+              0.06547068511139463
+            ],
+            [
+              14.0,
+              0.06536209469080341
+            ],
+            [
+              15.0,
+              0.06525536808313827
+            ],
+            [
+              16.0,
+              0.06513308672907468
+            ],
+            [
+              17.0,
+              0.06504664736440262
+            ],
+            [
+              18.0,
+              0.06496293238547172
+            ],
+            [
+              19.0,
+              0.0648643896290805
+            ],
+            [
+              20.0,
+              0.06478193843682846
+            ],
+            [
+              21.0,
+              0.06470117458068174
+            ],
+            [
+              22.0,
+              0.0646345183327433
+            ],
+            [
+              23.0,
+              0.06458095360158307
+            ],
+            [
+              24.0,
+              0.06450168730564215
+            ],
+            [
+              25.0,
+              0.06445094482799013
+            ],
+            [
+              26.0,
+              0.06438972348520683
+            ],
+            [
+              27.0,
+              0.06433371665848661
+            ],
+            [
+              28.0,
+              0.06428071861984765
+            ],
+            [
+              29.0,
+              0.06422357643420777
+            ],
+            [
+              30.0,
+              0.06416939100805341
+            ],
+            [
+              31.0,
+              0.0641173406221108
+            ],
+            [
+              32.0,
+              0.06407659654383417
+            ],
+            [
+              33.0,
+              0.06404264948386211
+            ],
+            [
+              34.0,
+              0.06400619621517052
+            ],
+            [
+              35.0,
+              0.06397404546714554
+            ],
+            [
+              36.0,
+              0.06394317031703782
+            ],
+            [
+              37.0,
+              0.06392005298944355
+            ],
+            [
+              38.0,
+              0.06390066660235015
+            ],
+            [
+              39.0,
+              0.06387742283814637
+            ],
+            [
+              40.0,
+              0.06386943500813942
+            ],
+            [
+              41.0,
+              0.06385717161189214
+            ],
+            [
+              42.0,
+              0.06383631786421415
+            ],
+            [
+              43.0,
+              0.0638132838627846
+            ],
+            [
+              44.0,
+              0.06378429313157408
+            ],
+            [
+              45.0,
+              0.06376496523475415
+            ],
+            [
+              46.0,
+              0.06375723565166704
+            ],
+            [
+              47.0,
+              0.06374853079653378
+            ],
+            [
+              48.0,
+              0.06373574165134123
+            ],
+            [
+              49.0,
+              0.06371332382363219
+            ],
+            [
+              50.0,
+              0.06370316095290234
+            ],
+            [
+              60.0,
+              0.06362742391582171
+            ],
+            [
+              70.0,
+              0.0636131138254932
+            ],
+            [
+              80.0,
+              0.06362868760405661
+            ],
+            [
+              90.0,
+              0.06368936368859288
+            ],
+            [
+              100.0,
+              0.06375221850548445
+            ],
+            [
+              110.0,
+              0.06383373447696827
+            ],
+            [
+              120.0,
+              0.06392679861605516
+            ],
+            [
+              130.0,
+              0.06403009184362402
+            ],
+            [
+              140.0,
+              0.06416131856792498
+            ],
+            [
+              150.0,
+              0.0642345417550649
+            ],
+            [
+              160.0,
+              0.06433666536178907
+            ],
+            [
+              170.0,
+              0.06441962382190483
+            ],
+            [
+              180.0,
+              0.06449960237713878
+            ],
+            [
+              190.0,
+              0.06457135264663987
+            ],
+            [
+              200.0,
+              0.06463323387012443
+            ],
+            [
+              210.0,
+              0.06472789207503357
+            ],
+            [
+              220.0,
+              0.06481335854464879
+            ],
+            [
+              230.0,
+              0.06486407413777177
+            ],
+            [
+              240.0,
+              0.0649351659876163
+            ],
+            [
+              250.0,
+              0.0649757829839309
+            ],
+            [
+              260.0,
+              0.06500293854212019
+            ],
+            [
+              270.0,
+              0.0650479419704298
+            ],
+            [
+              280.0,
+              0.06510216305611691
+            ],
+            [
+              290.0,
+              0.06512702926804978
+            ],
+            [
+              300.0,
+              0.06516821026776243
+            ],
+            [
+              310.0,
+              0.06520035470486678
+            ],
+            [
+              320.0,
+              0.06525926416974819
+            ],
+            [
+              330.0,
+              0.0652845957056205
+            ],
+            [
+              340.0,
+              0.06533092118336085
+            ],
+            [
+              350.0,
+              0.06539913717042263
+            ],
+            [
+              360.0,
+              0.06546392635141145
+            ],
+            [
+              370.0,
+              0.06549308041446025
+            ],
+            [
+              380.0,
+              0.06552402860936028
+            ],
+            [
+              390.0,
+              0.06557545842648907
+            ],
+            [
+              400.0,
+              0.06562908074385822
+            ],
+            [
+              410.0,
+              0.0656904868816667
+            ],
+            [
+              420.0,
+              0.06570131407409152
+            ],
+            [
+              430.0,
+              0.0657270818445343
+            ],
+            [
+              440.0,
+              0.06577196410588514
+            ],
+            [
+              450.0,
+              0.06580285558047062
+            ],
+            [
+              460.0,
+              0.06582260492139759
+            ],
+            [
+              470.0,
+              0.06588083801358646
+            ],
+            [
+              480.0,
+              0.06589891234722926
+            ],
+            [
+              490.0,
+              0.06589908584271323
+            ],
+            [
+              500.0,
+              0.06592327998341656
+            ],
+            [
+              510.0,
+              0.06595964769196919
+            ],
+            [
+              520.0,
+              0.06599257945184482
+            ],
+            [
+              530.0,
+              0.066017117822345
+            ],
+            [
+              540.0,
+              0.06603220742307526
+            ],
+            [
+              550.0,
+              0.06608130442871765
+            ],
+            [
+              560.0,
+              0.06608849190202457
+            ],
+            [
+              570.0,
+              0.06610987930123613
+            ],
+            [
+              580.0,
+              0.06613400834486043
+            ],
+            [
+              590.0,
+              0.06616668637790303
+            ],
+            [
+              600.0,
+              0.06618164220474716
+            ],
+            [
+              610.0,
+              0.066219815789066
+            ],
+            [
+              620.0,
+              0.06624795881883211
+            ],
+            [
+              630.0,
+              0.0662948216234208
+            ],
+            [
+              640.0,
+              0.06631311764382265
+            ],
+            [
+              650.0,
+              0.06635954381919906
+            ],
+            [
+              660.0,
+              0.0663831874986376
+            ],
+            [
+              670.0,
+              0.06639982969756346
+            ],
+            [
+              680.0,
+              0.06642794236634592
+            ],
+            [
+              690.0,
+              0.06644941018208496
+            ],
+            [
+              700.0,
+              0.06647042743489337
+            ],
+            [
+              710.0,
+              0.06649019807331093
+            ],
+            [
+              720.0,
+              0.06649943185343121
+            ],
+            [
+              730.0,
+              0.06651631636481165
+            ],
+            [
+              740.0,
+              0.06653114697990482
+            ],
+            [
+              750.0,
+              0.066557890693208
+            ],
+            [
+              760.0,
+              0.0665938138155076
+            ],
+            [
+              770.0,
+              0.06661765484211343
+            ],
+            [
+              780.0,
+              0.06664438134779352
+            ],
+            [
+              790.0,
+              0.06664891070006432
+            ],
+            [
+              800.0,
+              0.06666428128033171
+            ],
+            [
+              810.0,
+              0.06670291953978623
+            ],
+            [
+              820.0,
+              0.06670938860383689
+            ],
+            [
+              830.0,
+              0.0667216065378678
+            ],
+            [
+              840.0,
+              0.06674890885760616
+            ],
+            [
+              850.0,
+              0.06675397797323834
+            ],
+            [
+              860.0,
+              0.06678968501153658
+            ],
+            [
+              870.0,
+              0.0668071490568151
+            ],
+            [
+              880.0,
+              0.06681883881865325
+            ],
+            [
+              890.0,
+              0.06683636734013643
+            ],
+            [
+              900.0,
+              0.06685351085485164
+            ],
+            [
+              910.0,
+              0.0668613876540452
+            ],
+            [
+              920.0,
+              0.06686914451754483
+            ],
+            [
+              930.0,
+              0.06687705726834008
+            ],
+            [
+              940.0,
+              0.06689272142323333
+            ],
+            [
+              950.0,
+              0.06692143571142474
+            ],
+            [
+              960.0,
+              0.06693836095656411
+            ],
+            [
+              970.0,
+              0.06695618001378159
+            ],
+            [
+              980.0,
+              0.06698520517945362
+            ],
+            [
+              990.0,
+              0.06700520937375373
+            ],
+            [
+              1000.0,
+              0.06702760606115821
+            ]
+          ]
+        },
+        "auc": {
+          "best_round": 86,
+          "best_value": 0.6965820495461752,
+          "points": [
+            [
+              1.0,
+              0.6609836028808496
+            ],
+            [
+              2.0,
+              0.6696889793151996
+            ],
+            [
+              3.0,
+              0.6773258946301545
+            ],
+            [
+              4.0,
+              0.6800751187212531
+            ],
+            [
+              5.0,
+              0.6801131759094753
+            ],
+            [
+              6.0,
+              0.684443249873342
+            ],
+            [
+              7.0,
+              0.6855463316660532
+            ],
+            [
+              8.0,
+              0.6853529753610981
+            ],
+            [
+              9.0,
+              0.685470920072685
+            ],
+            [
+              10.0,
+              0.68614212431229
+            ],
+            [
+              11.0,
+              0.6865462796681466
+            ],
+            [
+              12.0,
+              0.6876165153069764
+            ],
+            [
+              13.0,
+              0.6893825430724835
+            ],
+            [
+              14.0,
+              0.6890050101727137
+            ],
+            [
+              15.0,
+              0.6878354660184575
+            ],
+            [
+              16.0,
+              0.6892000461741257
+            ],
+            [
+              17.0,
+              0.6889099522434706
+            ],
+            [
+              18.0,
+              0.6885310267443473
+            ],
+            [
+              19.0,
+              0.6888066820664996
+            ],
+            [
+              20.0,
+              0.6884399640858946
+            ],
+            [
+              21.0,
+              0.6882537810487047
+            ],
+            [
+              22.0,
+              0.6878104888315423
+            ],
+            [
+              23.0,
+              0.6887620009676431
+            ],
+            [
+              24.0,
+              0.6896183890003156
+            ],
+            [
+              25.0,
+              0.6894591610828643
+            ],
+            [
+              26.0,
+              0.6894147082692825
+            ],
+            [
+              27.0,
+              0.6893670273668518
+            ],
+            [
+              28.0,
+              0.6894847515036227
+            ],
+            [
+              29.0,
+              0.6901834666425786
+            ],
+            [
+              30.0,
+              0.6910170082031158
+            ],
+            [
+              31.0,
+              0.6917778136820597
+            ],
+            [
+              32.0,
+              0.692104357231209
+            ],
+            [
+              33.0,
+              0.6927066696881848
+            ],
+            [
+              34.0,
+              0.6929071180487145
+            ],
+            [
+              35.0,
+              0.6931151964042049
+            ],
+            [
+              36.0,
+              0.6936035755723158
+            ],
+            [
+              37.0,
+              0.6935488067219138
+            ],
+            [
+              38.0,
+              0.6932481450070906
+            ],
+            [
+              39.0,
+              0.693166434456281
+            ],
+            [
+              40.0,
+              0.6928861345313205
+            ],
+            [
+              41.0,
+              0.6926455619878552
+            ],
+            [
+              42.0,
+              0.6928241093038069
+            ],
+            [
+              43.0,
+              0.6927683116902349
+            ],
+            [
+              44.0,
+              0.6933935144279795
+            ],
+            [
+              45.0,
+              0.6936133911951429
+            ],
+            [
+              46.0,
+              0.6935973674520847
+            ],
+            [
+              47.0,
+              0.693685054565692
+            ],
+            [
+              48.0,
+              0.694172431600434
+            ],
+            [
+              49.0,
+              0.6944913615328205
+            ],
+            [
+              50.0,
+              0.6946613617443499
+            ],
+            [
+              60.0,
+              0.6953346181669295
+            ],
+            [
+              70.0,
+              0.6953491710747155
+            ],
+            [
+              80.0,
+              0.6962312084270004
+            ],
+            [
+              90.0,
+              0.696023564154672
+            ],
+            [
+              100.0,
+              0.6962460678037645
+            ],
+            [
+              110.0,
+              0.6958050689868397
+            ],
+            [
+              120.0,
+              0.6949549987961406
+            ],
+            [
+              130.0,
+              0.6944927460388032
+            ],
+            [
+              140.0,
+              0.6937700039442964
+            ],
+            [
+              150.0,
+              0.6938639783191188
+            ],
+            [
+              160.0,
+              0.6933126912413179
+            ],
+            [
+              170.0,
+              0.6931744063221907
+            ],
+            [
+              180.0,
+              0.6930680341563108
+            ],
+            [
+              190.0,
+              0.6929688192281003
+            ],
+            [
+              200.0,
+              0.6928351281933237
+            ],
+            [
+              210.0,
+              0.6926759979184762
+            ],
+            [
+              220.0,
+              0.6923588465086971
+            ],
+            [
+              230.0,
+              0.6923710057802819
+            ],
+            [
+              240.0,
+              0.6923400232251306
+            ],
+            [
+              250.0,
+              0.6922467832062333
+            ],
+            [
+              260.0,
+              0.6923992664390701
+            ],
+            [
+              270.0,
+              0.6924391927260334
+            ],
+            [
+              280.0,
+              0.6922560916096736
+            ],
+            [
+              290.0,
+              0.6924011729065582
+            ],
+            [
+              300.0,
+              0.6924084006522825
+            ],
+            [
+              310.0,
+              0.6921385314463377
+            ],
+            [
+              320.0,
+              0.6918458017397483
+            ],
+            [
+              330.0,
+              0.6919512220555895
+            ],
+            [
+              340.0,
+              0.691693966028799
+            ],
+            [
+              350.0,
+              0.6911719582954041
+            ],
+            [
+              360.0,
+              0.6906495032161621
+            ],
+            [
+              370.0,
+              0.6905454460676524
+            ],
+            [
+              380.0,
+              0.6905116360542144
+            ],
+            [
+              390.0,
+              0.690227949897678
+            ],
+            [
+              400.0,
+              0.6900814080171241
+            ],
+            [
+              410.0,
+              0.6897467985449117
+            ],
+            [
+              420.0,
+              0.6899304494535299
+            ],
+            [
+              430.0,
+              0.6900337884676664
+            ],
+            [
+              440.0,
+              0.6899235015469828
+            ],
+            [
+              450.0,
+              0.6898697743743339
+            ],
+            [
+              460.0,
+              0.6898669428432541
+            ],
+            [
+              470.0,
+              0.6894533115076668
+            ],
+            [
+              480.0,
+              0.6894945710948122
+            ],
+            [
+              490.0,
+              0.6896486138593044
+            ],
+            [
+              500.0,
+              0.6895846790836002
+            ],
+            [
+              510.0,
+              0.6893100730626344
+            ],
+            [
+              520.0,
+              0.6892509673315694
+            ],
+            [
+              530.0,
+              0.6891605734292248
+            ],
+            [
+              540.0,
+              0.6891069460226017
+            ],
+            [
+              550.0,
+              0.6887480369787774
+            ],
+            [
+              560.0,
+              0.6888358394011637
+            ],
+            [
+              570.0,
+              0.688745374068294
+            ],
+            [
+              580.0,
+              0.6886213902399845
+            ],
+            [
+              590.0,
+              0.6885546531041459
+            ],
+            [
+              600.0,
+              0.6885019286044239
+            ],
+            [
+              610.0,
+              0.6882538187481486
+            ],
+            [
+              620.0,
+              0.6881020160372665
+            ],
+            [
+              630.0,
+              0.6878051222652393
+            ],
+            [
+              640.0,
+              0.6877024809867002
+            ],
+            [
+              650.0,
+              0.687194160065974
+            ],
+            [
+              660.0,
+              0.6872205336987696
+            ],
+            [
+              670.0,
+              0.6871505069644631
+            ],
+            [
+              680.0,
+              0.6869692136460867
+            ],
+            [
+              690.0,
+              0.6868009177592288
+            ],
+            [
+              700.0,
+              0.6866967617149483
+            ],
+            [
+              710.0,
+              0.6865924715817873
+            ],
+            [
+              720.0,
+              0.6866069982252792
+            ],
+            [
+              730.0,
+              0.686556150517352
+            ],
+            [
+              740.0,
+              0.6865622584538349
+            ],
+            [
+              750.0,
+              0.6864540353949471
+            ],
+            [
+              760.0,
+              0.6861632764328752
+            ],
+            [
+              770.0,
+              0.6860819182830995
+            ],
+            [
+              780.0,
+              0.6859742386462039
+            ],
+            [
+              790.0,
+              0.6861051855931166
+            ],
+            [
+              800.0,
+              0.6860375974523814
+            ],
+            [
+              810.0,
+              0.6856677758641934
+            ],
+            [
+              820.0,
+              0.6857037022854202
+            ],
+            [
+              830.0,
+              0.6857532625033851
+            ],
+            [
+              840.0,
+              0.6856716747107368
+            ],
+            [
+              850.0,
+              0.6856922953666327
+            ],
+            [
+              860.0,
+              0.6855285073655326
+            ],
+            [
+              870.0,
+              0.6854603173564836
+            ],
+            [
+              880.0,
+              0.6855090765569952
+            ],
+            [
+              890.0,
+              0.6855217240067888
+            ],
+            [
+              900.0,
+              0.6854919222309396
+            ],
+            [
+              910.0,
+              0.6854667689740458
+            ],
+            [
+              920.0,
+              0.6855427648217678
+            ],
+            [
+              930.0,
+              0.6855735894256483
+            ],
+            [
+              940.0,
+              0.6854588180812801
+            ],
+            [
+              950.0,
+              0.6853107895268141
+            ],
+            [
+              960.0,
+              0.6852304577208995
+            ],
+            [
+              970.0,
+              0.6850996643565779
+            ],
+            [
+              980.0,
+              0.6848778881361812
+            ],
+            [
+              990.0,
+              0.6848143080763889
+            ],
+            [
+              1000.0,
+              0.6847383461337991
+            ]
+          ]
+        },
+        "average_precision": {
+          "best_round": 115,
+          "best_value": 0.07196604004129631,
+          "points": [
+            [
+              1.0,
+              0.04758930873210039
+            ],
+            [
+              2.0,
+              0.056610115916504396
+            ],
+            [
+              3.0,
+              0.056698496142963115
+            ],
+            [
+              4.0,
+              0.05803377599913044
+            ],
+            [
+              5.0,
+              0.058364337691719455
+            ],
+            [
+              6.0,
+              0.05793830360223068
+            ],
+            [
+              7.0,
+              0.059384816242306855
+            ],
+            [
+              8.0,
+              0.05945277261241269
+            ],
+            [
+              9.0,
+              0.060305228213658545
+            ],
+            [
+              10.0,
+              0.06099348619433768
+            ],
+            [
+              11.0,
+              0.060847046677248676
+            ],
+            [
+              12.0,
+              0.062056326889824785
+            ],
+            [
+              13.0,
+              0.06282688894380477
+            ],
+            [
+              14.0,
+              0.06259642719479004
+            ],
+            [
+              15.0,
+              0.06294900422274666
+            ],
+            [
+              16.0,
+              0.06366607593707348
+            ],
+            [
+              17.0,
+              0.0638774404309541
+            ],
+            [
+              18.0,
+              0.06373840861247357
+            ],
+            [
+              19.0,
+              0.06384750359470144
+            ],
+            [
+              20.0,
+              0.0641108582444679
+            ],
+            [
+              21.0,
+              0.06442148481521547
+            ],
+            [
+              22.0,
+              0.06478926915551773
+            ],
+            [
+              23.0,
+              0.06476756514385218
+            ],
+            [
+              24.0,
+              0.0649890789378337
+            ],
+            [
+              25.0,
+              0.06504092606629679
+            ],
+            [
+              26.0,
+              0.0653995447466907
+            ],
+            [
+              27.0,
+              0.06570199706295694
+            ],
+            [
+              28.0,
+              0.0657486305035445
+            ],
+            [
+              29.0,
+              0.06620843207657398
+            ],
+            [
+              30.0,
+              0.06654309113966213
+            ],
+            [
+              31.0,
+              0.06698660051539464
+            ],
+            [
+              32.0,
+              0.06722802818102491
+            ],
+            [
+              33.0,
+              0.06734987656621315
+            ],
+            [
+              34.0,
+              0.06765901040576972
+            ],
+            [
+              35.0,
+              0.06774562537230842
+            ],
+            [
+              36.0,
+              0.06790861924808184
+            ],
+            [
+              37.0,
+              0.06802369149611032
+            ],
+            [
+              38.0,
+              0.06818845504179652
+            ],
+            [
+              39.0,
+              0.06831675487635741
+            ],
+            [
+              40.0,
+              0.06823074167675929
+            ],
+            [
+              41.0,
+              0.06789709239897739
+            ],
+            [
+              42.0,
+              0.06802892005987862
+            ],
+            [
+              43.0,
+              0.06834392782367785
+            ],
+            [
+              44.0,
+              0.06861413596367673
+            ],
+            [
+              45.0,
+              0.06885006989398304
+            ],
+            [
+              46.0,
+              0.0687803189686072
+            ],
+            [
+              47.0,
+              0.06882342036335866
+            ],
+            [
+              48.0,
+              0.06880057603313931
+            ],
+            [
+              49.0,
+              0.06911971513906755
+            ],
+            [
+              50.0,
+              0.06893721833013745
+            ],
+            [
+              60.0,
+              0.0698800324706353
+            ],
+            [
+              70.0,
+              0.07087269780419388
+            ],
+            [
+              80.0,
+              0.07136142556516799
+            ],
+            [
+              90.0,
+              0.07151344253562435
+            ],
+            [
+              100.0,
+              0.07150166068261492
+            ],
+            [
+              110.0,
+              0.07170322352450677
+            ],
+            [
+              120.0,
+              0.07169665608835717
+            ],
+            [
+              130.0,
+              0.07132958409865156
+            ],
+            [
+              140.0,
+              0.07098593351565063
+            ],
+            [
+              150.0,
+              0.07091901594727006
+            ],
+            [
+              160.0,
+              0.07086447263511042
+            ],
+            [
+              170.0,
+              0.07075048636449935
+            ],
+            [
+              180.0,
+              0.07042555823558495
+            ],
+            [
+              190.0,
+              0.07030660320907522
+            ],
+            [
+              200.0,
+              0.07036047465108011
+            ],
+            [
+              210.0,
+              0.07000422038300946
+            ],
+            [
+              220.0,
+              0.06950710395870847
+            ],
+            [
+              230.0,
+              0.06939077225149629
+            ],
+            [
+              240.0,
+              0.0689002110768663
+            ],
+            [
+              250.0,
+              0.06865371862816606
+            ],
+            [
+              260.0,
+              0.06861960735076718
+            ],
+            [
+              270.0,
+              0.06828632755876747
+            ],
+            [
+              280.0,
+              0.06804572409623452
+            ],
+            [
+              290.0,
+              0.06796611183860958
+            ],
+            [
+              300.0,
+              0.0676112912630791
+            ],
+            [
+              310.0,
+              0.06753107915472392
+            ],
+            [
+              320.0,
+              0.06715370959500937
+            ],
+            [
+              330.0,
+              0.06699812468816908
+            ],
+            [
+              340.0,
+              0.06677316811764458
+            ],
+            [
+              350.0,
+              0.066459651280354
+            ],
+            [
+              360.0,
+              0.06622246939707374
+            ],
+            [
+              370.0,
+              0.06604227823165304
+            ],
+            [
+              380.0,
+              0.06577860245131614
+            ],
+            [
+              390.0,
+              0.06548880144590147
+            ],
+            [
+              400.0,
+              0.06513157610396081
+            ],
+            [
+              410.0,
+              0.06465530810210188
+            ],
+            [
+              420.0,
+              0.06459337331242378
+            ],
+            [
+              430.0,
+              0.06447124088521343
+            ],
+            [
+              440.0,
+              0.06404401178198549
+            ],
+            [
+              450.0,
+              0.06390644566188894
+            ],
+            [
+              460.0,
+              0.06382657963737419
+            ],
+            [
+              470.0,
+              0.06343153129757553
+            ],
+            [
+              480.0,
+              0.06337756849727558
+            ],
+            [
+              490.0,
+              0.06337255383108165
+            ],
+            [
+              500.0,
+              0.0632831531101856
+            ],
+            [
+              510.0,
+              0.06313916538645743
+            ],
+            [
+              520.0,
+              0.06298335001388619
+            ],
+            [
+              530.0,
+              0.06294909197294248
+            ],
+            [
+              540.0,
+              0.06298846491990459
+            ],
+            [
+              550.0,
+              0.06269133617827066
+            ],
+            [
+              560.0,
+              0.06263640152779076
+            ],
+            [
+              570.0,
+              0.06267014701089971
+            ],
+            [
+              580.0,
+              0.06253011037126706
+            ],
+            [
+              590.0,
+              0.06225673225221838
+            ],
+            [
+              600.0,
+              0.06208664182046707
+            ],
+            [
+              610.0,
+              0.061909519168482426
+            ],
+            [
+              620.0,
+              0.06187830974285805
+            ],
+            [
+              630.0,
+              0.06145348750724976
+            ],
+            [
+              640.0,
+              0.06136527960344872
+            ],
+            [
+              650.0,
+              0.06118357112401237
+            ],
+            [
+              660.0,
+              0.06101333275603665
+            ],
+            [
+              670.0,
+              0.06087388654687822
+            ],
+            [
+              680.0,
+              0.06074041511283836
+            ],
+            [
+              690.0,
+              0.06075091715016352
+            ],
+            [
+              700.0,
+              0.060645290380676994
+            ],
+            [
+              710.0,
+              0.060547201758815686
+            ],
+            [
+              720.0,
+              0.06051777746926175
+            ],
+            [
+              730.0,
+              0.06037637351202102
+            ],
+            [
+              740.0,
+              0.060196844291411124
+            ],
+            [
+              750.0,
+              0.060087621822689063
+            ],
+            [
+              760.0,
+              0.059847577656143645
+            ],
+            [
+              770.0,
+              0.05972592809355917
+            ],
+            [
+              780.0,
+              0.05963825082868716
+            ],
+            [
+              790.0,
+              0.059584299410374984
+            ],
+            [
+              800.0,
+              0.05945334444319294
+            ],
+            [
+              810.0,
+              0.05920803880615847
+            ],
+            [
+              820.0,
+              0.05922383838914539
+            ],
+            [
+              830.0,
+              0.05920466228925129
+            ],
+            [
+              840.0,
+              0.05908818083358112
+            ],
+            [
+              850.0,
+              0.05911582914357833
+            ],
+            [
+              860.0,
+              0.05894090436963297
+            ],
+            [
+              870.0,
+              0.05886359211980054
+            ],
+            [
+              880.0,
+              0.05881922895089415
+            ],
+            [
+              890.0,
+              0.058764061741098
+            ],
+            [
+              900.0,
+              0.05864634907921317
+            ],
+            [
+              910.0,
+              0.058649902705674155
+            ],
+            [
+              920.0,
+              0.058580333338903126
+            ],
+            [
+              930.0,
+              0.058622441144169216
+            ],
+            [
+              940.0,
+              0.058566723126776854
+            ],
+            [
+              950.0,
+              0.05841643616138303
+            ],
+            [
+              960.0,
+              0.05831829871465762
+            ],
+            [
+              970.0,
+              0.0582214717604937
+            ],
+            [
+              980.0,
+              0.0580280139469839
+            ],
+            [
+              990.0,
+              0.0579618772238086
+            ],
+            [
+              1000.0,
+              0.05788242767442337
+            ]
+          ]
+        }
+      },
+      "file": "deliverables/models/run-20261120T174502Z/cancelled-lgbm.txt",
+      "gain_importance": [
+        {
+          "feature": "Origin",
+          "gain": 464493.5016822815,
+          "gain_share": 0.1465647536121508,
+          "splits": 1157
+        },
+        {
+          "feature": "origin_dwpf",
+          "gain": 455559.6410827637,
+          "gain_share": 0.14374579258722506,
+          "splits": 865
+        },
+        {
+          "feature": "origin_p01i",
+          "gain": 342174.0378112793,
+          "gain_share": 0.10796847181424835,
+          "splits": 179
+        },
+        {
+          "feature": "origin_tmpf",
+          "gain": 230714.77227020264,
+          "gain_share": 0.07279898132050794,
+          "splits": 721
+        },
+        {
+          "feature": "Reporting_Airline",
+          "gain": 213115.02138519287,
+          "gain_share": 0.06724561374323428,
+          "splits": 748
+        },
+        {
+          "feature": "crs_dep_minute_of_day",
+          "gain": 146440.43962478638,
+          "gain_share": 0.04620733524737831,
+          "splits": 339
+        },
+        {
+          "feature": "origin_ceiling_ft",
+          "gain": 138206.19353103638,
+          "gain_share": 0.04360912828529731,
+          "splits": 389
+        },
+        {
+          "feature": "dest_dwpf",
+          "gain": 129044.789768219,
+          "gain_share": 0.040718369038126596,
+          "splits": 407
+        },
+        {
+          "feature": "origin_wx_ts",
+          "gain": 118157.92958831787,
+          "gain_share": 0.037283164941410145,
+          "splits": 112
+        },
+        {
+          "feature": "planned_departures_origin_day",
+          "gain": 113677.06906890869,
+          "gain_share": 0.03586928893320103,
+          "splits": 635
+        },
+        {
+          "feature": "dest_p01i",
+          "gain": 91597.8879699707,
+          "gain_share": 0.02890249666161101,
+          "splits": 131
+        },
+        {
+          "feature": "day_of_week",
+          "gain": 83546.8881111145,
+          "gain_share": 0.026362110614505774,
+          "splits": 562
+        },
+        {
+          "feature": "origin_gust",
+          "gain": 80684.21528625488,
+          "gain_share": 0.025458832235522685,
+          "splits": 316
+        },
+        {
+          "feature": "dest_tmpf",
+          "gain": 61037.58500671387,
+          "gain_share": 0.01925959905830687,
+          "splits": 236
+        },
+        {
+          "feature": "origin_sknt",
+          "gain": 53206.979904174805,
+          "gain_share": 0.016788755648590618,
+          "splits": 281
+        },
+        {
+          "feature": "origin_vsby",
+          "gain": 47540.57508850098,
+          "gain_share": 0.01500079688777246,
+          "splits": 149
+        },
+        {
+          "feature": "te_route_cancel",
+          "gain": 43761.315868377686,
+          "gain_share": 0.013808301848707958,
+          "splits": 137
+        },
+        {
+          "feature": "support_n_carrier_origin_arrdel15",
+          "gain": 43401.4486618042,
+          "gain_share": 0.013694750532546353,
+          "splits": 320
+        },
+        {
+          "feature": "dest_ceiling_ft",
+          "gain": 40993.5613822937,
+          "gain_share": 0.012934973690525679,
+          "splits": 167
+        },
+        {
+          "feature": "te_carrier_origin_arrdel15",
+          "gain": 39094.72613143921,
+          "gain_share": 0.012335821453339125,
+          "splits": 271
+        },
+        {
+          "feature": "origin_wx_ra",
+          "gain": 23612.34267425537,
+          "gain_share": 0.007450561038473028,
+          "splits": 32
+        },
+        {
+          "feature": "dest_gust",
+          "gain": 21134.3067779541,
+          "gain_share": 0.006668649732355578,
+          "splits": 117
+        },
+        {
+          "feature": "crs_dep_hour",
+          "gain": 20090.05030441284,
+          "gain_share": 0.006339148475183724,
+          "splits": 74
+        },
+        {
+          "feature": "hist_taxiout_origin_hour_median",
+          "gain": 20082.411140441895,
+          "gain_share": 0.006336738038479767,
+          "splits": 65
+        },
+        {
+          "feature": "support_n_origin_hour_taxiout",
+          "gain": 18658.59726715088,
+          "gain_share": 0.0058874724862757665,
+          "splits": 87
+        },
+        {
+          "feature": "Distance",
+          "gain": 13711.079425811768,
+          "gain_share": 0.004326348959721923,
+          "splits": 73
+        },
+        {
+          "feature": "dest_wx_ts",
+          "gain": 13605.140956878662,
+          "gain_share": 0.0042929214832534805,
+          "splits": 63
+        },
+        {
+          "feature": "hist_route_hour_p95",
+          "gain": 11703.899543762207,
+          "gain_share": 0.003693010013531276,
+          "splits": 40
+        },
+        {
+          "feature": "origin_wx_sn",
+          "gain": 11431.411766052246,
+          "gain_share": 0.0036070301153029033,
+          "splits": 3
+        },
+        {
+          "feature": "dest_sknt",
+          "gain": 9721.635551452637,
+          "gain_share": 0.003067532945337938,
+          "splits": 73
+        },
+        {
+          "feature": "dest_vsby",
+          "gain": 8822.615364074707,
+          "gain_share": 0.0027838590687860026,
+          "splits": 52
+        },
+        {
+          "feature": "origin_ifr_flag",
+          "gain": 8596.585262298584,
+          "gain_share": 0.0027125382730035746,
+          "splits": 17
+        },
+        {
+          "feature": "dest_wx_ra",
+          "gain": 8224.324935913086,
+          "gain_share": 0.0025950764725291534,
+          "splits": 28
+        },
+        {
+          "feature": "te_dest_hour_arrdel15",
+          "gain": 7248.444255828857,
+          "gain_share": 0.002287150288603254,
+          "splits": 60
+        },
+        {
+          "feature": "support_n_dest_hour_arrdel15",
+          "gain": 6897.487548828125,
+          "gain_share": 0.002176410562204933,
+          "splits": 65
+        },
+        {
+          "feature": "crs_arr_hour",
+          "gain": 3971.612091064453,
+          "gain_share": 0.0012531894320624147,
+          "splits": 26
+        },
+        {
+          "feature": "planned_departures_origin_hour",
+          "gain": 3777.1463890075684,
+          "gain_share": 0.0011918283632751127,
+          "splits": 31
+        },
+        {
+          "feature": "hist_route_hour_p80",
+          "gain": 3727.349838256836,
+          "gain_share": 0.0011761157232379907,
+          "splits": 28
+        },
+        {
+          "feature": "CRSElapsedTime",
+          "gain": 3136.639976501465,
+          "gain_share": 0.0009897250740020333,
+          "splits": 29
+        },
+        {
+          "feature": "dest_wx_sn",
+          "gain": 2587.142936706543,
+          "gain_share": 0.0008163385832191397,
+          "splits": 11
+        },
+        {
+          "feature": "planned_arrivals_dest_hour",
+          "gain": 2020.5664749145508,
+          "gain_share": 0.000637562907726939,
+          "splits": 21
+        },
+        {
+          "feature": "support_n_route_cancel",
+          "gain": 1825.3909912109375,
+          "gain_share": 0.0005759778767705336,
+          "splits": 20
+        },
+        {
+          "feature": "origin_wx_fg",
+          "gain": 1685.2758331298828,
+          "gain_share": 0.0005317664000822674,
+          "splits": 12
+        },
+        {
+          "feature": "DistanceGroup",
+          "gain": 1597.8735542297363,
+          "gain_share": 0.0005041877721235437,
+          "splits": 7
+        },
+        {
+          "feature": "dest_ifr_flag",
+          "gain": 1139.8377151489258,
+          "gain_share": 0.00035966064815457866,
+          "splits": 6
+        },
+        {
+          "feature": "hour_block",
+          "gain": 833.74658203125,
+          "gain_share": 0.00026307765755131636,
+          "splits": 2
+        },
+        {
+          "feature": "origin_wx_fzra",
+          "gain": 756.5335006713867,
+          "gain_share": 0.0002387140955118972,
+          "splits": 8
+        },
+        {
+          "feature": "schedule_excess_min",
+          "gain": 666.8877296447754,
+          "gain_share": 0.0002104275634176899,
+          "splits": 9
+        },
+        {
+          "feature": "origin_obs_age_min",
+          "gain": 499.8551788330078,
+          "gain_share": 0.00015772266105356362,
+          "splits": 6
+        },
+        {
+          "feature": "support_n_route_hour_elapsed",
+          "gain": 327.78094482421875,
+          "gain_share": 0.00010342692253589431,
+          "splits": 3
+        },
+        {
+          "feature": "te_route_hour_arrdel15",
+          "gain": 299.3490982055664,
+          "gain_share": 9.44556310553698e-05,
+          "splits": 4
+        },
+        {
+          "feature": "hist_route_hour_p50",
+          "gain": 161.18762969970703,
+          "gain_share": 5.086061515759056e-05,
+          "splits": 2
+        },
+        {
+          "feature": "dest_wx_fg",
+          "gain": 150.61114501953125,
+          "gain_share": 4.7523345926442174e-05,
+          "splits": 1
+        },
+        {
+          "feature": "dest_obs_age_min",
+          "gain": 49.6063346862793,
+          "gain_share": 1.56526198850238e-05,
+          "splits": 1
+        },
+        {
+          "feature": "dest_weather_available",
+          "gain": 0.0,
+          "gain_share": 0.0,
+          "splits": 0
+        },
+        {
+          "feature": "dest_weather_missing",
+          "gain": 0.0,
+          "gain_share": 0.0,
+          "splits": 0
+        },
+        {
+          "feature": "dest_wx_fzra",
+          "gain": 0.0,
+          "gain_share": 0.0,
+          "splits": 0
+        },
+        {
+          "feature": "origin_weather_missing",
+          "gain": 0.0,
+          "gain_share": 0.0,
+          "splits": 0
+        },
+        {
+          "feature": "support_n_route_hour_arrdel15",
+          "gain": 0.0,
+          "gain_share": 0.0,
+          "splits": 0
+        },
+        {
+          "feature": "support_n_route_hour_p80",
+          "gain": 0.0,
+          "gain_share": 0.0,
+          "splits": 0
+        }
+      ],
+      "leakage_alarm": {
+        "raised": false,
+        "threshold": 0.5,
+        "top_feature": "Origin",
+        "top_gain_share": 0.1465647536121508,
+        "rule": "stage 1 (suspicion): single feature gain share > threshold; the decision is stage 2 (importance: Val-B permutation + time travel test)"
+      },
+      "early_stopping_set": "val_a",
+      "val_a_checkpoints": [
+        {
+          "round": 10,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.012031894875871049,
+            "log_loss": 0.06592590079080311,
+            "roc_auc": 0.68614212431229
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.012182908827901181,
+              "log_loss": 0.034223944214800524,
+              "roc_auc": 0.7675091121463512
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.011710964751456488,
+              "log_loss": 0.03504997059412471,
+              "roc_auc": 0.7693593175638169
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.011664149930460067,
+              "log_loss": 0.12024294367997011,
+              "roc_auc": 0.6653654266105162
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.01258099063726887,
+              "log_loss": 0.07547388525227755,
+              "roc_auc": 0.6817750726516193
+            }
+          }
+        },
+        {
+          "round": 15,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.011680378475833007,
+            "log_loss": 0.06525536808312854,
+            "roc_auc": 0.6878354660184575
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.01188227751253857,
+              "log_loss": 0.03365919351816634,
+              "roc_auc": 0.7678491273216143
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.011224170279649876,
+              "log_loss": 0.034340887849654354,
+              "roc_auc": 0.7717826505242953
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.01116267105574139,
+              "log_loss": 0.11960117835433097,
+              "roc_auc": 0.66449660238053
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.01246833456936187,
+              "log_loss": 0.07471288888827604,
+              "roc_auc": 0.6917483583322579
+            }
+          }
+        },
+        {
+          "round": 25,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.011122885267940136,
+            "log_loss": 0.06445094482799246,
+            "roc_auc": 0.6894591610828643
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.011428660336605594,
+              "log_loss": 0.03290875642425133,
+              "roc_auc": 0.7776826807161324
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.010454275147566475,
+              "log_loss": 0.03328606321059242,
+              "roc_auc": 0.774010688689449
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.010355884160945095,
+              "log_loss": 0.11897052619096495,
+              "roc_auc": 0.6665302159911899
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.012276244773969644,
+              "log_loss": 0.07394655109612368,
+              "roc_auc": 0.6936452825747876
+            }
+          }
+        },
+        {
+          "round": 50,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.010193869920219622,
+            "log_loss": 0.06370316095290239,
+            "roc_auc": 0.6946613617443499
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.010661243447937103,
+              "log_loss": 0.03182539961002354,
+              "roc_auc": 0.7882879209705562
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.00909356873667083,
+              "log_loss": 0.031665999233726115,
+              "roc_auc": 0.7835267902095576
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.009027404233971303,
+              "log_loss": 0.11921869609509259,
+              "roc_auc": 0.6728351242147264
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.01203260731701539,
+              "log_loss": 0.07345495105299502,
+              "roc_auc": 0.6939789790132166
+            }
+          }
+        },
+        {
+          "round": 73,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.009696092588380367,
+            "log_loss": 0.0636005220023496,
+            "roc_auc": 0.6961855138466506
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.010242358377727788,
+              "log_loss": 0.031348091959610844,
+              "roc_auc": 0.7904814528193599
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.008381430539989469,
+              "log_loss": 0.030930303725938888,
+              "roc_auc": 0.786101827074525
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.008306279284138572,
+              "log_loss": 0.12003882646248352,
+              "roc_auc": 0.6761820664242766
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.011900994369469628,
+              "log_loss": 0.07346892577650824,
+              "roc_auc": 0.6944532371327092
+            }
+          }
+        },
+        {
+          "round": 100,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.009315741447265574,
+            "log_loss": 0.06375221850548451,
+            "roc_auc": 0.6962460678037645
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.009918039084621244,
+              "log_loss": 0.031010276479636396,
+              "roc_auc": 0.7920989737358677
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.007876382519455386,
+              "log_loss": 0.03047997150924083,
+              "roc_auc": 0.787384841888184
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.007771745570639259,
+              "log_loss": 0.121102734415274,
+              "roc_auc": 0.6790027303287393
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.011747639096473483,
+              "log_loss": 0.07382643681754102,
+              "roc_auc": 0.6909339127000713
+            }
+          }
+        },
+        {
+          "round": 200,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.008573701248961481,
+            "log_loss": 0.06463323387012496,
+            "roc_auc": 0.6928351281933237
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.009144639289261446,
+              "log_loss": 0.030470840282123695,
+              "roc_auc": 0.7932977818574486
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.007016561772957927,
+              "log_loss": 0.0299591453466054,
+              "roc_auc": 0.7896019664881692
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.00684407105083912,
+              "log_loss": 0.12430551687962926,
+              "roc_auc": 0.6809663634611158
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.011340849174375974,
+              "log_loss": 0.07526433901389286,
+              "roc_auc": 0.6793831285720079
+            }
+          }
+        },
+        {
+          "round": 400,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.008032106999541171,
+            "log_loss": 0.06562908074385859,
+            "roc_auc": 0.6900814080171241
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.008673887175712445,
+              "log_loss": 0.030388196557915113,
+              "roc_auc": 0.7890266206062257
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.006507231184783808,
+              "log_loss": 0.029882920124278275,
+              "roc_auc": 0.7897643572217081
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.006215402714005651,
+              "log_loss": 0.12754199403774316,
+              "roc_auc": 0.6796886569225971
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.010782522338408247,
+              "log_loss": 0.07622211539324206,
+              "roc_auc": 0.6768230185477755
+            }
+          }
+        },
+        {
+          "round": 800,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.007554101400170757,
+            "log_loss": 0.06666428128033157,
+            "roc_auc": 0.6860375974523814
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.008228170298407814,
+              "log_loss": 0.030368347853616032,
+              "roc_auc": 0.7827654933198046
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.00606674816600192,
+              "log_loss": 0.029949359331288023,
+              "roc_auc": 0.7887454481270783
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.005739895935370702,
+              "log_loss": 0.1307694348305836,
+              "roc_auc": 0.6757361830023889
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.010231716145540328,
+              "log_loss": 0.0771364095382089,
+              "roc_auc": 0.6732386044670511
+            }
+          }
+        },
+        {
+          "round": 1000,
+          "all": {
+            "n": 1506008,
+            "prevalence": 0.012830609133550419,
+            "mean_pred": 0.007366664512189131,
+            "log_loss": 0.06702760606115786,
+            "roc_auc": 0.6847383461337991
+          },
+          "by_month": {
+            "9": {
+              "n": 365245,
+              "prevalence": 0.005355309449821353,
+              "mean_pred": 0.008035252152421138,
+              "log_loss": 0.030345341328074642,
+              "roc_auc": 0.7812288294860946
+            },
+            "10": {
+              "n": 393123,
+              "prevalence": 0.005596212890113273,
+              "mean_pred": 0.005913011073146342,
+              "log_loss": 0.02999447122654106,
+              "roc_auc": 0.7877214124706725
+            },
+            "11": {
+              "n": 370313,
+              "prevalence": 0.025481147029674897,
+              "mean_pred": 0.00558109703539447,
+              "log_loss": 0.13190735785377516,
+              "roc_auc": 0.6741547469453457
+            },
+            "12": {
+              "n": 377327,
+              "prevalence": 0.015188417473438158,
+              "mean_pred": 0.009986368793341924,
+              "log_loss": 0.07744502999966363,
+              "roc_auc": 0.6722214547497279
+            }
+          }
+        }
+      ]
+    }
+  },
+  "leakage_alarm": {
+    "raised": false,
+    "stage": "1 - suspicion (gain share)",
+    "models": []
+  },
+  "timings_seconds": {
+    "load": 3.8,
+    "search": 0.0,
+    "b1_reference": 3.8,
+    "history": 30.3,
+    "matrices": 24.5,
+    "classification": 582.8,
+    "quantiles": 0.0
+  },
+  "peak_rss_gb": 6.475,
+  "data_fingerprint": {
+    "pattern": "files read by flight_delay.modeling.loading",
+    "content_hash": true,
+    "file_count": 120,
+    "total_bytes": 1033077258,
+    "digest": "5a964eddc4fef5a89f00c98b9016ac480e0103bf3d71fa06ca8d3070e501e705",
+    "files": [
+      {
+        "path": "flight_labels/year=2023/month=09/part-0.parquet",
+        "bytes": 10391752,
+        "sha256": "f2b02b3c4768df2b73817b3e9173dd134252b559255794eedcbed3bf6c2244df"
+      },
+      {
+        "path": "flight_labels/year=2023/month=10/part-0.parquet",
+        "bytes": 10687754,
+        "sha256": "7aa0881d2bbbf3583f586613be9c86815b33c73f7da922575bba4671aa158103"
+      },
+      {
+        "path": "flight_labels/year=2023/month=11/part-0.parquet",
+        "bytes": 10016288,
+        "sha256": "da71e52540e339a872c57ed87a677af3f8a25b493f569d694c64740b6c8a583d"
+      },
+      {
+        "path": "flight_labels/year=2023/month=12/part-0.parquet",
+        "bytes": 10315076,
+        "sha256": "805b4950fd5497e9833f84bfd1d392fc020def13af21c1d893cd57eded3323f9"
+      },
+      {
+        "path": "flight_labels/year=2024/month=01/part-0.parquet",
+        "bytes": 10212170,
+        "sha256": "a6bc9e3e6004a85ff0bc99714e85422c2bb6270d8e8510c0b9cd7b81b790363c"
+      },
+      {
+        "path": "flight_labels/year=2024/month=02/part-0.parquet",
+        "bytes": 9304308,
+        "sha256": "d06f5a8a13207e81db98472ff8b8239fe27d4f149b14ec013ea903896733a01f"
+      },
+      {
+        "path": "flight_labels/year=2024/month=03/part-0.parquet",
+        "bytes": 10767830,
+        "sha256": "0ddd85d4a5e62112876a6e76bc14bd7e1f0fc0bad77c5cb73962cae9a5157982"
+      },
+      {
+        "path": "flight_labels/year=2024/month=04/part-0.parquet",
+        "bytes": 10576879,
+        "sha256": "da3a7b42b25b4e1679425be1fb5a0ff135eae3fc9276db17342694432665284b"
+      },
+      {
+        "path": "flight_labels/year=2024/month=05/part-0.parquet",
+        "bytes": 11289744,
+        "sha256": "0cc9216051a85dbbc3fd0560c13e12bb2b322a8816bab8bacf06168c39365733"
+      },
+      {
+        "path": "flight_labels/year=2024/month=06/part-0.parquet",
+        "bytes": 11101326,
+        "sha256": "ef158fd517249653d37aa1b6c86a324bbcf6b2e20e5af1476443a6102672c02b"
+      },
+      {
+        "path": "flight_labels/year=2024/month=07/part-0.parquet",
+        "bytes": 11772353,
+        "sha256": "4345a44873fe281833e60f87e74db193c00b409ed9925411a5914dcb97830eee"
+      },
+      {
+        "path": "flight_labels/year=2024/month=08/part-0.parquet",
+        "bytes": 11277864,
+        "sha256": "1180fbb5be8fabd2a4516d32201f09e8f9d682fc10984ee1f4b49acee0129afa"
+      },
+      {
+        "path": "flight_labels/year=2024/month=09/part-0.parquet",
+        "bytes": 10351274,
+        "sha256": "3ee0342f9794e7c5b397d3d6ab2fcf5ab773c1608655427ee9f2f407e22c6e9d"
+      },
+      {
+        "path": "flight_labels/year=2024/month=10/part-0.parquet",
+        "bytes": 10838863,
+        "sha256": "661d63c190477cbe89f882c4f5a9a28734e1bb36460d9ff79de381c2fd2fd516"
+      },
+      {
+        "path": "flight_labels/year=2024/month=11/part-0.parquet",
+        "bytes": 10186517,
+        "sha256": "7a91df5beaa492f66e6ef5ed70cd93dc3a391e98e1962b7bcdfa7dcecb9c8451"
+      },
+      {
+        "path": "flight_labels/year=2024/month=12/part-0.parquet",
+        "bytes": 10669727,
+        "sha256": "696bad4ae9b6066c6e48a08f8d9092dfe33dadcfeb49846bf185130aeeb09a2e"
+      },
+      {
+        "path": "flight_labels/year=2025/month=01/part-0.parquet",
+        "bytes": 9778626,
+        "sha256": "709afb4a2be410088d054ed49a0e5f895ef905a2b587030018cfaf7f36c1869e"
+      },
+      {
+        "path": "flight_labels/year=2025/month=02/part-0.parquet",
+        "bytes": 9265403,
+        "sha256": "93cb2b1639e98fd8b921c2b05966dbd36d4178f0ef7575c29093f1c9ad97fb7e"
+      },
+      {
+        "path": "flight_labels/year=2025/month=03/part-0.parquet",
+        "bytes": 10806243,
+        "sha256": "04a4c06d2732b99787e3bc844d56e05fea8fb81e1ec877ea57f4e3da012bc742"
+      },
+      {
+        "path": "flight_labels/year=2025/month=04/part-0.parquet",
+        "bytes": 10608183,
+        "sha256": "14a25ccb16b02140ebe58741ab26f14048d820bcd19833b54c6b895ddd6d316e"
+      },
+      {
+        "path": "flight_labels/year=2025/month=05/part-0.parquet",
+        "bytes": 11033629,
+        "sha256": "1063211632ea27b9b48eec8acd41910e01b4d995800be8e88c03b0b34a324bf0"
+      },
+      {
+        "path": "flight_labels/year=2025/month=06/part-0.parquet",
+        "bytes": 11213795,
+        "sha256": "cae0123649926ac98460e79388fb81ac1242a4b7ca14401f870daeabe898843f"
+      },
+      {
+        "path": "flight_labels/year=2025/month=07/part-0.parquet",
+        "bytes": 11621565,
+        "sha256": "c7a4163f1a251a379248a967ef058d979cbbdab0f112d068259fba827ee66e9f"
+      },
+      {
+        "path": "flight_labels/year=2025/month=08/part-0.parquet",
+        "bytes": 10886650,
+        "sha256": "aa2aec68918d54af853f1ec901683c7e37645fe7947fd4d261656b0438e0ac41"
+      },
+      {
+        "path": "flight_labels/year=2025/month=09/part-0.parquet",
+        "bytes": 10038549,
+        "sha256": "7ec65728c019786c9f639eeeca8b6247ead19e9a1ca9600fc0b0eecbde5ee943"
+      },
+      {
+        "path": "flight_labels/year=2025/month=10/part-0.parquet",
+        "bytes": 10873844,
+        "sha256": "ca03c0ab0c3448bc2df46749956ff8e268e1def949b04a51f36339ec66b724a8"
+      },
+      {
+        "path": "flight_labels/year=2025/month=11/part-0.parquet",
+        "bytes": 10423339,
+        "sha256": "d3da2340f6a6d32bfe0e4d9f93c9a4d02d17875ad5a4ce0f34c2403f2d387652"
+      },
+      {
+        "path": "flight_labels/year=2025/month=12/part-0.parquet",
+        "bytes": 10827763,
+        "sha256": "cc91e66c630f8eff068a287ad143b4a0f87ef09eb45d360143ed867f0b6d8245"
+      },
+      {
+        "path": "flight_labels/year=2026/month=01/part-0.parquet",
+        "bytes": 9891515,
+        "sha256": "790909a8e1d3a8c077a7f9e2dd6b08eea48ee99478241776fcca0dac07b6a4fa"
+      },
+      {
+        "path": "flight_labels/year=2026/month=02/part-0.parquet",
+        "bytes": 9347603,
+        "sha256": "a1a0694a9fea61053680384ea938d6fcc1150bc15f98432e7bc74f87d29a5048"
+      },
+      {
+        "path": "flights/year=2023/month=09/part-0.parquet",
+        "bytes": 12864070,
+        "sha256": "729b370cbad350d59baae6f4113974400ca6d65f6febad31b3a775d2e8222633"
+      },
+      {
+        "path": "flights/year=2023/month=10/part-0.parquet",
+        "bytes": 13468004,
+        "sha256": "ade31e2f2a7d397cb0c558ac3cd01136b202ca8aeefdf680270841264c029e72"
+      },
+      {
+        "path": "flights/year=2023/month=11/part-0.parquet",
+        "bytes": 12719172,
+        "sha256": "ea021c5c3bd6361501e30846d54f71b101693f17816745f0ad051ad7f477966f"
+      },
+      {
+        "path": "flights/year=2023/month=12/part-0.parquet",
+        "bytes": 12838713,
+        "sha256": "0e0c3134cb6b23bf5ac87cf9e4b49b0ca8876fad275ae7f4c2310b852d132b90"
+      },
+      {
+        "path": "flights/year=2024/month=01/part-0.parquet",
+        "bytes": 12257604,
+        "sha256": "6eef8e98ca6b8177f92a803877c036f16d8dc5429e8756bbb7f6aa2a8a6cd88b"
+      },
+      {
+        "path": "flights/year=2024/month=02/part-0.parquet",
+        "bytes": 11699683,
+        "sha256": "82a7013caabe51d54bb4cf0228696378d6dcb7468d0836204014a3e91637de4e"
+      },
+      {
+        "path": "flights/year=2024/month=03/part-0.parquet",
+        "bytes": 13272931,
+        "sha256": "7285b501a2db8cb6cfe3f1e1e752cda7e0bdc8d5454fcf9942a5785efe750469"
+      },
+      {
+        "path": "flights/year=2024/month=04/part-0.parquet",
+        "bytes": 13088166,
+        "sha256": "f47e8d9c9b403203a0243b6cd650dd58611bbc7e88fbdb013483fa207a5f37c2"
+      },
+      {
+        "path": "flights/year=2024/month=05/part-0.parquet",
+        "bytes": 13684482,
+        "sha256": "a8cfd99288f7b3f7d3d8fad03c4a92a4c722fc20d488d71fe682896841b7f872"
+      },
+      {
+        "path": "flights/year=2024/month=06/part-0.parquet",
+        "bytes": 13552091,
+        "sha256": "b83e8034153f3e9fb7f36a84e61fdad03f54c2794409f528c534c3acad5cd707"
+      },
+      {
+        "path": "flights/year=2024/month=07/part-0.parquet",
+        "bytes": 14063691,
+        "sha256": "74e362e42cc7b7ca6f74415f050f32bd34bdb3a0daa7cfc4bd394f9b2daad39c"
+      },
+      {
+        "path": "flights/year=2024/month=08/part-0.parquet",
+        "bytes": 13784209,
+        "sha256": "82dfb3a20b4f7a051759a0cc977f90a93e1d25a55ac689873d3b4bf6c49c81c3"
+      },
+      {
+        "path": "flights/year=2024/month=09/part-0.parquet",
+        "bytes": 13010990,
+        "sha256": "1cfe6b506dce3225292374cba097296330676e3a255fe84eea961a9e5db479e7"
+      },
+      {
+        "path": "flights/year=2024/month=10/part-0.parquet",
+        "bytes": 13652679,
+        "sha256": "1296557c3d9157755b9d645797bec06f9b143940adfafa0a918a590b1958a56e"
+      },
+      {
+        "path": "flights/year=2024/month=11/part-0.parquet",
+        "bytes": 12836291,
+        "sha256": "4d660097933aa57fc1175174491eda4436f2749820488cec5378aec00a0cb34f"
+      },
+      {
+        "path": "flights/year=2024/month=12/part-0.parquet",
+        "bytes": 13145391,
+        "sha256": "95dd14148e865d9a1dec8c9b641f411377ebc5aab4220d87f214591bd67cf0f4"
+      },
+      {
+        "path": "flights/year=2025/month=01/part-0.parquet",
+        "bytes": 12058370,
+        "sha256": "3a7923551a6de4c1e5b752396b98262bcc8473e7c4df0d553ed878e480a6cdf9"
+      },
+      {
+        "path": "flights/year=2025/month=02/part-0.parquet",
+        "bytes": 11335302,
+        "sha256": "747b76a097bcf58316a5e19b3c601c5215fa6a623e18fa0eac247fa71aa4f953"
+      },
+      {
+        "path": "flights/year=2025/month=03/part-0.parquet",
+        "bytes": 13376289,
+        "sha256": "a2f6d3d7a1fa21ba8bc4357de5f93f996dd3583282a6615e999c403b36876b54"
+      },
+      {
+        "path": "flights/year=2025/month=04/part-0.parquet",
+        "bytes": 12990301,
+        "sha256": "f6f71389908a6a0281759777f55ba4cfe27c47f17bd710c7c15491a550ffcc8d"
+      },
+      {
+        "path": "flights/year=2025/month=05/part-0.parquet",
+        "bytes": 13415289,
+        "sha256": "a6ad184baa2c1140303202fc742c1289d1629d6a1fe044181d50d8e7a9dc7379"
+      },
+      {
+        "path": "flights/year=2025/month=06/part-0.parquet",
+        "bytes": 13466062,
+        "sha256": "34307a3120482bd3108b4d0eee1b1b5f0e9622d7354310d159a09f3e0d0c2ffa"
+      },
+      {
+        "path": "flights/year=2025/month=07/part-0.parquet",
+        "bytes": 13873084,
+        "sha256": "fe7d6698214955e81e03a2e10ca9faf1cc25ae792bf5524c0cb221245e01eaf8"
+      },
+      {
+        "path": "flights/year=2025/month=08/part-0.parquet",
+        "bytes": 13331599,
+        "sha256": "5313caada875afeb6bc3375d362f1b2b337850db4f38e380e381c3f385fb7b3d"
+      },
+      {
+        "path": "flights/year=2025/month=09/part-0.parquet",
+        "bytes": 12535818,
+        "sha256": "17fa453fb601981cae4ed9ed754d4f78d852a0d73306ac54159ee3d38450487e"
+      },
+      {
+        "path": "flights/year=2025/month=10/part-0.parquet",
+        "bytes": 13419529,
+        "sha256": "f3ed166352efda428704ad13777ccc657b5e840eafe00b18a1a318cd4bb7525c"
+      },
+      {
+        "path": "flights/year=2025/month=11/part-0.parquet",
+        "bytes": 12742102,
+        "sha256": "30ecc48670c66d297c46964763abb33a3d3363c945fc257de57b774fd4f7f978"
+      },
+      {
+        "path": "flights/year=2025/month=12/part-0.parquet",
+        "bytes": 13014295,
+        "sha256": "09f6ae19146bc5c639b00fb884c7e91146c8d119d5998f03423f459d097050d0"
+      },
+      {
+        "path": "flights/year=2026/month=01/part-0.parquet",
+        "bytes": 12175996,
+        "sha256": "9d429025a3d1e243915ed37319675a3fa7a8f69aa1bd03c796c344f81e6c41e6"
+      },
+      {
+        "path": "flights/year=2026/month=02/part-0.parquet",
+        "bytes": 11571157,
+        "sha256": "4f3b6076d234f7972451d69992dbda0ec52aa28b399693b7b76b1dc50819339c"
+      },
+      {
+        "path": "scheduled_density/year=2023/month=09/part-0.parquet",
+        "bytes": 147871,
+        "sha256": "e92f980cbe8bbf60590898be974fce90e773793830d41ed1aa03b6697d142952"
+      },
+      {
+        "path": "scheduled_density/year=2023/month=10/part-0.parquet",
+        "bytes": 152077,
+        "sha256": "00578e32640ad96d568850ff500e6bd4a6099fad13b6ada6bdbd84852e7ba323"
+      },
+      {
+        "path": "scheduled_density/year=2023/month=11/part-0.parquet",
+        "bytes": 153375,
+        "sha256": "1eca9ad07f686f58a9a4add419b27cb198d1224a1891cb30fceb1d41383d83f3"
+      },
+      {
+        "path": "scheduled_density/year=2023/month=12/part-0.parquet",
+        "bytes": 159647,
+        "sha256": "a4c7315b7c09445e27eb59d1a6fd63384592a8b5ec069060c00410c8be56ab2b"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=01/part-0.parquet",
+        "bytes": 152559,
+        "sha256": "a5fcad18691dfa3fb710d8d5e28c5c7a6d8558d2aadabca9c0a27bd812481a46"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=02/part-0.parquet",
+        "bytes": 146354,
+        "sha256": "ac7345a9e26da8bd70b271447eb2dca010f5e8fec0c6ea7c2b44b3f839735000"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=03/part-0.parquet",
+        "bytes": 152846,
+        "sha256": "a7a56f7d4c7630957d1b90a8375b6f63c31540e6dd39d8c38cc04aae5f684310"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=04/part-0.parquet",
+        "bytes": 148923,
+        "sha256": "7551e144122f0d90e006c86e156467d26b1f19ba5b970e380e7a5a5dd1491b36"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=05/part-0.parquet",
+        "bytes": 157576,
+        "sha256": "0d4b0445a7978ab08d8594ced518eaa7e70da2c9f1ef1a7ae740b4c989e735fc"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=06/part-0.parquet",
+        "bytes": 156431,
+        "sha256": "9f53b7ccfb6d5fbf1c21d854ae1168fca93317f3687aa2ea26bd37745be6c97c"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=07/part-0.parquet",
+        "bytes": 154250,
+        "sha256": "e7cec30c255cbdf261565a852a2ac1c7813a19551519118a8ffad399eb1ce9bb"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=08/part-0.parquet",
+        "bytes": 159986,
+        "sha256": "8b1f5696f7647d972be036f4dcc0e8285b8d7fb40cee018a024bb89385d91f08"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=09/part-0.parquet",
+        "bytes": 146533,
+        "sha256": "b907c028422c744f773bd0703228b7e90c77735b3d5a42f81a76421bc681ac59"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=10/part-0.parquet",
+        "bytes": 151878,
+        "sha256": "7796b3c24575965e836cf7522bcd02924d416b866f9d331220e9135a046c5f89"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=11/part-0.parquet",
+        "bytes": 155657,
+        "sha256": "92bd2ddb40a43a04833b91f6f03f72ae38abbf5fa29f1716b6de1dab48762c9b"
+      },
+      {
+        "path": "scheduled_density/year=2024/month=12/part-0.parquet",
+        "bytes": 160556,
+        "sha256": "cc10b90c474aee2150c5e4e631e727ad29fd7f52bfc6c178e948d0ea19df7fb7"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=01/part-0.parquet",
+        "bytes": 147231,
+        "sha256": "eb5b12760f164a3f4bdcde0dc9cdb8a069692a48c3524567348a613ff938b5aa"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=02/part-0.parquet",
+        "bytes": 138947,
+        "sha256": "d5a7527b734ab52ce7248d295978776a4fef8a630c6c1bad523fb199205af83e"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=03/part-0.parquet",
+        "bytes": 152828,
+        "sha256": "0b8615773e07e59b0d7aa38bacdd703fc354087efe148ca0a6859ce45f575cc4"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=04/part-0.parquet",
+        "bytes": 148761,
+        "sha256": "06891fc41d7971e528511cdd7a014a6a818f2929e8b79da273d5238ab1663798"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=05/part-0.parquet",
+        "bytes": 155797,
+        "sha256": "155e4049e0f0675d1deb414b6d763704b9f8b7a5e51263b820b78c5b1fd58e74"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=06/part-0.parquet",
+        "bytes": 154015,
+        "sha256": "efe61aecb834615d228686757f6aa68261bd92dc8365ca07b18062a4bb9cfd25"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=07/part-0.parquet",
+        "bytes": 144358,
+        "sha256": "f506e3183acb765e99a6200229addf9125aebb6eb6e09912ab3efac3d775d4e2"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=08/part-0.parquet",
+        "bytes": 165126,
+        "sha256": "12fbd7130621c46f08b169178bd25bdb4515d37c43101a286ecce740d948e047"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=09/part-0.parquet",
+        "bytes": 148031,
+        "sha256": "c4e4688d130106b44aabea652573bfc3a5cc1b462c24718ca02d010041e2ef91"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=10/part-0.parquet",
+        "bytes": 157935,
+        "sha256": "91ce558d6a5682f1a809f17a8e79ef01f03467736e6167fdafcc6f8544bd1bfe"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=11/part-0.parquet",
+        "bytes": 156195,
+        "sha256": "148e6876523fd4628886181193b3409bec028a85f88f712ec8305dcc777eb9a4"
+      },
+      {
+        "path": "scheduled_density/year=2025/month=12/part-0.parquet",
+        "bytes": 161321,
+        "sha256": "3a43a75d74b83e669c030b205f8a89b1af3846340e8415b28a6d16bccc871a54"
+      },
+      {
+        "path": "scheduled_density/year=2026/month=01/part-0.parquet",
+        "bytes": 150184,
+        "sha256": "672c6aaad842eff2f890fe08b060c1acfb8530caa2c053f80c51b1221842b140"
+      },
+      {
+        "path": "scheduled_density/year=2026/month=02/part-0.parquet",
+        "bytes": 142291,
+        "sha256": "da5db4909115822d150b207d446c47978210efb12dd118d9e6d6c78e7c30caf8"
+      },
+      {
+        "path": "weather_t120m/year=2023/month=09/part-0.parquet",
+        "bytes": 10673661,
+        "sha256": "75f9eb2370ad58bbf263429939a14ddcafdbac95adc7e04c414049beaef8f35a"
+      },
+      {
+        "path": "weather_t120m/year=2023/month=10/part-0.parquet",
+        "bytes": 11055681,
+        "sha256": "c3da63a85b90f2703d5d84904961e9ac36e13109f4f3b9f8422805a8e9e72957"
+      },
+      {
+        "path": "weather_t120m/year=2023/month=11/part-0.parquet",
+        "bytes": 10395551,
+        "sha256": "3d199dcf6ff11cc7ad0805d6ac82aa251889d34e11a271d3fbdf9371fa62e349"
+      },
+      {
+        "path": "weather_t120m/year=2023/month=12/part-0.parquet",
+        "bytes": 10747445,
+        "sha256": "80cc2987c0851d71dfb82758724817cad26717e3da4e122af8c2234fd74ed453"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=01/part-0.parquet",
+        "bytes": 10303864,
+        "sha256": "dd3acf749c5d43f2a97bc53e75e43e872746e8f5be130d4d6770b5c046f2bf45"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=02/part-0.parquet",
+        "bytes": 9741931,
+        "sha256": "d429a809428bcc2a984959a4c42d503f5d89c8492ffd30ac755567520266fdd0"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=03/part-0.parquet",
+        "bytes": 11208456,
+        "sha256": "4920db7f4e027ec8e6a0d01e9ba843b9472ec2ff1fb9c6038ac89c04292be90e"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=04/part-0.parquet",
+        "bytes": 11003392,
+        "sha256": "3bca9e3dc76ea669fba935723bf393bda2d5be42ae0117137159b83594fd898c"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=05/part-0.parquet",
+        "bytes": 11598888,
+        "sha256": "fa535501946d8a6143c99cd166e3cc6dcb0acfe1c862a4fda78c5e5d403333e6"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=06/part-0.parquet",
+        "bytes": 11242634,
+        "sha256": "671a3b037426c40a0fa79aacab4b44835084cc14892da367ca7d0d43c212e1dd"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=07/part-0.parquet",
+        "bytes": 11716599,
+        "sha256": "435bef68838c4d77f22d5754700dd6337db170aaa8be496cf0b7c2d0287164ae"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=08/part-0.parquet",
+        "bytes": 11286518,
+        "sha256": "0ddcd1ad915b5d05b1cff4758fabdb63edb96172fb2d0ded61d24d90d7fb59ba"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=09/part-0.parquet",
+        "bytes": 10705075,
+        "sha256": "b90bd1588c88fe7b39e53b33f8035c9e0d9409a7631b4c0e8b3038feb7c8f036"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=10/part-0.parquet",
+        "bytes": 10922771,
+        "sha256": "0c383895168386055fd51f5909219ba9e615e22c21425f939ebfbbc7a8499181"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=11/part-0.parquet",
+        "bytes": 10554533,
+        "sha256": "badb74e5dabc9b5205cd9c33719800a5d27829bdd85fac5b6c96bbc21184d4f4"
+      },
+      {
+        "path": "weather_t120m/year=2024/month=12/part-0.parquet",
+        "bytes": 10855911,
+        "sha256": "9cc375e5a6df1d8624e08ee3e2993aac255838182df29bdb58d949dfe0fb8ad9"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=01/part-0.parquet",
+        "bytes": 10014301,
+        "sha256": "77403e3d7d52c99f7a6ceefa0511b7557eef2fbce69594b7653722bff4212aa3"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=02/part-0.parquet",
+        "bytes": 9540889,
+        "sha256": "2e99e2f6c54f539b00ead06fb98843799f2fff693a913fc09207a5b1f1518594"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=03/part-0.parquet",
+        "bytes": 11120872,
+        "sha256": "e6681cac80d92c04dc074f9ef8b05e16f44377a0d8fc037de7ac32a35629cecc"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=04/part-0.parquet",
+        "bytes": 10814173,
+        "sha256": "9ae8a9839d9b9bef1fee6696f2ee240d631b3ee36192b2689bb38423c13243ef"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=05/part-0.parquet",
+        "bytes": 11389942,
+        "sha256": "0d7352d14d7849c414d0d470e69d1fee4cc0f98c79f9ffe68e97c7547160b04a"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=06/part-0.parquet",
+        "bytes": 11182888,
+        "sha256": "37c11b13cc57e4521ec77c8648e685689b668efb36e3e1c077718370ae60b3d3"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=07/part-0.parquet",
+        "bytes": 11591703,
+        "sha256": "e0b4d7bc984e891c15e069c3b09972bc1c8cc950fd0883052baef9c8cf60e09d"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=08/part-0.parquet",
+        "bytes": 11036648,
+        "sha256": "9dd9925d1c2959c5a0c01f4dc6e7fe56a77c5d11bfb977aaab63fc491978756d"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=09/part-0.parquet",
+        "bytes": 10234779,
+        "sha256": "a05ce9a0d8462743bcc8cfa0c57d750c82eaaa64fb412ea1b29729045c727f84"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=10/part-0.parquet",
+        "bytes": 10842685,
+        "sha256": "ec5fc230188ae82e81b87e70831f1a6ab2fecec30cc630a5e4c2bf1d8b2b9e2e"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=11/part-0.parquet",
+        "bytes": 10491263,
+        "sha256": "50921d2c5698c69fd03e404188424d98b17ea0b1d456e701959e6539b17f8a72"
+      },
+      {
+        "path": "weather_t120m/year=2025/month=12/part-0.parquet",
+        "bytes": 10812194,
+        "sha256": "d938ff06b473ce533b3cb88d96a17437829a310b69803a102874b38dd133a2ad"
+      },
+      {
+        "path": "weather_t120m/year=2026/month=01/part-0.parquet",
+        "bytes": 10167218,
+        "sha256": "2cd404433a9e05a6d484deb3f2bd1509d05d784ea95d0dcf0eadbbcd40751b0a"
+      },
+      {
+        "path": "weather_t120m/year=2026/month=02/part-0.parquet",
+        "bytes": 9625462,
+        "sha256": "40c452b8b74febebb32bb28e5a79907b3856ac8ec696a0d82060912815cba2f8"
+      }
+    ]
+  }
+}

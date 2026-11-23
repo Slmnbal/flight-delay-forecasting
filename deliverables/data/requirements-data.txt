@@ -1,0 +1,9 @@
+# Veri paketi bağımlılıkları (Python 3.12). Sürümler sabitlenmedi: ilk kurulumdan sonra `pip freeze` ile kaydet.
+pandas
+numpy
+pyarrow
+pydantic>=2
+pytest
+tzdata            # zoneinfo için IANA veritabanı (macOS/Linux'ta sistemde var; Windows'ta gerekli)
+# İsteğe bağlı (OurAirports'ta saat dilimi sütunu yoksa koordinattan türetmek için):
+timezonefinder

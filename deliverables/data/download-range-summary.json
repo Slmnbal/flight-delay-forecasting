@@ -1,0 +1,442 @@
+{
+  "months": [
+    {
+      "year": 2023,
+      "month": 9,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 569338,
+      "rows_layer": 372829,
+      "deleted_raw": [
+        "ontime_2023_09.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2023_9.csv"
+      ]
+    },
+    {
+      "year": 2023,
+      "month": 10,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 598968,
+      "rows_layer": 391716,
+      "deleted_raw": [
+        "ontime_2023_10.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2023_10.csv"
+      ]
+    },
+    {
+      "year": 2023,
+      "month": 11,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 563777,
+      "rows_layer": 369394,
+      "deleted_raw": [
+        "ontime_2023_11.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2023_11.csv"
+      ]
+    },
+    {
+      "year": 2023,
+      "month": 12,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 570394,
+      "rows_layer": 371837,
+      "deleted_raw": [
+        "ontime_2023_12.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2023_12.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 1,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 547271,
+      "rows_layer": 356179,
+      "deleted_raw": [
+        "ontime_2024_01.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_1.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 2,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 519221,
+      "rows_layer": 338127,
+      "deleted_raw": [
+        "ontime_2024_02.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_2.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 3,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 591767,
+      "rows_layer": 384343,
+      "deleted_raw": [
+        "ontime_2024_03.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_3.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 4,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 582185,
+      "rows_layer": 379691,
+      "deleted_raw": [
+        "ontime_2024_04.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_4.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 5,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 609743,
+      "rows_layer": 398225,
+      "deleted_raw": [
+        "ontime_2024_05.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_5.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 6,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 611132,
+      "rows_layer": 393787,
+      "deleted_raw": [
+        "ontime_2024_06.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_6.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 7,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 634613,
+      "rows_layer": 408551,
+      "deleted_raw": [
+        "ontime_2024_07.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_7.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 8,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 619025,
+      "rows_layer": 400861,
+      "deleted_raw": [
+        "ontime_2024_08.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_8.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 9,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 582622,
+      "rows_layer": 379066,
+      "deleted_raw": [
+        "ontime_2024_09.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_9.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 10,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 615497,
+      "rows_layer": 399435,
+      "deleted_raw": [
+        "ontime_2024_10.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_10.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 11,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 575404,
+      "rows_layer": 373812,
+      "deleted_raw": [
+        "ontime_2024_11.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_11.csv"
+      ]
+    },
+    {
+      "year": 2024,
+      "month": 12,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 590581,
+      "rows_layer": 382450,
+      "deleted_raw": [
+        "ontime_2024_12.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2024_12.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 1,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 539747,
+      "rows_layer": 352215,
+      "deleted_raw": [
+        "ontime_2025_01.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_1.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 2,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 504884,
+      "rows_layer": 328288,
+      "deleted_raw": [
+        "ontime_2025_02.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_2.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 3,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 600872,
+      "rows_layer": 389075,
+      "deleted_raw": [
+        "ontime_2025_03.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_3.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 4,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 583950,
+      "rows_layer": 378937,
+      "deleted_raw": [
+        "ontime_2025_04.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_4.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 5,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 605648,
+      "rows_layer": 392150,
+      "deleted_raw": [
+        "ontime_2025_05.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_5.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 6,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 611575,
+      "rows_layer": 392659,
+      "deleted_raw": [
+        "ontime_2025_06.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_6.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 7,
+      "status": "skipped_processed",
+      "deleted_raw": [
+        "ontime_2025_07.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_7.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 8,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 602378,
+      "rows_layer": 388162,
+      "deleted_raw": [
+        "ontime_2025_08.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_8.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 9,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 562439,
+      "rows_layer": 365245,
+      "deleted_raw": [
+        "ontime_2025_09.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_9.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 10,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 605844,
+      "rows_layer": 393123,
+      "deleted_raw": [
+        "ontime_2025_10.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_10.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 11,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 570550,
+      "rows_layer": 370313,
+      "deleted_raw": [
+        "ontime_2025_11.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_11.csv"
+      ]
+    },
+    {
+      "year": 2025,
+      "month": 12,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 582304,
+      "rows_layer": 377327,
+      "deleted_raw": [
+        "ontime_2025_12.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2025_12.csv"
+      ]
+    },
+    {
+      "year": 2026,
+      "month": 1,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 544003,
+      "rows_layer": 354304,
+      "deleted_raw": [
+        "ontime_2026_01.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2026_1.csv"
+      ]
+    },
+    {
+      "year": 2026,
+      "month": 2,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 515037,
+      "rows_layer": 334815,
+      "deleted_raw": [
+        "ontime_2026_02.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2026_2.csv"
+      ]
+    },
+    {
+      "year": 2026,
+      "month": 3,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 612102,
+      "rows_layer": 396712,
+      "deleted_raw": [
+        "ontime_2026_03.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2026_3.csv"
+      ]
+    },
+    {
+      "year": 2026,
+      "month": 4,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 597919,
+      "rows_layer": 388497,
+      "deleted_raw": [
+        "ontime_2026_04.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2026_4.csv"
+      ]
+    },
+    {
+      "year": 2026,
+      "month": 5,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 611735,
+      "rows_layer": 395189,
+      "deleted_raw": [
+        "ontime_2026_05.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2026_5.csv"
+      ]
+    },
+    {
+      "year": 2026,
+      "month": 6,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 607577,
+      "rows_layer": 390003,
+      "deleted_raw": [
+        "ontime_2026_06.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2026_6.csv"
+      ]
+    },
+    {
+      "year": 2026,
+      "month": 7,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 631970,
+      "rows_layer": 405825,
+      "deleted_raw": [
+        "ontime_2026_07.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2026_7.csv"
+      ]
+    },
+    {
+      "year": 2026,
+      "month": 8,
+      "status": "processed",
+      "downloaded": true,
+      "rows_raw": 608389,
+      "rows_layer": 392776,
+      "deleted_raw": [
+        "ontime_2026_08.zip",
+        "On_Time_Reporting_Carrier_On_Time_Performance_(1987_present)_2026_8.csv"
+      ]
+    }
+  ],
+  "has_error": false,
+  "parameters": {
+    "delete_raw": true,
+    "process": true,
+    "wait_sec": 5.0,
+    "force": false,
+    "month_count": 36
+  },
+  "unprocessed_months": []
+}

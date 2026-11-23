@@ -1,0 +1,17 @@
+# Ham veri ve yerel ortam git'e girmez (Data Engineer önerisi, CALISTIRMA.md §0)
+.venv/
+deliverables/data/raw/
+*.parquet
+__pycache__/
+.pytest_cache/
+mlruns/
+deliverables/data/processed/
+
+# Kişisel ve süreç dosyaları ürün deposuna girmez
+kayit/
+ciktilar/
+hedef-beceriler.md
+project-brief.md
+deliverables/data/layer/
+*.egg-info/
+deliverables/models/

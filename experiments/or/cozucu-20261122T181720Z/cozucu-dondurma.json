@@ -1,0 +1,122 @@
+{
+  "etiket": "keşifsel (post hoc), son test sonucu değildir",
+  "exploratory_post_hoc": true,
+  "schema": "flight_delay/or-solver-freeze/v1",
+  "created_utc": "2026-11-22T18:17:20.022695+00:00",
+  "written_before_final_test_read": true,
+  "manifest": {
+    "path": "experiments/son-test-dondurma.json",
+    "sha256": "7bd24d2515d775f7bd558431eb2882e44c01aed5508aa3828d35369029e03721"
+  },
+  "lock": {
+    "path": "experiments/son-test-kilidi.json",
+    "exists": true,
+    "manifest_sha256": "7bd24d2515d775f7bd558431eb2882e44c01aed5508aa3828d35369029e03721",
+    "sha256": "fee816c25ddf24c656e60d575c7840e0225ddadd19edc45f4c9bf67d564c1788"
+  },
+  "roles": [
+    "arr_delay/plan",
+    "cancelled/plan"
+  ],
+  "git": {
+    "commit": "3fac4b9a73f2131d4fd8145f5498fdd62bb86e26",
+    "dirty": false
+  },
+  "config": {
+    "levels": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "budgets_per_flight": [
+      1.0,
+      2.0,
+      3.0,
+      5.0,
+      7.5,
+      10.0,
+      15.0
+    ],
+    "replicates": 1000,
+    "seed": 42,
+    "ci_level": 0.95,
+    "solver": "highs",
+    "lp": true,
+    "lp_formulation": "segments",
+    "lp_max_segment_min": 2.0,
+    "lp_time_limit_s": 600.0,
+    "milp": true,
+    "milp_time_limit_s": 120.0,
+    "milp_rel_gap": 1e-06,
+    "milp_min_n": 0,
+    "mixture_cells": true,
+    "mixture_candidate_levels": [
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "selection_tie_arrdel15": 0.0001,
+    "plots": true,
+    "development_only": false,
+    "hash_files": true
+  },
+  "aggregator": "mean",
+  "aggregator_equals_first_run": true,
+  "cell_distribution": "mixture",
+  "cell_distribution_selection": {
+    "rule": "development only; (1) lower mean realised ArrDel15 over budgets if |difference| > 0.0001; (2) lower mean |realised - expected|; (3) vincentize",
+    "candidates": {
+      "vincentize": {
+        "realized_arr_del15_mean": 0.19432071760495923,
+        "abs_gap_mean": 0.01381856975481959,
+        "budgets": 7.0
+      },
+      "mixture": {
+        "realized_arr_del15_mean": 0.19264161240037905,
+        "abs_gap_mean": 0.0073110281391954935,
+        "budgets": 7.0
+      }
+    },
+    "chosen": "mixture",
+    "reason": "realised ArrDel15"
+  },
+  "first_run": {
+    "folder": "experiments/or/tampon-20261122T173803Z",
+    "politika-dondurma.json": {
+      "path": "experiments/or/tampon-20261122T173803Z/politika-dondurma.json",
+      "sha256": "f2585b420b67fbe1b4b4fe703313db69dc17279fe00cf178a82c3861a33f7b6d"
+    },
+    "tampon-sonuclari.json": {
+      "path": "experiments/or/tampon-20261122T173803Z/tampon-sonuclari.json",
+      "sha256": "ed1cebc85eeb8521e946afbfceb3cc562fadaae0cd9c33abe54199c457038482"
+    }
+  },
+  "development_eval_months": [
+    "2025-11",
+    "2025-12",
+    "2026-01",
+    "2026-02"
+  ]
+}

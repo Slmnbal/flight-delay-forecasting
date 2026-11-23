@@ -1,0 +1,44 @@
+# Project settings (English-key successor of deliverables/config/proje.yaml).
+# Reader: flight_delay.mlops.settings (Pydantic; unknown fields are REJECTED).
+# All paths are relative to the PROJECT ROOT (projects/havayolu-ds/) and cannot leave it.
+# This file ships inside the package (package data) so the default settings are always found next to the code.
+version: 1
+seed: 42                        # all randomness comes from here; change it only with a recorded reason
+
+paths:
+  raw_data: deliverables/data/raw                       # not in git
+  processed_data: deliverables/data/layer               # partitioned Parquet layer (the old file said deliverables/data/processed, which no code writes; see code review)
+  target_airports_file: deliverables/data/target-airports.txt   # 30 IATA codes (M3 scope decision)
+  experiment_outputs: experiments                       # modelling plan, reports, small tables
+  result_json: web/data                                 # small JSON files that GitHub Pages will read
+
+mlflow:
+  # Folder (inside the project) holding the local SQLite DB (mlflow.db) and artifacts/. NO server; not in git.
+  # The old file store is rejected by recent MLflow. MLFLOW_TRACKING_URI, if set, overrides the default URI.
+  tracking_dir: mlruns
+  experiment_prefix: havayolu-ds
+  # Evaluation sets whose metrics are required; "{set}" in a metric name expands to each of them.
+  evaluation_sets: [val_a, val_b]
+  # topic -> metrics every run of that topic must record (checked when the run ends).
+  # Unknown topic = error (declare a topic with [] to require nothing). An empty mapping enforces nothing.
+  # Metrics that can be non-finite (calibration_slope, calibration_intercept) are deliberately NOT required.
+  required_metrics:
+    arrdel15: &classification
+      - "{set}_roc_auc"
+      - "{set}_pr_auc"
+      - "{set}_brier"
+      - "{set}_brier_skill_score"
+      - "{set}_log_loss"
+      - "{set}_ece"
+      - "{set}_calibration_in_the_large"
+    cancelled: *classification
+    arr-delay-quantile:
+      - "{set}_pinball_q050"
+      - "{set}_pinball_q080"
+      - "{set}_pinball_q095"
+      - "{set}_mae_q050"
+      - "{set}_coverage_q080"
+      - "{set}_coverage_q095"
+      - "{set}_interval80_coverage"
+      - "{set}_interval80_mean_width_min"
+      - "{set}_crossing_rate"

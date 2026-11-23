@@ -1,0 +1,111 @@
+{
+  "schema": "flight_delay/or-buffer-freeze/v1",
+  "created_utc": "2026-11-22T17:38:03.214001+00:00",
+  "written_before_final_test_read": true,
+  "manifest": {
+    "path": "experiments/son-test-dondurma.json",
+    "sha256": "7bd24d2515d775f7bd558431eb2882e44c01aed5508aa3828d35369029e03721"
+  },
+  "lock": {
+    "path": "experiments/son-test-kilidi.json",
+    "exists": true,
+    "manifest_sha256": "7bd24d2515d775f7bd558431eb2882e44c01aed5508aa3828d35369029e03721",
+    "sha256": "fee816c25ddf24c656e60d575c7840e0225ddadd19edc45f4c9bf67d564c1788"
+  },
+  "roles": [
+    "arr_delay/plan",
+    "cancelled/plan"
+  ],
+  "git": {
+    "commit": "edb79b6cca49dc572dbe6524e79f194d713ff54d",
+    "dirty": false
+  },
+  "config": {
+    "levels": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "budgets_per_flight": [
+      1.0,
+      2.0,
+      3.0,
+      5.0,
+      7.5,
+      10.0,
+      15.0
+    ],
+    "publish_level": 0.8,
+    "publish_policy": "plan",
+    "replicates": 1000,
+    "seed": 42,
+    "ci_level": 0.95,
+    "with_t2": false,
+    "development_only": false,
+    "flight_file": true,
+    "hash_files": true,
+    "min_n": 50,
+    "carrier_share_max": 0.9
+  },
+  "aggregator": "mean",
+  "selection": {
+    "rule": "lowest mean realised plan-policy cost over the level grid on development rows only; ties -> mean",
+    "candidates": {
+      "mean": {
+        "cost_mean_by_level": {
+          "t050": 8.621196008837886,
+          "t055": 9.475924905796507,
+          "t060": 10.293944640226004,
+          "t065": 11.009554562848407,
+          "t070": 11.55362613470619,
+          "t075": 11.873912532683173,
+          "t080": 11.930973219527942,
+          "t085": 11.479380038768774,
+          "t090": 10.423413091472458,
+          "t095": 8.037556634315768
+        },
+        "cost_mean_over_levels": 10.46994817691831
+      },
+      "median": {
+        "cost_mean_by_level": {
+          "t050": 8.624909084067847,
+          "t055": 9.47904142320707,
+          "t060": 10.295315982184782,
+          "t065": 11.011240096684933,
+          "t070": 11.557786161875645,
+          "t075": 11.883483961260346,
+          "t080": 11.94926449643999,
+          "t085": 11.494550856484873,
+          "t090": 10.447118993883397,
+          "t095": 8.058308990853671
+        },
+        "cost_mean_over_levels": 10.480102004694256
+      }
+    },
+    "chosen": "mean",
+    "rows_completed": 1393174
+  },
+  "cell_definition": [
+    "Origin",
+    "Dest",
+    "hour_block",
+    "season"
+  ],
+  "conformal": {
+    "scheme": "rolling",
+    "window": "[m - 57 d, m - 2 d] (splits.conformal_calibration_window)"
+  },
+  "development_eval_months": [
+    "2025-11",
+    "2025-12",
+    "2026-01",
+    "2026-02"
+  ]
+}

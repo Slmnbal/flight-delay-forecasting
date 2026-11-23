@@ -1,0 +1,132 @@
+{
+  "with_calendar_run": "run-20261121T073825Z",
+  "without_calendar_run": "run-20261121T080035Z",
+  "contract": "plan",
+  "set_used": "val_a",
+  "val_b_read": false,
+  "problems": [],
+  "valid": true,
+  "families": {
+    "arr_del15": {
+      "rule": "Val-A Brier lower in total AND in >= 3 of 4 months",
+      "decisive": [
+        {
+          "metric": "brier",
+          "complete": true,
+          "total_with_calendar": 0.16722255714349432,
+          "total_without_calendar": 0.16459416670198873,
+          "total_improves": true,
+          "months_with_calendar": {
+            "9": 0.13709145560652478,
+            "10": 0.16529575399175067,
+            "11": 0.16605826006460944,
+            "12": 0.19985234914086442
+          },
+          "months_without_calendar": {
+            "9": 0.13933767740409567,
+            "10": 0.15987729872282744,
+            "11": 0.1614446079025565,
+            "12": 0.19732284741671727
+          },
+          "months_improving": [
+            "10",
+            "11",
+            "12"
+          ],
+          "months_required": 3,
+          "condition_met": true
+        }
+      ],
+      "information": {
+        "log_loss_total": [
+          0.5146602535055599,
+          0.5051067229559446
+        ],
+        "roc_auc_total": [
+          0.6560082768322388,
+          0.6543315519655396
+        ],
+        "citl_months": [
+          {
+            "9": -0.003422350450545869,
+            "10": -0.06566951062573817,
+            "11": -0.0643050765971499,
+            "12": -0.08882049420433816
+          },
+          {
+            "9": 0.03934730653852225,
+            "10": 0.010353321710600688,
+            "11": -7.171101898101329e-05,
+            "12": -0.07185491641247604
+          }
+        ]
+      },
+      "drop_calendar_features": true
+    },
+    "arr_delay": {
+      "rule": "Val-A pinball P80 AND P95 each lower in total AND in >= 3 of 4 months",
+      "decisive": [
+        {
+          "metric": "pinball_q080",
+          "complete": true,
+          "total_with_calendar": 12.87473963932292,
+          "total_without_calendar": 12.675429701488603,
+          "total_improves": true,
+          "months_with_calendar": {
+            "9": 10.626915792377087,
+            "10": 11.810038457108233,
+            "11": 13.42625417928035,
+            "12": 15.658356246794012
+          },
+          "months_without_calendar": {
+            "9": 10.823173026405023,
+            "10": 11.468030150169165,
+            "11": 13.032073184911386,
+            "12": 15.411746266779046
+          },
+          "months_improving": [
+            "10",
+            "11",
+            "12"
+          ],
+          "months_required": 3,
+          "condition_met": true
+        },
+        {
+          "metric": "pinball_q095",
+          "complete": true,
+          "total_with_calendar": 8.137220384727863,
+          "total_without_calendar": 7.830151327194109,
+          "total_improves": true,
+          "months_with_calendar": {
+            "9": 6.938481910784676,
+            "10": 7.323711903304877,
+            "11": 8.501929099271518,
+            "12": 9.811807913077113
+          },
+          "months_without_calendar": {
+            "9": 6.893807471985158,
+            "10": 7.112459170487238,
+            "11": 7.896245673146778,
+            "12": 9.437364010340834
+          },
+          "months_improving": [
+            "9",
+            "10",
+            "11",
+            "12"
+          ],
+          "months_required": 3,
+          "condition_met": true
+        }
+      ],
+      "information": {
+        "pinball_q050_total": [
+          11.742560294146669,
+          11.74341193380851
+        ]
+      },
+      "drop_calendar_features": true
+    }
+  }
+}

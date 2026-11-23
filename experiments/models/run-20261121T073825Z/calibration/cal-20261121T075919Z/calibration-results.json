@@ -1,0 +1,2633 @@
+{
+  "metadata": {
+    "run_id": "run-20261121T073825Z",
+    "created_utc": "2026-11-21T07:59:19.766155+00:00",
+    "command": "python -m flight_delay.modeling.run_calibration",
+    "run_dir": "experiments/models/run-20261121T073825Z",
+    "model_dir": "deliverables/models/run-20261121T073825Z",
+    "retrained": false,
+    "final_test_read": false,
+    "val_a_read": false,
+    "segment_min_n": 500,
+    "primary_calibration_method": "isotonic",
+    "seconds_total": 73.9,
+    "peak_rss_gb": 4.247,
+    "timings_seconds": {
+      "load": 3.7,
+      "history_and_b1": 10.3,
+      "matrix": 1.8,
+      "classification": 7.4,
+      "quantiles": 50.7
+    },
+    "files_checked_against_run": 55,
+    "rows_val_b": 689119
+  },
+  "split": {
+    "fit": {
+      "start": "2026-01-01",
+      "end": "2026-01-30"
+    },
+    "evaluation": {
+      "start": "2026-02-01",
+      "end": "2026-02-28"
+    },
+    "embargo_days_left_out": 1,
+    "rule": "Val-B ∩ conformal_calibration_window(2026-02-01) -> fit; 2026-02 -> evaluation"
+  },
+  "reproduction": {
+    "arr_del15-B1": {
+      "metric": "roc_auc",
+      "run": 0.5999622358542739,
+      "now": 0.5999622358542739,
+      "reproduces_run": true
+    },
+    "arr_del15-lgbm": {
+      "metric": "roc_auc",
+      "run": 0.5909835443726046,
+      "now": 0.5909835443726046,
+      "reproduces_run": true
+    },
+    "arr_delay_q010-lgbm": {
+      "metric": "pinball_q010",
+      "run": 3.6417445552351526,
+      "now": 3.6417445552351526,
+      "reproduces_run": true
+    },
+    "arr_delay_q050-lgbm": {
+      "metric": "pinball_q050",
+      "run": 12.307871600123788,
+      "now": 12.307871600123788,
+      "reproduces_run": true
+    },
+    "arr_delay_q080-lgbm": {
+      "metric": "pinball_q080",
+      "run": 13.181530682958602,
+      "now": 13.181530682958602,
+      "reproduces_run": true
+    },
+    "arr_delay_q090-lgbm": {
+      "metric": "pinball_q090",
+      "run": 10.815000788995963,
+      "now": 10.815000788995963,
+      "reproduces_run": true
+    },
+    "arr_delay_q095-lgbm": {
+      "metric": "pinball_q095",
+      "run": 8.18209489283578,
+      "now": 8.18209489283578,
+      "reproduces_run": true
+    }
+  },
+  "classification": {
+    "arr_del15": {
+      "B1": {
+        "n_fit": 327518,
+        "n_eval": 325967,
+        "methods": {
+          "isotonic": {
+            "before": {
+              "n": 325967.0,
+              "prevalence": 0.2078707353811889,
+              "mean_pred": 0.2217922475630942,
+              "brier": 0.1616281085302084,
+              "brier_skill_score": 0.0,
+              "log_loss": 0.5011090911905672,
+              "ece": 0.02454464310064399,
+              "calibration_in_the_large": 0.013921512181905321,
+              "calibration_intercept": -0.4276297862997524,
+              "calibration_slope": 0.7131090178817788,
+              "roc_auc": 0.6100703038691428,
+              "pr_auc": 0.27582274933758927
+            },
+            "after": {
+              "n": 325967.0,
+              "prevalence": 0.2078707353811889,
+              "mean_pred": 0.21848029685011505,
+              "brier": 0.16083947071476712,
+              "brier_skill_score": 0.0,
+              "log_loss": 0.49930905771104606,
+              "ece": 0.014308816506084664,
+              "calibration_in_the_large": 0.010609561468926165,
+              "calibration_intercept": 0.13837157181836954,
+              "calibration_slope": 1.164505221784047,
+              "roc_auc": 0.610049157905553,
+              "pr_auc": 0.2728284619109921
+            },
+            "after_minus_before": {
+              "mean_pred": -0.003311950712979156,
+              "brier": -0.0007886378154412788,
+              "brier_skill_score": 0.0,
+              "log_loss": -0.0018000334795211792,
+              "ece": -0.010235826594559327,
+              "calibration_in_the_large": -0.003311950712979156,
+              "calibration_intercept": 0.5660013581181219,
+              "calibration_slope": 0.4513962039022682,
+              "roc_auc": -2.114596358981924e-05,
+              "pr_auc": -0.0029942874265971864
+            },
+            "fit_part_in_sample_after": {
+              "n": 327518.0,
+              "prevalence": 0.21804297779053364,
+              "mean_pred": 0.21804297779053364,
+              "brier": 0.16738271612133135,
+              "ece": 0.005446395088817209,
+              "calibration_in_the_large": 0.0,
+              "calibration_slope": 1.000000008794351
+            },
+            "calibrator": {
+              "method": "isotonic",
+              "n_fit": 327518,
+              "prevalence_fit": 0.21804297779053364,
+              "intercept": null,
+              "slope": null,
+              "n_breakpoints": 117
+            },
+            "segments": [
+              {
+                "segment": "ATL",
+                "n": 22633,
+                "prevalence": 0.19683647770953916,
+                "calibration_in_the_large_before": 0.013260044634646417,
+                "calibration_in_the_large_after": 0.015624819911661841,
+                "brier_before": 0.1555815613074777,
+                "brier_after": 0.15523610388937842
+              },
+              {
+                "segment": "AUS",
+                "n": 6393,
+                "prevalence": 0.18082277491005788,
+                "calibration_in_the_large_before": 0.03197324177788294,
+                "calibration_in_the_large_after": 0.02946998064037798,
+                "brier_before": 0.1429771096372747,
+                "brier_after": 0.1430983982448811
+              },
+              {
+                "segment": "BNA",
+                "n": 7410,
+                "prevalence": 0.19001349527665318,
+                "calibration_in_the_large_before": 0.009458719694716483,
+                "calibration_in_the_large_after": 0.011831024964091358,
+                "brier_before": 0.15158579753867102,
+                "brier_after": 0.15051796765717926
+              },
+              {
+                "segment": "BOS",
+                "n": 9379,
+                "prevalence": 0.252372321142979,
+                "calibration_in_the_large_before": -0.035524878255870335,
+                "calibration_in_the_large_after": -0.03707942790470278,
+                "brier_before": 0.18500416823276714,
+                "brier_after": 0.18472946991918604
+              },
+              {
+                "segment": "BWI",
+                "n": 6309,
+                "prevalence": 0.16912347440164843,
+                "calibration_in_the_large_before": 0.06296939896548767,
+                "calibration_in_the_large_after": 0.05520374056597871,
+                "brier_before": 0.13978971119321199,
+                "brier_after": 0.13810853312322718
+              },
+              {
+                "segment": "CLT",
+                "n": 12711,
+                "prevalence": 0.21327983636220596,
+                "calibration_in_the_large_before": 0.04846098533742424,
+                "calibration_in_the_large_after": 0.030375526997739488,
+                "brier_before": 0.17048745216351685,
+                "brier_after": 0.16673579699244445
+              },
+              {
+                "segment": "DAL",
+                "n": 5111,
+                "prevalence": 0.2032870279788691,
+                "calibration_in_the_large_before": 0.02064903814524474,
+                "calibration_in_the_large_after": 0.014491729224921007,
+                "brier_before": 0.15078320130579928,
+                "brier_after": 0.15260294091363738
+              },
+              {
+                "segment": "DCA",
+                "n": 10507,
+                "prevalence": 0.2890453983058913,
+                "calibration_in_the_large_before": -0.07227950840655933,
+                "calibration_in_the_large_after": -0.07313606291160177,
+                "brier_before": 0.20275782637309284,
+                "brier_after": 0.20419021726931733
+              },
+              {
+                "segment": "DEN",
+                "n": 22797,
+                "prevalence": 0.1760757994472957,
+                "calibration_in_the_large_before": 0.06636030866262563,
+                "calibration_in_the_large_after": 0.0556000801053223,
+                "brier_before": 0.14769970045682496,
+                "brier_after": 0.1453557831651384
+              },
+              {
+                "segment": "DFW",
+                "n": 21679,
+                "prevalence": 0.21126435721204853,
+                "calibration_in_the_large_before": 0.05436562571459405,
+                "calibration_in_the_large_after": 0.03548278264225743,
+                "brier_before": 0.1686999446132932,
+                "brier_after": 0.16533363829077105
+              },
+              {
+                "segment": "DTW",
+                "n": 8906,
+                "prevalence": 0.24309454300471592,
+                "calibration_in_the_large_before": -0.052086459431724075,
+                "calibration_in_the_large_after": -0.04036665713130769,
+                "brier_before": 0.18537063689728814,
+                "brier_after": 0.18390894684747314
+              },
+              {
+                "segment": "EWR",
+                "n": 8503,
+                "prevalence": 0.18158297071621782,
+                "calibration_in_the_large_before": 0.04401135509900367,
+                "calibration_in_the_large_after": 0.038600876653141214,
+                "brier_before": 0.15036753189751942,
+                "brier_after": 0.1480494503873009
+              },
+              {
+                "segment": "FLL",
+                "n": 7912,
+                "prevalence": 0.32697168857431747,
+                "calibration_in_the_large_before": -0.0690910002413031,
+                "calibration_in_the_large_after": -0.08815403122272683,
+                "brier_before": 0.20945893087329098,
+                "brier_after": 0.21537490943283627
+              },
+              {
+                "segment": "IAH",
+                "n": 8871,
+                "prevalence": 0.1441776575357908,
+                "calibration_in_the_large_before": 0.08986796378821454,
+                "calibration_in_the_large_after": 0.08119215220603715,
+                "brier_before": 0.13194165509289718,
+                "brier_after": 0.12878577674053318
+              },
+              {
+                "segment": "JFK",
+                "n": 6787,
+                "prevalence": 0.24826874907912186,
+                "calibration_in_the_large_before": -0.025586665329610236,
+                "calibration_in_the_large_after": -0.026189612678253454,
+                "brier_before": 0.18777541278261428,
+                "brier_after": 0.18591331713916123
+              },
+              {
+                "segment": "LAS",
+                "n": 12754,
+                "prevalence": 0.16873137839109298,
+                "calibration_in_the_large_before": 0.041626128750460845,
+                "calibration_in_the_large_after": 0.04013791939030817,
+                "brier_before": 0.1374829015435701,
+                "brier_after": 0.1373558885542831
+              },
+              {
+                "segment": "LAX",
+                "n": 13453,
+                "prevalence": 0.19088679105032336,
+                "calibration_in_the_large_before": -0.013144566179665862,
+                "calibration_in_the_large_after": 0.0013916017720211615,
+                "brier_before": 0.15183890947732553,
+                "brier_after": 0.1516584321903528
+              },
+              {
+                "segment": "LGA",
+                "n": 9446,
+                "prevalence": 0.2146940503917002,
+                "calibration_in_the_large_before": -0.011953557567763479,
+                "calibration_in_the_large_after": -0.009881504071741987,
+                "brier_before": 0.1687282579987209,
+                "brier_after": 0.16696083482544752
+              },
+              {
+                "segment": "MCO",
+                "n": 12971,
+                "prevalence": 0.270603654305759,
+                "calibration_in_the_large_before": -0.025807292011442273,
+                "calibration_in_the_large_after": -0.041476388227856265,
+                "brier_before": 0.18783211415545195,
+                "brier_after": 0.1894955544374314
+              },
+              {
+                "segment": "MDW",
+                "n": 4487,
+                "prevalence": 0.18386449743704034,
+                "calibration_in_the_large_before": 0.02173259168738459,
+                "calibration_in_the_large_after": 0.02258286314599403,
+                "brier_before": 0.14864557561098435,
+                "brier_after": 0.14710616875089047
+              },
+              {
+                "segment": "MIA",
+                "n": 9121,
+                "prevalence": 0.24701238899243505,
+                "calibration_in_the_large_before": 0.021734060491936547,
+                "calibration_in_the_large_after": -0.0014788962339355172,
+                "brier_before": 0.18052901551131215,
+                "brier_after": 0.1798236470959776
+              },
+              {
+                "segment": "MSP",
+                "n": 7817,
+                "prevalence": 0.19636689266982219,
+                "calibration_in_the_large_before": -0.020810602884287266,
+                "calibration_in_the_large_after": -0.003802691696808358,
+                "brier_before": 0.15845710664506735,
+                "brier_after": 0.15695661145310977
+              },
+              {
+                "segment": "ORD",
+                "n": 25178,
+                "prevalence": 0.26261021526729683,
+                "calibration_in_the_large_before": -0.025695314436085498,
+                "calibration_in_the_large_after": -0.032237317962470646,
+                "brier_before": 0.1927098315716849,
+                "brier_after": 0.19233333665735267
+              },
+              {
+                "segment": "PHL",
+                "n": 6271,
+                "prevalence": 0.19964917875936852,
+                "calibration_in_the_large_before": 0.0359932748021099,
+                "calibration_in_the_large_after": 0.028904940425164144,
+                "brier_before": 0.16177895587879282,
+                "brier_after": 0.15931752740908792
+              },
+              {
+                "segment": "PHX",
+                "n": 15515,
+                "prevalence": 0.16635514018691588,
+                "calibration_in_the_large_before": 0.020863015641209293,
+                "calibration_in_the_large_after": 0.030490605101336637,
+                "brier_before": 0.13684506225446985,
+                "brier_after": 0.13687751009042365
+              },
+              {
+                "segment": "SAN",
+                "n": 6921,
+                "prevalence": 0.1600924721861003,
+                "calibration_in_the_large_before": 0.056815465267224086,
+                "calibration_in_the_large_after": 0.05418096754471069,
+                "brier_before": 0.13292672844127898,
+                "brier_after": 0.13321140366140502
+              },
+              {
+                "segment": "SEA",
+                "n": 10885,
+                "prevalence": 0.1559026182820395,
+                "calibration_in_the_large_before": 0.05625822793643653,
+                "calibration_in_the_large_after": 0.05831429971413318,
+                "brier_before": 0.13451710744339837,
+                "brier_after": 0.133805838515343
+              },
+              {
+                "segment": "SFO",
+                "n": 10165,
+                "prevalence": 0.18268568617806197,
+                "calibration_in_the_large_before": 0.022163727868438593,
+                "calibration_in_the_large_after": 0.02497179081214307,
+                "brier_before": 0.14668168808921717,
+                "brier_after": 0.1465736467138175
+              },
+              {
+                "segment": "SLC",
+                "n": 9054,
+                "prevalence": 0.14457698254914955,
+                "calibration_in_the_large_before": 0.018527900449788914,
+                "calibration_in_the_large_after": 0.036250995610831116,
+                "brier_before": 0.12367031049100609,
+                "brier_after": 0.12380767441832313
+              },
+              {
+                "segment": "TPA",
+                "n": 6021,
+                "prevalence": 0.22886563693738582,
+                "calibration_in_the_large_before": -0.013628581461065381,
+                "calibration_in_the_large_after": -0.017596305371360144,
+                "brier_before": 0.16982032534915753,
+                "brier_after": 0.17009401287497086
+              }
+            ]
+          },
+          "platt": {
+            "before": {
+              "n": 325967.0,
+              "prevalence": 0.2078707353811889,
+              "mean_pred": 0.2217922475630942,
+              "brier": 0.1616281085302084,
+              "brier_skill_score": 0.0,
+              "log_loss": 0.5011090911905672,
+              "ece": 0.02454464310064399,
+              "calibration_in_the_large": 0.013921512181905321,
+              "calibration_intercept": -0.4276297862997524,
+              "calibration_slope": 0.7131090178817788,
+              "roc_auc": 0.6100703038691428,
+              "pr_auc": 0.27582274933758927
+            },
+            "after": {
+              "n": 325967.0,
+              "prevalence": 0.2078707353811889,
+              "mean_pred": 0.21849741148221702,
+              "brier": 0.16083487769099625,
+              "brier_skill_score": 0.0,
+              "log_loss": 0.4993340893311529,
+              "ece": 0.012429441061277361,
+              "calibration_in_the_large": 0.010626676101028132,
+              "calibration_intercept": 0.17460044753410173,
+              "calibration_slope": 1.1936567682248942,
+              "roc_auc": 0.6100703038691428,
+              "pr_auc": 0.27582274933758927
+            },
+            "after_minus_before": {
+              "mean_pred": -0.0032948360808771893,
+              "brier": -0.0007932308392121501,
+              "brier_skill_score": 0.0,
+              "log_loss": -0.0017750018594143158,
+              "ece": -0.01211520203936663,
+              "calibration_in_the_large": -0.0032948360808771893,
+              "calibration_intercept": 0.6022302338338541,
+              "calibration_slope": 0.48054775034311537,
+              "roc_auc": 0.0,
+              "pr_auc": 0.0
+            },
+            "fit_part_in_sample_after": {
+              "n": 327518.0,
+              "prevalence": 0.21804297779053364,
+              "mean_pred": 0.21804297779053364,
+              "brier": 0.16751627271728436,
+              "ece": 0.006423035331928677,
+              "calibration_in_the_large": 0.0,
+              "calibration_slope": 0.9999999999999996
+            },
+            "calibrator": {
+              "method": "platt",
+              "n_fit": 327518,
+              "prevalence_fit": 0.21804297779053364,
+              "intercept": -0.5045254631525607,
+              "slope": 0.5974154688891472,
+              "n_breakpoints": 0
+            },
+            "segments": [
+              {
+                "segment": "ATL",
+                "n": 22633,
+                "prevalence": 0.19683647770953916,
+                "calibration_in_the_large_before": 0.013260044634646417,
+                "calibration_in_the_large_after": 0.01524537897157105,
+                "brier_before": 0.1555815613074777,
+                "brier_after": 0.1552048737129581
+              },
+              {
+                "segment": "AUS",
+                "n": 6393,
+                "prevalence": 0.18082277491005788,
+                "calibration_in_the_large_before": 0.03197324177788294,
+                "calibration_in_the_large_after": 0.03105581850678457,
+                "brier_before": 0.1429771096372747,
+                "brier_after": 0.14301875311551807
+              },
+              {
+                "segment": "BNA",
+                "n": 7410,
+                "prevalence": 0.19001349527665318,
+                "calibration_in_the_large_before": 0.009458719694716483,
+                "calibration_in_the_large_after": 0.013999524872032931,
+                "brier_before": 0.15158579753867102,
+                "brier_after": 0.15063118081343735
+              },
+              {
+                "segment": "BOS",
+                "n": 9379,
+                "prevalence": 0.252372321142979,
+                "calibration_in_the_large_before": -0.035524878255870335,
+                "calibration_in_the_large_after": -0.03740208852269852,
+                "brier_before": 0.18500416823276714,
+                "brier_after": 0.18492648510722648
+              },
+              {
+                "segment": "BWI",
+                "n": 6309,
+                "prevalence": 0.16912347440164843,
+                "calibration_in_the_large_before": 0.06296939896548767,
+                "calibration_in_the_large_after": 0.05451740540469366,
+                "brier_before": 0.13978971119321199,
+                "brier_after": 0.13785324759806802
+              },
+              {
+                "segment": "CLT",
+                "n": 12711,
+                "prevalence": 0.21327983636220596,
+                "calibration_in_the_large_before": 0.04846098533742424,
+                "calibration_in_the_large_after": 0.02929843473003141,
+                "brier_before": 0.17048745216351685,
+                "brier_after": 0.16660782533808358
+              },
+              {
+                "segment": "DAL",
+                "n": 5111,
+                "prevalence": 0.2032870279788691,
+                "calibration_in_the_large_before": 0.02064903814524474,
+                "calibration_in_the_large_after": 0.015267211636129624,
+                "brier_before": 0.15078320130579928,
+                "brier_after": 0.1526009390328562
+              },
+              {
+                "segment": "DCA",
+                "n": 10507,
+                "prevalence": 0.2890453983058913,
+                "calibration_in_the_large_before": -0.07227950840655933,
+                "calibration_in_the_large_after": -0.07334917641958677,
+                "brier_before": 0.20275782637309284,
+                "brier_after": 0.20417055761976216
+              },
+              {
+                "segment": "DEN",
+                "n": 22797,
+                "prevalence": 0.1760757994472957,
+                "calibration_in_the_large_before": 0.06636030866262563,
+                "calibration_in_the_large_after": 0.055681993108248645,
+                "brier_before": 0.14769970045682496,
+                "brier_after": 0.14537787636585753
+              },
+              {
+                "segment": "DFW",
+                "n": 21679,
+                "prevalence": 0.21126435721204853,
+                "calibration_in_the_large_before": 0.05436562571459405,
+                "calibration_in_the_large_after": 0.03397129565912113,
+                "brier_before": 0.1686999446132932,
+                "brier_after": 0.16512419945668716
+              },
+              {
+                "segment": "DTW",
+                "n": 8906,
+                "prevalence": 0.24309454300471592,
+                "calibration_in_the_large_before": -0.052086459431724075,
+                "calibration_in_the_large_after": -0.04232472939703849,
+                "brier_before": 0.18537063689728814,
+                "brier_after": 0.18393231349231792
+              },
+              {
+                "segment": "EWR",
+                "n": 8503,
+                "prevalence": 0.18158297071621782,
+                "calibration_in_the_large_before": 0.04401135509900367,
+                "calibration_in_the_large_after": 0.03928628453701888,
+                "brier_before": 0.15036753189751942,
+                "brier_after": 0.14809626311790855
+              },
+              {
+                "segment": "FLL",
+                "n": 7912,
+                "prevalence": 0.32697168857431747,
+                "calibration_in_the_large_before": -0.0690910002413031,
+                "calibration_in_the_large_after": -0.0884637194535483,
+                "brier_before": 0.20945893087329098,
+                "brier_after": 0.21530836944939472
+              },
+              {
+                "segment": "IAH",
+                "n": 8871,
+                "prevalence": 0.1441776575357908,
+                "calibration_in_the_large_before": 0.08986796378821454,
+                "calibration_in_the_large_after": 0.08241680752903024,
+                "brier_before": 0.13194165509289718,
+                "brier_after": 0.12898740823274218
+              },
+              {
+                "segment": "JFK",
+                "n": 6787,
+                "prevalence": 0.24826874907912186,
+                "calibration_in_the_large_before": -0.025586665329610236,
+                "calibration_in_the_large_after": -0.028469370086998902,
+                "brier_before": 0.18777541278261428,
+                "brier_after": 0.18607692859489075
+              },
+              {
+                "segment": "LAS",
+                "n": 12754,
+                "prevalence": 0.16873137839109298,
+                "calibration_in_the_large_before": 0.041626128750460845,
+                "calibration_in_the_large_after": 0.04218042481789272,
+                "brier_before": 0.1374829015435701,
+                "brier_after": 0.13737776610567218
+              },
+              {
+                "segment": "LAX",
+                "n": 13453,
+                "prevalence": 0.19088679105032336,
+                "calibration_in_the_large_before": -0.013144566179665862,
+                "calibration_in_the_large_after": 0.0008703972086085143,
+                "brier_before": 0.15183890947732553,
+                "brier_after": 0.15160032270928556
+              },
+              {
+                "segment": "LGA",
+                "n": 9446,
+                "prevalence": 0.2146940503917002,
+                "calibration_in_the_large_before": -0.011953557567763479,
+                "calibration_in_the_large_after": -0.007984995422831959,
+                "brier_before": 0.1687282579987209,
+                "brier_after": 0.16689573772063246
+              },
+              {
+                "segment": "MCO",
+                "n": 12971,
+                "prevalence": 0.270603654305759,
+                "calibration_in_the_large_before": -0.025807292011442273,
+                "calibration_in_the_large_after": -0.03985250869343651,
+                "brier_before": 0.18783211415545195,
+                "brier_after": 0.1897305945068048
+              },
+              {
+                "segment": "MDW",
+                "n": 4487,
+                "prevalence": 0.18386449743704034,
+                "calibration_in_the_large_before": 0.02173259168738459,
+                "calibration_in_the_large_after": 0.023817509845596302,
+                "brier_before": 0.14864557561098435,
+                "brier_after": 0.1472773797293973
+              },
+              {
+                "segment": "MIA",
+                "n": 9121,
+                "prevalence": 0.24701238899243505,
+                "calibration_in_the_large_before": 0.021734060491936547,
+                "calibration_in_the_large_after": -0.0010311181488031618,
+                "brier_before": 0.18052901551131215,
+                "brier_after": 0.17990823942113607
+              },
+              {
+                "segment": "MSP",
+                "n": 7817,
+                "prevalence": 0.19636689266982219,
+                "calibration_in_the_large_before": -0.020810602884287266,
+                "calibration_in_the_large_after": -0.005587042938946296,
+                "brier_before": 0.15845710664506735,
+                "brier_after": 0.1570370550511865
+              },
+              {
+                "segment": "ORD",
+                "n": 25178,
+                "prevalence": 0.26261021526729683,
+                "calibration_in_the_large_before": -0.025695314436085498,
+                "calibration_in_the_large_after": -0.03386476357962087,
+                "brier_before": 0.1927098315716849,
+                "brier_after": 0.1922981570128417
+              },
+              {
+                "segment": "PHL",
+                "n": 6271,
+                "prevalence": 0.19964917875936852,
+                "calibration_in_the_large_before": 0.0359932748021099,
+                "calibration_in_the_large_after": 0.027478640277275035,
+                "brier_before": 0.16177895587879282,
+                "brier_after": 0.15904430711749631
+              },
+              {
+                "segment": "PHX",
+                "n": 15515,
+                "prevalence": 0.16635514018691588,
+                "calibration_in_the_large_before": 0.020863015641209293,
+                "calibration_in_the_large_after": 0.031120628517454785,
+                "brier_before": 0.13684506225446985,
+                "brier_after": 0.13692253958984715
+              },
+              {
+                "segment": "SAN",
+                "n": 6921,
+                "prevalence": 0.1600924721861003,
+                "calibration_in_the_large_before": 0.056815465267224086,
+                "calibration_in_the_large_after": 0.05596115171137195,
+                "brier_before": 0.13292672844127898,
+                "brier_after": 0.13307872168720677
+              },
+              {
+                "segment": "SEA",
+                "n": 10885,
+                "prevalence": 0.1559026182820395,
+                "calibration_in_the_large_before": 0.05625822793643653,
+                "calibration_in_the_large_after": 0.058110943530312154,
+                "brier_before": 0.13451710744339837,
+                "brier_after": 0.13375324984965278
+              },
+              {
+                "segment": "SFO",
+                "n": 10165,
+                "prevalence": 0.18268568617806197,
+                "calibration_in_the_large_before": 0.022163727868438593,
+                "calibration_in_the_large_after": 0.026253933109584182,
+                "brier_before": 0.14668168808921717,
+                "brier_after": 0.14676846981668984
+              },
+              {
+                "segment": "SLC",
+                "n": 9054,
+                "prevalence": 0.14457698254914955,
+                "calibration_in_the_large_before": 0.018527900449788914,
+                "calibration_in_the_large_after": 0.037252781103217225,
+                "brier_before": 0.12367031049100609,
+                "brier_after": 0.12379395407866459
+              },
+              {
+                "segment": "TPA",
+                "n": 6021,
+                "prevalence": 0.22886563693738582,
+                "calibration_in_the_large_before": -0.013628581461065381,
+                "calibration_in_the_large_after": -0.015753463745817126,
+                "brier_before": 0.16982032534915753,
+                "brier_after": 0.16992452032929375
+              }
+            ]
+          }
+        }
+      },
+      "LightGBM": {
+        "n_fit": 327518,
+        "n_eval": 325967,
+        "methods": {
+          "isotonic": {
+            "before": {
+              "n": 325967.0,
+              "prevalence": 0.2078707353811889,
+              "mean_pred": 0.2134565375263172,
+              "brier": 0.16499238719714335,
+              "brier_skill_score": -0.02081493557976133,
+              "log_loss": 0.5091043855527071,
+              "ece": 0.04388523013556217,
+              "calibration_in_the_large": 0.005585802145128327,
+              "calibration_intercept": -0.6273681613724915,
+              "calibration_slope": 0.5236542199130372,
+              "roc_auc": 0.6034524982425568,
+              "pr_auc": 0.2774383710001358
+            },
+            "after": {
+              "n": 325967.0,
+              "prevalence": 0.2078707353811889,
+              "mean_pred": 0.22251245855289928,
+              "brier": 0.16272458772857798,
+              "brier_skill_score": -0.01172048754844468,
+              "log_loss": 0.5035871028399123,
+              "ece": 0.028340074895068772,
+              "calibration_in_the_large": 0.014641723171710391,
+              "calibration_intercept": -0.42710797486239327,
+              "calibration_slope": 0.7227508914295675,
+              "roc_auc": 0.6031753387308468,
+              "pr_auc": 0.27370298074513016
+            },
+            "after_minus_before": {
+              "mean_pred": 0.009055921026582064,
+              "brier": -0.002267799468565368,
+              "brier_skill_score": 0.009094448031316649,
+              "log_loss": -0.005517282712794835,
+              "ece": -0.015545155240493398,
+              "calibration_in_the_large": 0.009055921026582064,
+              "calibration_intercept": 0.20026018651009825,
+              "calibration_slope": 0.19909667151653032,
+              "roc_auc": -0.0002771595117099235,
+              "pr_auc": -0.003735390255005633
+            },
+            "fit_part_in_sample_after": {
+              "n": 327518.0,
+              "prevalence": 0.21804297779053364,
+              "mean_pred": 0.21804297779053364,
+              "brier": 0.16710008561178044,
+              "ece": 0.007534391105920529,
+              "calibration_in_the_large": 0.0,
+              "calibration_slope": 1.000000016859466
+            },
+            "calibrator": {
+              "method": "isotonic",
+              "n_fit": 327518,
+              "prevalence_fit": 0.21804297779053364,
+              "intercept": null,
+              "slope": null,
+              "n_breakpoints": 162
+            },
+            "segments": [
+              {
+                "segment": "ATL",
+                "n": 22633,
+                "prevalence": 0.19683647770953916,
+                "calibration_in_the_large_before": 0.01535672149203729,
+                "calibration_in_the_large_after": 0.025295737447703026,
+                "brier_before": 0.16207469050451367,
+                "brier_after": 0.1580824313944646
+              },
+              {
+                "segment": "AUS",
+                "n": 6393,
+                "prevalence": 0.18082277491005788,
+                "calibration_in_the_large_before": 0.011628766445809818,
+                "calibration_in_the_large_after": 0.02537342226670916,
+                "brier_before": 0.14138436060522025,
+                "brier_after": 0.14253218934774178
+              },
+              {
+                "segment": "BNA",
+                "n": 7410,
+                "prevalence": 0.19001349527665318,
+                "calibration_in_the_large_before": -0.006776073706229069,
+                "calibration_in_the_large_after": 0.010487595151419782,
+                "brier_before": 0.1525745312050856,
+                "brier_after": 0.150704453743761
+              },
+              {
+                "segment": "BOS",
+                "n": 9379,
+                "prevalence": 0.252372321142979,
+                "calibration_in_the_large_before": -0.01790323130337884,
+                "calibration_in_the_large_after": -0.013722151419833517,
+                "brier_before": 0.19937927445954634,
+                "brier_after": 0.19351461439794096
+              },
+              {
+                "segment": "BWI",
+                "n": 6309,
+                "prevalence": 0.16912347440164843,
+                "calibration_in_the_large_before": 0.04026218440730556,
+                "calibration_in_the_large_after": 0.0530779973993909,
+                "brier_before": 0.14854973018818451,
+                "brier_after": 0.1441704163568468
+              },
+              {
+                "segment": "CLT",
+                "n": 12711,
+                "prevalence": 0.21327983636220596,
+                "calibration_in_the_large_before": -0.0021920590526514905,
+                "calibration_in_the_large_after": 0.007563471055984816,
+                "brier_before": 0.1698285946074903,
+                "brier_after": 0.1668554083532957
+              },
+              {
+                "segment": "DAL",
+                "n": 5111,
+                "prevalence": 0.2032870279788691,
+                "calibration_in_the_large_before": -0.01737066439297802,
+                "calibration_in_the_large_after": -0.00180738089253768,
+                "brier_before": 0.1484573460966758,
+                "brier_after": 0.1518507618809092
+              },
+              {
+                "segment": "DCA",
+                "n": 10507,
+                "prevalence": 0.2890453983058913,
+                "calibration_in_the_large_before": -0.05311733482825354,
+                "calibration_in_the_large_after": -0.052180645483711235,
+                "brier_before": 0.20833944852750863,
+                "brier_after": 0.20589532497467958
+              },
+              {
+                "segment": "DEN",
+                "n": 22797,
+                "prevalence": 0.1760757994472957,
+                "calibration_in_the_large_before": 0.07819661694489802,
+                "calibration_in_the_large_after": 0.07552271854900897,
+                "brier_before": 0.1545808265163152,
+                "brier_after": 0.14934117089034477
+              },
+              {
+                "segment": "DFW",
+                "n": 21679,
+                "prevalence": 0.21126435721204853,
+                "calibration_in_the_large_before": 0.01994149193652134,
+                "calibration_in_the_large_after": 0.018017055446325647,
+                "brier_before": 0.16442638763327055,
+                "brier_after": 0.16481768598364233
+              },
+              {
+                "segment": "DTW",
+                "n": 8906,
+                "prevalence": 0.24309454300471592,
+                "calibration_in_the_large_before": -0.01793913126593244,
+                "calibration_in_the_large_after": -0.007377027530747926,
+                "brier_before": 0.20245432415521172,
+                "brier_after": 0.19354976627977857
+              },
+              {
+                "segment": "EWR",
+                "n": 8503,
+                "prevalence": 0.18158297071621782,
+                "calibration_in_the_large_before": 0.04264754999690196,
+                "calibration_in_the_large_after": 0.049542026561967434,
+                "brier_before": 0.15730275856276543,
+                "brier_after": 0.1529701701438006
+              },
+              {
+                "segment": "FLL",
+                "n": 7912,
+                "prevalence": 0.32697168857431747,
+                "calibration_in_the_large_before": -0.052570401578796666,
+                "calibration_in_the_large_after": -0.061229132344105486,
+                "brier_before": 0.2022493918093952,
+                "brier_after": 0.207689011505154
+              },
+              {
+                "segment": "IAH",
+                "n": 8871,
+                "prevalence": 0.1441776575357908,
+                "calibration_in_the_large_before": 0.06194532054620516,
+                "calibration_in_the_large_after": 0.07295838366736615,
+                "brier_before": 0.12936638453921367,
+                "brier_after": 0.1281929176802563
+              },
+              {
+                "segment": "JFK",
+                "n": 6787,
+                "prevalence": 0.24826874907912186,
+                "calibration_in_the_large_before": -0.006631527782563318,
+                "calibration_in_the_large_after": -0.0017865113453796877,
+                "brier_before": 0.19924122558678026,
+                "brier_after": 0.19194428846188516
+              },
+              {
+                "segment": "LAS",
+                "n": 12754,
+                "prevalence": 0.16873137839109298,
+                "calibration_in_the_large_before": 0.01987267136990592,
+                "calibration_in_the_large_after": 0.03227554576515412,
+                "brier_before": 0.13279788156082153,
+                "brier_after": 0.13443120640633627
+              },
+              {
+                "segment": "LAX",
+                "n": 13453,
+                "prevalence": 0.19088679105032336,
+                "calibration_in_the_large_before": -0.023946072349281117,
+                "calibration_in_the_large_after": 0.001958822719247244,
+                "brier_before": 0.14994561741635715,
+                "brier_after": 0.1506825039832788
+              },
+              {
+                "segment": "LGA",
+                "n": 9446,
+                "prevalence": 0.2146940503917002,
+                "calibration_in_the_large_before": -0.005699079555197606,
+                "calibration_in_the_large_after": 0.008131940504347013,
+                "brier_before": 0.17996138349015814,
+                "brier_after": 0.17322151729165258
+              },
+              {
+                "segment": "MCO",
+                "n": 12971,
+                "prevalence": 0.270603654305759,
+                "calibration_in_the_large_before": -0.03963533508798958,
+                "calibration_in_the_large_after": -0.037267626973560064,
+                "brier_before": 0.19066237957093737,
+                "brier_after": 0.19057570001652016
+              },
+              {
+                "segment": "MDW",
+                "n": 4487,
+                "prevalence": 0.18386449743704034,
+                "calibration_in_the_large_before": -0.00185065552491398,
+                "calibration_in_the_large_after": 0.017011998225342995,
+                "brier_before": 0.15293553896845477,
+                "brier_after": 0.14926187571642888
+              },
+              {
+                "segment": "MIA",
+                "n": 9121,
+                "prevalence": 0.24701238899243505,
+                "calibration_in_the_large_before": -0.0017774112566751599,
+                "calibration_in_the_large_after": -0.005423928164020264,
+                "brier_before": 0.17951218358229293,
+                "brier_after": 0.1784523227021923
+              },
+              {
+                "segment": "MSP",
+                "n": 7817,
+                "prevalence": 0.19636689266982219,
+                "calibration_in_the_large_before": -0.02714974326673189,
+                "calibration_in_the_large_after": -0.00021372134022878964,
+                "brier_before": 0.16291511364033953,
+                "brier_after": 0.15851892178210783
+              },
+              {
+                "segment": "ORD",
+                "n": 25178,
+                "prevalence": 0.26261021526729683,
+                "calibration_in_the_large_before": -0.02697348847450251,
+                "calibration_in_the_large_after": -0.023074252030199555,
+                "brier_before": 0.20846987864042854,
+                "brier_after": 0.2015380710739873
+              },
+              {
+                "segment": "PHL",
+                "n": 6271,
+                "prevalence": 0.19964917875936852,
+                "calibration_in_the_large_before": 0.031682937864022015,
+                "calibration_in_the_large_after": 0.035334208015432494,
+                "brier_before": 0.17089524538440035,
+                "brier_after": 0.16487252177177666
+              },
+              {
+                "segment": "PHX",
+                "n": 15515,
+                "prevalence": 0.16635514018691588,
+                "calibration_in_the_large_before": 0.005784818179989187,
+                "calibration_in_the_large_after": 0.028659348038022087,
+                "brier_before": 0.13513365622336376,
+                "brier_after": 0.13613621739632567
+              },
+              {
+                "segment": "SAN",
+                "n": 6921,
+                "prevalence": 0.1600924721861003,
+                "calibration_in_the_large_before": 0.027444573621103502,
+                "calibration_in_the_large_after": 0.04237425068934586,
+                "brier_before": 0.12738392821983777,
+                "brier_after": 0.13025470285261648
+              },
+              {
+                "segment": "SEA",
+                "n": 10885,
+                "prevalence": 0.1559026182820395,
+                "calibration_in_the_large_before": 0.038846396575502984,
+                "calibration_in_the_large_after": 0.05163870442691232,
+                "brier_before": 0.13207758728231725,
+                "brier_after": 0.13247707765411237
+              },
+              {
+                "segment": "SFO",
+                "n": 10165,
+                "prevalence": 0.18268568617806197,
+                "calibration_in_the_large_before": 0.013203019940841554,
+                "calibration_in_the_large_after": 0.02465402909780262,
+                "brier_before": 0.1445511016337757,
+                "brier_after": 0.1454425555587643
+              },
+              {
+                "segment": "SLC",
+                "n": 9054,
+                "prevalence": 0.14457698254914955,
+                "calibration_in_the_large_before": 0.026282888551216826,
+                "calibration_in_the_large_after": 0.05018171587087483,
+                "brier_before": 0.12272260323609528,
+                "brier_after": 0.12348235306222977
+              },
+              {
+                "segment": "TPA",
+                "n": 6021,
+                "prevalence": 0.22886563693738582,
+                "calibration_in_the_large_before": -0.031479978398730596,
+                "calibration_in_the_large_after": -0.01747182729398508,
+                "brier_before": 0.17249542711635635,
+                "brier_after": 0.16943306613197293
+              }
+            ]
+          },
+          "platt": {
+            "before": {
+              "n": 325967.0,
+              "prevalence": 0.2078707353811889,
+              "mean_pred": 0.2134565375263172,
+              "brier": 0.16499238719714335,
+              "brier_skill_score": -0.02081493557976133,
+              "log_loss": 0.5091043855527071,
+              "ece": 0.04388523013556217,
+              "calibration_in_the_large": 0.005585802145128327,
+              "calibration_intercept": -0.6273681613724915,
+              "calibration_slope": 0.5236542199130372,
+              "roc_auc": 0.6034524982425568,
+              "pr_auc": 0.2774383710001358
+            },
+            "after": {
+              "n": 325967.0,
+              "prevalence": 0.2078707353811889,
+              "mean_pred": 0.21662536118162593,
+              "brier": 0.1612274918848664,
+              "brier_skill_score": -0.002441101081473551,
+              "log_loss": 0.5004646661712758,
+              "ece": 0.013705272344619258,
+              "calibration_in_the_large": 0.008754625800437038,
+              "calibration_intercept": -0.08439189646627743,
+              "calibration_slope": 0.9753953768236938,
+              "roc_auc": 0.6034524982425568,
+              "pr_auc": 0.2774383710001358
+            },
+            "after_minus_before": {
+              "mean_pred": 0.0031688236553087112,
+              "brier": -0.0037648953122769446,
+              "brier_skill_score": 0.018373834498287778,
+              "log_loss": -0.008639719381431266,
+              "ece": -0.030179957790942912,
+              "calibration_in_the_large": 0.0031688236553087112,
+              "calibration_intercept": 0.5429762649062141,
+              "calibration_slope": 0.45174115691065664,
+              "roc_auc": 0.0,
+              "pr_auc": 0.0
+            },
+            "fit_part_in_sample_after": {
+              "n": 327518.0,
+              "prevalence": 0.21804297779053364,
+              "mean_pred": 0.21804297779053364,
+              "brier": 0.16757873803384374,
+              "ece": 0.011440976279123011,
+              "calibration_in_the_large": 0.0,
+              "calibration_slope": 1.0000000000000016
+            },
+            "calibrator": {
+              "method": "platt",
+              "n_fit": 327518,
+              "prevalence_fit": 0.21804297779053364,
+              "intercept": -0.5566729941599458,
+              "slope": 0.5368635451382597,
+              "n_breakpoints": 0
+            },
+            "segments": [
+              {
+                "segment": "ATL",
+                "n": 22633,
+                "prevalence": 0.19683647770953916,
+                "calibration_in_the_large_before": 0.01535672149203729,
+                "calibration_in_the_large_after": 0.0190762607017666,
+                "brier_before": 0.16207469050451367,
+                "brier_after": 0.15692631953709835
+              },
+              {
+                "segment": "AUS",
+                "n": 6393,
+                "prevalence": 0.18082277491005788,
+                "calibration_in_the_large_before": 0.011628766445809818,
+                "calibration_in_the_large_after": 0.02398093716840785,
+                "brier_before": 0.14138436060522025,
+                "brier_after": 0.14217747091494
+              },
+              {
+                "segment": "BNA",
+                "n": 7410,
+                "prevalence": 0.19001349527665318,
+                "calibration_in_the_large_before": -0.006776073706229069,
+                "calibration_in_the_large_after": 0.008480288969932942,
+                "brier_before": 0.1525745312050856,
+                "brier_after": 0.15017460380869044
+              },
+              {
+                "segment": "BOS",
+                "n": 9379,
+                "prevalence": 0.252372321142979,
+                "calibration_in_the_large_before": -0.01790323130337884,
+                "calibration_in_the_large_after": -0.025180153842877195,
+                "brier_before": 0.19937927445954634,
+                "brier_after": 0.18947411860243274
+              },
+              {
+                "segment": "BWI",
+                "n": 6309,
+                "prevalence": 0.16912347440164843,
+                "calibration_in_the_large_before": 0.04026218440730556,
+                "calibration_in_the_large_after": 0.04330919766745661,
+                "brier_before": 0.14854973018818451,
+                "brier_after": 0.14072359160131906
+              },
+              {
+                "segment": "CLT",
+                "n": 12711,
+                "prevalence": 0.21327983636220596,
+                "calibration_in_the_large_before": -0.0021920590526514905,
+                "calibration_in_the_large_after": 0.0031777563505818174,
+                "brier_before": 0.1698285946074903,
+                "brier_after": 0.1661961499332176
+              },
+              {
+                "segment": "DAL",
+                "n": 5111,
+                "prevalence": 0.2032870279788691,
+                "calibration_in_the_large_before": -0.01737066439297802,
+                "calibration_in_the_large_after": -0.0024166603951702725,
+                "brier_before": 0.1484573460966758,
+                "brier_after": 0.15141789594412014
+              },
+              {
+                "segment": "DCA",
+                "n": 10507,
+                "prevalence": 0.2890453983058913,
+                "calibration_in_the_large_before": -0.05311733482825354,
+                "calibration_in_the_large_after": -0.06083370193459592,
+                "brier_before": 0.20833944852750863,
+                "brier_after": 0.2042944486197578
+              },
+              {
+                "segment": "DEN",
+                "n": 22797,
+                "prevalence": 0.1760757994472957,
+                "calibration_in_the_large_before": 0.07819661694489802,
+                "calibration_in_the_large_after": 0.06311521345459731,
+                "brier_before": 0.1545808265163152,
+                "brier_after": 0.14626773657990344
+              },
+              {
+                "segment": "DFW",
+                "n": 21679,
+                "prevalence": 0.21126435721204853,
+                "calibration_in_the_large_before": 0.01994149193652134,
+                "calibration_in_the_large_after": 0.017076641212290578,
+                "brier_before": 0.16442638763327055,
+                "brier_after": 0.16310240170440546
+              },
+              {
+                "segment": "DTW",
+                "n": 8906,
+                "prevalence": 0.24309454300471592,
+                "calibration_in_the_large_before": -0.01793913126593244,
+                "calibration_in_the_large_after": -0.020706056638122583,
+                "brier_before": 0.20245432415521172,
+                "brier_after": 0.18909130339553842
+              },
+              {
+                "segment": "EWR",
+                "n": 8503,
+                "prevalence": 0.18158297071621782,
+                "calibration_in_the_large_before": 0.04264754999690196,
+                "calibration_in_the_large_after": 0.04046483188060074,
+                "brier_before": 0.15730275856276543,
+                "brier_after": 0.14960253191025083
+              },
+              {
+                "segment": "FLL",
+                "n": 7912,
+                "prevalence": 0.32697168857431747,
+                "calibration_in_the_large_before": -0.052570401578796666,
+                "calibration_in_the_large_after": -0.07804374071334977,
+                "brier_before": 0.2022493918093952,
+                "brier_after": 0.2084508351123529
+              },
+              {
+                "segment": "IAH",
+                "n": 8871,
+                "prevalence": 0.1441776575357908,
+                "calibration_in_the_large_before": 0.06194532054620516,
+                "calibration_in_the_large_after": 0.06967483406340791,
+                "brier_before": 0.12936638453921367,
+                "brier_after": 0.1271057632843526
+              },
+              {
+                "segment": "JFK",
+                "n": 6787,
+                "prevalence": 0.24826874907912186,
+                "calibration_in_the_large_before": -0.006631527782563318,
+                "calibration_in_the_large_after": -0.016966133753348323,
+                "brier_before": 0.19924122558678026,
+                "brier_after": 0.1882825130442037
+              },
+              {
+                "segment": "LAS",
+                "n": 12754,
+                "prevalence": 0.16873137839109298,
+                "calibration_in_the_large_before": 0.01987267136990592,
+                "calibration_in_the_large_after": 0.033640803152555715,
+                "brier_before": 0.13279788156082153,
+                "brier_after": 0.13455930642946848
+              },
+              {
+                "segment": "LAX",
+                "n": 13453,
+                "prevalence": 0.19088679105032336,
+                "calibration_in_the_large_before": -0.023946072349281117,
+                "calibration_in_the_large_after": 0.0005504171172898975,
+                "brier_before": 0.14994561741635715,
+                "brier_after": 0.150285602983965
+              },
+              {
+                "segment": "LGA",
+                "n": 9446,
+                "prevalence": 0.2146940503917002,
+                "calibration_in_the_large_before": -0.005699079555197606,
+                "calibration_in_the_large_after": -0.002439286547271602,
+                "brier_before": 0.17996138349015814,
+                "brier_after": 0.16974776542306247
+              },
+              {
+                "segment": "MCO",
+                "n": 12971,
+                "prevalence": 0.270603654305759,
+                "calibration_in_the_large_before": -0.03963533508798958,
+                "calibration_in_the_large_after": -0.0449714648169956,
+                "brier_before": 0.19066237957093737,
+                "brier_after": 0.18988503500459164
+              },
+              {
+                "segment": "MDW",
+                "n": 4487,
+                "prevalence": 0.18386449743704034,
+                "calibration_in_the_large_before": -0.00185065552491398,
+                "calibration_in_the_large_after": 0.013794395977046042,
+                "brier_before": 0.15293553896845477,
+                "brier_after": 0.14840627368135778
+              },
+              {
+                "segment": "MIA",
+                "n": 9121,
+                "prevalence": 0.24701238899243505,
+                "calibration_in_the_large_before": -0.0017774112566751599,
+                "calibration_in_the_large_after": -0.01248044166646381,
+                "brier_before": 0.17951218358229293,
+                "brier_after": 0.17864853915992968
+              },
+              {
+                "segment": "MSP",
+                "n": 7817,
+                "prevalence": 0.19636689266982219,
+                "calibration_in_the_large_before": -0.02714974326673189,
+                "calibration_in_the_large_after": -0.0038770979955608242,
+                "brier_before": 0.16291511364033953,
+                "brier_after": 0.15866618681428188
+              },
+              {
+                "segment": "ORD",
+                "n": 25178,
+                "prevalence": 0.26261021526729683,
+                "calibration_in_the_large_before": -0.02697348847450251,
+                "calibration_in_the_large_after": -0.03377919681220609,
+                "brier_before": 0.20846987864042854,
+                "brier_after": 0.19774583584158878
+              },
+              {
+                "segment": "PHL",
+                "n": 6271,
+                "prevalence": 0.19964917875936852,
+                "calibration_in_the_large_before": 0.031682937864022015,
+                "calibration_in_the_large_after": 0.026355250877293623,
+                "brier_before": 0.17089524538440035,
+                "brier_after": 0.1614633262446069
+              },
+              {
+                "segment": "PHX",
+                "n": 15515,
+                "prevalence": 0.16635514018691588,
+                "calibration_in_the_large_before": 0.005784818179989187,
+                "calibration_in_the_large_after": 0.02781493763035703,
+                "brier_before": 0.13513365622336376,
+                "brier_after": 0.13585236752992633
+              },
+              {
+                "segment": "SAN",
+                "n": 6921,
+                "prevalence": 0.1600924721861003,
+                "calibration_in_the_large_before": 0.027444573621103502,
+                "calibration_in_the_large_after": 0.04270611068665495,
+                "brier_before": 0.12738392821983777,
+                "brier_after": 0.1300148895305705
+              },
+              {
+                "segment": "SEA",
+                "n": 10885,
+                "prevalence": 0.1559026182820395,
+                "calibration_in_the_large_before": 0.038846396575502984,
+                "calibration_in_the_large_after": 0.052553871327399915,
+                "brier_before": 0.13207758728231725,
+                "brier_after": 0.13256589211454797
+              },
+              {
+                "segment": "SFO",
+                "n": 10165,
+                "prevalence": 0.18268568617806197,
+                "calibration_in_the_large_before": 0.013203019940841554,
+                "calibration_in_the_large_after": 0.025433827623231153,
+                "brier_before": 0.1445511016337757,
+                "brier_after": 0.14535222355095875
+              },
+              {
+                "segment": "SLC",
+                "n": 9054,
+                "prevalence": 0.14457698254914955,
+                "calibration_in_the_large_before": 0.026282888551216826,
+                "calibration_in_the_large_after": 0.04834348598560184,
+                "brier_before": 0.12272260323609528,
+                "brier_after": 0.12327536922676696
+              },
+              {
+                "segment": "TPA",
+                "n": 6021,
+                "prevalence": 0.22886563693738582,
+                "calibration_in_the_large_before": -0.031479978398730596,
+                "calibration_in_the_large_after": -0.021974699222951338,
+                "brier_before": 0.17249542711635635,
+                "brier_after": 0.17052880790513503
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "quantile": {
+    "LightGBM": {
+      "n_fit": 327518,
+      "n_eval": 325967,
+      "one_sided": {
+        "q080": {
+          "offset_min": 1.9492956562877488,
+          "rank": 262016,
+          "coverage_fit_before": 0.7857033811882095,
+          "coverage_before": 0.786475318053668,
+          "coverage_after": 0.8025996496577874,
+          "pinball_before": 12.542744828397463,
+          "pinball_after": 12.532428761855028,
+          "segments": {
+            "dimension": "Origin",
+            "min_n": 500,
+            "target": 0.8,
+            "tolerance": 0.05,
+            "share_within_tolerance_before": 0.8,
+            "share_within_tolerance_after": 0.9333333333333333,
+            "rows": [
+              {
+                "segment": "ATL",
+                "n": 22633,
+                "coverage_before": 0.7875226439270092,
+                "coverage_after": 0.8059912517121018
+              },
+              {
+                "segment": "AUS",
+                "n": 6393,
+                "coverage_before": 0.8061942749882685,
+                "coverage_after": 0.8249648052557484
+              },
+              {
+                "segment": "BNA",
+                "n": 7410,
+                "coverage_before": 0.7635627530364373,
+                "coverage_after": 0.7865047233468286
+              },
+              {
+                "segment": "BOS",
+                "n": 9379,
+                "coverage_before": 0.7530653587802537,
+                "coverage_after": 0.766606248000853
+              },
+              {
+                "segment": "BWI",
+                "n": 6309,
+                "coverage_before": 0.8023458551275955,
+                "coverage_after": 0.8194642574100491
+              },
+              {
+                "segment": "CLT",
+                "n": 12711,
+                "coverage_before": 0.7805837463614193,
+                "coverage_after": 0.7964754936669027
+              },
+              {
+                "segment": "DAL",
+                "n": 5111,
+                "coverage_before": 0.766973195069458,
+                "coverage_after": 0.79182156133829
+              },
+              {
+                "segment": "DCA",
+                "n": 10507,
+                "coverage_before": 0.7420767107642524,
+                "coverage_after": 0.7562577329399448
+              },
+              {
+                "segment": "DEN",
+                "n": 22797,
+                "coverage_before": 0.8368644997148748,
+                "coverage_after": 0.8487520287757161
+              },
+              {
+                "segment": "DFW",
+                "n": 21679,
+                "coverage_before": 0.8144748374002491,
+                "coverage_after": 0.8273444347063978
+              },
+              {
+                "segment": "DTW",
+                "n": 8906,
+                "coverage_before": 0.7377049180327869,
+                "coverage_after": 0.7537615090949922
+              },
+              {
+                "segment": "EWR",
+                "n": 8503,
+                "coverage_before": 0.8052452075737975,
+                "coverage_after": 0.8206515347524403
+              },
+              {
+                "segment": "FLL",
+                "n": 7912,
+                "coverage_before": 0.7583417593528817,
+                "coverage_after": 0.7746461071789686
+              },
+              {
+                "segment": "IAH",
+                "n": 8871,
+                "coverage_before": 0.852440536579867,
+                "coverage_after": 0.8641641303122534
+              },
+              {
+                "segment": "JFK",
+                "n": 6787,
+                "coverage_before": 0.7624871077059083,
+                "coverage_after": 0.776189774569029
+              },
+              {
+                "segment": "LAS",
+                "n": 12754,
+                "coverage_before": 0.813940724478595,
+                "coverage_after": 0.8315038419319429
+              },
+              {
+                "segment": "LAX",
+                "n": 13453,
+                "coverage_before": 0.7724671077083178,
+                "coverage_after": 0.790752991897718
+              },
+              {
+                "segment": "LGA",
+                "n": 9446,
+                "coverage_before": 0.7561930976074529,
+                "coverage_after": 0.7710141858987931
+              },
+              {
+                "segment": "MCO",
+                "n": 12971,
+                "coverage_before": 0.7363349009328503,
+                "coverage_after": 0.7577673271143319
+              },
+              {
+                "segment": "MDW",
+                "n": 4487,
+                "coverage_before": 0.7617561845330956,
+                "coverage_after": 0.7824827278805437
+              },
+              {
+                "segment": "MIA",
+                "n": 9121,
+                "coverage_before": 0.7962942659796075,
+                "coverage_after": 0.8102181778313782
+              },
+              {
+                "segment": "MSP",
+                "n": 7817,
+                "coverage_before": 0.762568760394013,
+                "coverage_after": 0.7771523602405015
+              },
+              {
+                "segment": "ORD",
+                "n": 25178,
+                "coverage_before": 0.7421558503455398,
+                "coverage_after": 0.7573278258797362
+              },
+              {
+                "segment": "PHL",
+                "n": 6271,
+                "coverage_before": 0.798118322436613,
+                "coverage_after": 0.8107159942592888
+              },
+              {
+                "segment": "PHX",
+                "n": 15515,
+                "coverage_before": 0.7912987431517886,
+                "coverage_after": 0.8120528520786335
+              },
+              {
+                "segment": "SAN",
+                "n": 6921,
+                "coverage_before": 0.8270481144343304,
+                "coverage_after": 0.843808698165005
+              },
+              {
+                "segment": "SEA",
+                "n": 10885,
+                "coverage_before": 0.8384014699127239,
+                "coverage_after": 0.8522737712448324
+              },
+              {
+                "segment": "SFO",
+                "n": 10165,
+                "coverage_before": 0.811706837186424,
+                "coverage_after": 0.826463354648303
+              },
+              {
+                "segment": "SLC",
+                "n": 9054,
+                "coverage_before": 0.8242765628451513,
+                "coverage_after": 0.8400706869891761
+              },
+              {
+                "segment": "TPA",
+                "n": 6021,
+                "coverage_before": 0.7365886065437635,
+                "coverage_after": 0.7565188506892543
+              }
+            ]
+          }
+        },
+        "q095": {
+          "offset_min": 5.630320403505372,
+          "rank": 311144,
+          "coverage_fit_before": 0.9454839123345893,
+          "coverage_before": 0.9549709019624686,
+          "coverage_after": 0.9592351372991744,
+          "pinball_before": 7.633180455389544,
+          "pinball_after": 7.6733915550962495,
+          "segments": {
+            "dimension": "Origin",
+            "min_n": 500,
+            "target": 0.95,
+            "tolerance": 0.05,
+            "share_within_tolerance_before": 1.0,
+            "share_within_tolerance_after": 1.0,
+            "rows": [
+              {
+                "segment": "ATL",
+                "n": 22633,
+                "coverage_before": 0.9644324658684222,
+                "coverage_after": 0.9683205938231786
+              },
+              {
+                "segment": "AUS",
+                "n": 6393,
+                "coverage_before": 0.9644924135773503,
+                "coverage_after": 0.9677772563741592
+              },
+              {
+                "segment": "BNA",
+                "n": 7410,
+                "coverage_before": 0.9650472334682861,
+                "coverage_after": 0.969365721997301
+              },
+              {
+                "segment": "BOS",
+                "n": 9379,
+                "coverage_before": 0.9316558268472118,
+                "coverage_after": 0.9389060667448555
+              },
+              {
+                "segment": "BWI",
+                "n": 6309,
+                "coverage_before": 0.9643366619115549,
+                "coverage_after": 0.9675067364083056
+              },
+              {
+                "segment": "CLT",
+                "n": 12711,
+                "coverage_before": 0.9512233498544568,
+                "coverage_after": 0.9563370309181024
+              },
+              {
+                "segment": "DAL",
+                "n": 5111,
+                "coverage_before": 0.9733907258853454,
+                "coverage_after": 0.9763255722950499
+              },
+              {
+                "segment": "DCA",
+                "n": 10507,
+                "coverage_before": 0.935281241077377,
+                "coverage_after": 0.9415627676786904
+              },
+              {
+                "segment": "DEN",
+                "n": 22797,
+                "coverage_before": 0.9546870202219591,
+                "coverage_after": 0.9586787735228319
+              },
+              {
+                "segment": "DFW",
+                "n": 21679,
+                "coverage_before": 0.9639743530605656,
+                "coverage_after": 0.9666958808063103
+              },
+              {
+                "segment": "DTW",
+                "n": 8906,
+                "coverage_before": 0.9352122164832697,
+                "coverage_after": 0.9406018414551988
+              },
+              {
+                "segment": "EWR",
+                "n": 8503,
+                "coverage_before": 0.9549570739738915,
+                "coverage_after": 0.9593084793602258
+              },
+              {
+                "segment": "FLL",
+                "n": 7912,
+                "coverage_before": 0.9365520728008089,
+                "coverage_after": 0.9413549039433772
+              },
+              {
+                "segment": "IAH",
+                "n": 8871,
+                "coverage_before": 0.9699019276293541,
+                "coverage_after": 0.9720437380227708
+              },
+              {
+                "segment": "JFK",
+                "n": 6787,
+                "coverage_before": 0.9341387947546781,
+                "coverage_after": 0.9404744364225726
+              },
+              {
+                "segment": "LAS",
+                "n": 12754,
+                "coverage_before": 0.9675395954210444,
+                "coverage_after": 0.971303120589619
+              },
+              {
+                "segment": "LAX",
+                "n": 13453,
+                "coverage_before": 0.9513863078867167,
+                "coverage_after": 0.9547312867018509
+              },
+              {
+                "segment": "LGA",
+                "n": 9446,
+                "coverage_before": 0.9449502434893077,
+                "coverage_after": 0.9498200296421766
+              },
+              {
+                "segment": "MCO",
+                "n": 12971,
+                "coverage_before": 0.9454937938478144,
+                "coverage_after": 0.9508133528640814
+              },
+              {
+                "segment": "MDW",
+                "n": 4487,
+                "coverage_before": 0.9710274125250724,
+                "coverage_after": 0.9734789391575663
+              },
+              {
+                "segment": "MIA",
+                "n": 9121,
+                "coverage_before": 0.9548295143076417,
+                "coverage_after": 0.9585571757482733
+              },
+              {
+                "segment": "MSP",
+                "n": 7817,
+                "coverage_before": 0.9443520532173468,
+                "coverage_after": 0.949597032109505
+              },
+              {
+                "segment": "ORD",
+                "n": 25178,
+                "coverage_before": 0.943879577408849,
+                "coverage_after": 0.9493208356501708
+              },
+              {
+                "segment": "PHL",
+                "n": 6271,
+                "coverage_before": 0.9580609153245097,
+                "coverage_after": 0.9614096635305374
+              },
+              {
+                "segment": "PHX",
+                "n": 15515,
+                "coverage_before": 0.9682887528198517,
+                "coverage_after": 0.9717692555591363
+              },
+              {
+                "segment": "SAN",
+                "n": 6921,
+                "coverage_before": 0.9693685883542841,
+                "coverage_after": 0.9732697587053893
+              },
+              {
+                "segment": "SEA",
+                "n": 10885,
+                "coverage_before": 0.9682131373449702,
+                "coverage_after": 0.9720716582452917
+              },
+              {
+                "segment": "SFO",
+                "n": 10165,
+                "coverage_before": 0.9523856369896705,
+                "coverage_after": 0.9570093457943926
+              },
+              {
+                "segment": "SLC",
+                "n": 9054,
+                "coverage_before": 0.9582504970178927,
+                "coverage_after": 0.9612326043737575
+              },
+              {
+                "segment": "TPA",
+                "n": 6021,
+                "coverage_before": 0.9609699385484138,
+                "coverage_after": 0.9661185849526657
+              }
+            ]
+          }
+        }
+      },
+      "adjusted_crossing_rate_q080_q095": 0.0,
+      "interval80": {
+        "method": "CQR (numpy; plan 5.4)",
+        "offset_min": 2.1222721973254366,
+        "rank": 262016,
+        "coverage_fit_before": 0.7562668311359987,
+        "coverage_before": 0.7684826991689343,
+        "coverage_after": 0.8093027821834725,
+        "mean_width_min_before": 65.33634751186756,
+        "mean_width_min_after": 69.58089190651843,
+        "segments": {
+          "dimension": "Origin",
+          "min_n": 500,
+          "target": 0.8,
+          "tolerance": 0.05,
+          "share_within_tolerance_before": 0.6666666666666666,
+          "share_within_tolerance_after": 0.7333333333333333,
+          "rows": [
+            {
+              "segment": "ATL",
+              "n": 22633,
+              "coverage_before": 0.7941501347589802,
+              "coverage_after": 0.8400565545884329
+            },
+            {
+              "segment": "AUS",
+              "n": 6393,
+              "coverage_before": 0.8047864852182074,
+              "coverage_after": 0.8412325981542312
+            },
+            {
+              "segment": "BNA",
+              "n": 7410,
+              "coverage_before": 0.8226720647773279,
+              "coverage_after": 0.8545209176788124
+            },
+            {
+              "segment": "BOS",
+              "n": 9379,
+              "coverage_before": 0.6689412517325941,
+              "coverage_after": 0.7060454206205352
+            },
+            {
+              "segment": "BWI",
+              "n": 6309,
+              "coverage_before": 0.7422729434141703,
+              "coverage_after": 0.7883975273418925
+            },
+            {
+              "segment": "CLT",
+              "n": 12711,
+              "coverage_before": 0.7646919990559358,
+              "coverage_after": 0.811344504759657
+            },
+            {
+              "segment": "DAL",
+              "n": 5111,
+              "coverage_before": 0.8395617296028175,
+              "coverage_after": 0.8761494815104676
+            },
+            {
+              "segment": "DCA",
+              "n": 10507,
+              "coverage_before": 0.750547254211478,
+              "coverage_after": 0.7844294280003807
+            },
+            {
+              "segment": "DEN",
+              "n": 22797,
+              "coverage_before": 0.7334298372592885,
+              "coverage_after": 0.783260955388867
+            },
+            {
+              "segment": "DFW",
+              "n": 21679,
+              "coverage_before": 0.8050186816735089,
+              "coverage_after": 0.8464412565155219
+            },
+            {
+              "segment": "DTW",
+              "n": 8906,
+              "coverage_before": 0.7109813608803054,
+              "coverage_after": 0.7558949023130473
+            },
+            {
+              "segment": "EWR",
+              "n": 8503,
+              "coverage_before": 0.7118664000940844,
+              "coverage_after": 0.7484417264494884
+            },
+            {
+              "segment": "FLL",
+              "n": 7912,
+              "coverage_before": 0.7795753286147624,
+              "coverage_after": 0.8095298281092013
+            },
+            {
+              "segment": "IAH",
+              "n": 8871,
+              "coverage_before": 0.7769135384962237,
+              "coverage_after": 0.8240333671513922
+            },
+            {
+              "segment": "JFK",
+              "n": 6787,
+              "coverage_before": 0.6736407838514807,
+              "coverage_after": 0.7092971857963755
+            },
+            {
+              "segment": "LAS",
+              "n": 12754,
+              "coverage_before": 0.8171554022267524,
+              "coverage_after": 0.8587893994041085
+            },
+            {
+              "segment": "LAX",
+              "n": 13453,
+              "coverage_before": 0.7797517282390545,
+              "coverage_after": 0.8172154909685572
+            },
+            {
+              "segment": "LGA",
+              "n": 9446,
+              "coverage_before": 0.7141647258098666,
+              "coverage_after": 0.7507939868727503
+            },
+            {
+              "segment": "MCO",
+              "n": 12971,
+              "coverage_before": 0.7993215634877804,
+              "coverage_after": 0.8306221571197286
+            },
+            {
+              "segment": "MDW",
+              "n": 4487,
+              "coverage_before": 0.8025406730554937,
+              "coverage_after": 0.8464452863828839
+            },
+            {
+              "segment": "MIA",
+              "n": 9121,
+              "coverage_before": 0.8021050323429448,
+              "coverage_after": 0.8365310821181888
+            },
+            {
+              "segment": "MSP",
+              "n": 7817,
+              "coverage_before": 0.7447870026864526,
+              "coverage_after": 0.7912242548292183
+            },
+            {
+              "segment": "ORD",
+              "n": 25178,
+              "coverage_before": 0.7392167765509572,
+              "coverage_after": 0.7800063547541505
+            },
+            {
+              "segment": "PHL",
+              "n": 6271,
+              "coverage_before": 0.7030776590655398,
+              "coverage_after": 0.7493222771487801
+            },
+            {
+              "segment": "PHX",
+              "n": 15515,
+              "coverage_before": 0.7891717692555591,
+              "coverage_after": 0.8326780534966162
+            },
+            {
+              "segment": "SAN",
+              "n": 6921,
+              "coverage_before": 0.7893368010403121,
+              "coverage_after": 0.8326831382748158
+            },
+            {
+              "segment": "SEA",
+              "n": 10885,
+              "coverage_before": 0.7956821313734497,
+              "coverage_after": 0.8359209921910886
+            },
+            {
+              "segment": "SFO",
+              "n": 10165,
+              "coverage_before": 0.7898671913428431,
+              "coverage_after": 0.8291195277914413
+            },
+            {
+              "segment": "SLC",
+              "n": 9054,
+              "coverage_before": 0.7736911862160372,
+              "coverage_after": 0.8194168323392975
+            },
+            {
+              "segment": "TPA",
+              "n": 6021,
+              "coverage_before": 0.8393954492609201,
+              "coverage_after": 0.868792559375519
+            }
+          ]
+        }
+      }
+    },
+    "B1": {
+      "n_fit": 327518,
+      "n_eval": 325967,
+      "one_sided": {
+        "q080": {
+          "offset_min": 0.7999999999999545,
+          "rank": 262016,
+          "coverage_fit_before": 0.7991896628582246,
+          "coverage_before": 0.8135884920866223,
+          "coverage_after": 0.8143493052977755,
+          "pinball_before": 12.359029472308546,
+          "pinball_after": 12.370137099767767,
+          "segments": {
+            "dimension": "Origin",
+            "min_n": 500,
+            "target": 0.8,
+            "tolerance": 0.05,
+            "share_within_tolerance_before": 0.7333333333333333,
+            "share_within_tolerance_after": 0.7333333333333333,
+            "rows": [
+              {
+                "segment": "ATL",
+                "n": 22633,
+                "coverage_before": 0.8181416515707153,
+                "coverage_after": 0.8188485839261256
+              },
+              {
+                "segment": "AUS",
+                "n": 6393,
+                "coverage_before": 0.8356014390739872,
+                "coverage_after": 0.8360707023306742
+              },
+              {
+                "segment": "BNA",
+                "n": 7410,
+                "coverage_before": 0.8140350877192982,
+                "coverage_after": 0.8144399460188934
+              },
+              {
+                "segment": "BOS",
+                "n": 9379,
+                "coverage_before": 0.7642605821516153,
+                "coverage_after": 0.7647936880264421
+              },
+              {
+                "segment": "BWI",
+                "n": 6309,
+                "coverage_before": 0.8614677444919956,
+                "coverage_after": 0.8624187668410208
+              },
+              {
+                "segment": "CLT",
+                "n": 12711,
+                "coverage_before": 0.8384863504051608,
+                "coverage_after": 0.8391943985524349
+              },
+              {
+                "segment": "DAL",
+                "n": 5111,
+                "coverage_before": 0.8315398160829583,
+                "coverage_after": 0.8329094110741538
+              },
+              {
+                "segment": "DCA",
+                "n": 10507,
+                "coverage_before": 0.7377938517179023,
+                "coverage_after": 0.7393166460454935
+              },
+              {
+                "segment": "DEN",
+                "n": 22797,
+                "coverage_before": 0.8580514980041234,
+                "coverage_after": 0.8586656138965654
+              },
+              {
+                "segment": "DFW",
+                "n": 21679,
+                "coverage_before": 0.8468564048157203,
+                "coverage_after": 0.8474560634715623
+              },
+              {
+                "segment": "DTW",
+                "n": 8906,
+                "coverage_before": 0.7463507747585897,
+                "coverage_after": 0.7467999101729171
+              },
+              {
+                "segment": "EWR",
+                "n": 8503,
+                "coverage_before": 0.8354698341761732,
+                "coverage_after": 0.8364106785840292
+              },
+              {
+                "segment": "FLL",
+                "n": 7912,
+                "coverage_before": 0.7479777553083923,
+                "coverage_after": 0.7491152679474217
+              },
+              {
+                "segment": "IAH",
+                "n": 8871,
+                "coverage_before": 0.8771277195355653,
+                "coverage_after": 0.8779168075752452
+              },
+              {
+                "segment": "JFK",
+                "n": 6787,
+                "coverage_before": 0.7667599823191396,
+                "coverage_after": 0.7676440253425667
+              },
+              {
+                "segment": "LAS",
+                "n": 12754,
+                "coverage_before": 0.8413046887251059,
+                "coverage_after": 0.8421671632429042
+              },
+              {
+                "segment": "LAX",
+                "n": 13453,
+                "coverage_before": 0.7890433360588717,
+                "coverage_after": 0.789786664684457
+              },
+              {
+                "segment": "LGA",
+                "n": 9446,
+                "coverage_before": 0.782976921448232,
+                "coverage_after": 0.7839297056955326
+              },
+              {
+                "segment": "MCO",
+                "n": 12971,
+                "coverage_before": 0.7761930460257498,
+                "coverage_after": 0.7771952817824378
+              },
+              {
+                "segment": "MDW",
+                "n": 4487,
+                "coverage_before": 0.826387341207934,
+                "coverage_after": 0.8272788054379318
+              },
+              {
+                "segment": "MIA",
+                "n": 9121,
+                "coverage_before": 0.8251288235939042,
+                "coverage_after": 0.8260059204034645
+              },
+              {
+                "segment": "MSP",
+                "n": 7817,
+                "coverage_before": 0.7857234233081745,
+                "coverage_after": 0.7864909811948317
+              },
+              {
+                "segment": "ORD",
+                "n": 25178,
+                "coverage_before": 0.7798872031138295,
+                "coverage_after": 0.7807212645960759
+              },
+              {
+                "segment": "PHL",
+                "n": 6271,
+                "coverage_before": 0.8260245574868442,
+                "coverage_after": 0.8273002710891405
+              },
+              {
+                "segment": "PHX",
+                "n": 15515,
+                "coverage_before": 0.8221076377699001,
+                "coverage_after": 0.8226877215597809
+              },
+              {
+                "segment": "SAN",
+                "n": 6921,
+                "coverage_before": 0.8562346481722295,
+                "coverage_after": 0.8569570871261378
+              },
+              {
+                "segment": "SEA",
+                "n": 10885,
+                "coverage_before": 0.8515388148828663,
+                "coverage_after": 0.8519062930638494
+              },
+              {
+                "segment": "SFO",
+                "n": 10165,
+                "coverage_before": 0.8226266601082145,
+                "coverage_after": 0.8230201672405313
+              },
+              {
+                "segment": "SLC",
+                "n": 9054,
+                "coverage_before": 0.8227302849569251,
+                "coverage_after": 0.8233929754804507
+              },
+              {
+                "segment": "TPA",
+                "n": 6021,
+                "coverage_before": 0.7827603388141505,
+                "coverage_after": 0.7834246802856668
+              }
+            ]
+          }
+        },
+        "q095": {
+          "offset_min": 5.400000000000091,
+          "rank": 311144,
+          "coverage_fit_before": 0.9449587503587589,
+          "coverage_before": 0.9546273088993671,
+          "coverage_after": 0.9589252899833419,
+          "pinball_before": 7.746363987765635,
+          "pinball_after": 7.782885292069447,
+          "segments": {
+            "dimension": "Origin",
+            "min_n": 500,
+            "target": 0.95,
+            "tolerance": 0.05,
+            "share_within_tolerance_before": 1.0,
+            "share_within_tolerance_after": 1.0,
+            "rows": [
+              {
+                "segment": "ATL",
+                "n": 22633,
+                "coverage_before": 0.9610745371802236,
+                "coverage_after": 0.9657579640348164
+              },
+              {
+                "segment": "AUS",
+                "n": 6393,
+                "coverage_before": 0.9649616768340372,
+                "coverage_after": 0.9693414672297825
+              },
+              {
+                "segment": "BNA",
+                "n": 7410,
+                "coverage_before": 0.9609986504723347,
+                "coverage_after": 0.9669365721997301
+              },
+              {
+                "segment": "BOS",
+                "n": 9379,
+                "coverage_before": 0.9322955538970039,
+                "coverage_after": 0.940292142019405
+              },
+              {
+                "segment": "BWI",
+                "n": 6309,
+                "coverage_before": 0.967348232683468,
+                "coverage_after": 0.9708353146298938
+              },
+              {
+                "segment": "CLT",
+                "n": 12711,
+                "coverage_before": 0.9541342144599166,
+                "coverage_after": 0.9588545354417434
+              },
+              {
+                "segment": "DAL",
+                "n": 5111,
+                "coverage_before": 0.9724124437487771,
+                "coverage_after": 0.977303854431618
+              },
+              {
+                "segment": "DCA",
+                "n": 10507,
+                "coverage_before": 0.9406110212239459,
+                "coverage_after": 0.9447035309793471
+              },
+              {
+                "segment": "DEN",
+                "n": 22797,
+                "coverage_before": 0.9579330613677238,
+                "coverage_after": 0.9613545641970435
+              },
+              {
+                "segment": "DFW",
+                "n": 21679,
+                "coverage_before": 0.9653120531389824,
+                "coverage_after": 0.968125836062549
+              },
+              {
+                "segment": "DTW",
+                "n": 8906,
+                "coverage_before": 0.9273523467325399,
+                "coverage_after": 0.9339770940938693
+              },
+              {
+                "segment": "EWR",
+                "n": 8503,
+                "coverage_before": 0.962836645889686,
+                "coverage_after": 0.9661296013171822
+              },
+              {
+                "segment": "FLL",
+                "n": 7912,
+                "coverage_before": 0.9411021233569262,
+                "coverage_after": 0.9459049544994944
+              },
+              {
+                "segment": "IAH",
+                "n": 8871,
+                "coverage_before": 0.9721564648855823,
+                "coverage_after": 0.9744110021418104
+              },
+              {
+                "segment": "JFK",
+                "n": 6787,
+                "coverage_before": 0.9351701782820098,
+                "coverage_after": 0.9392957123913364
+              },
+              {
+                "segment": "LAS",
+                "n": 12754,
+                "coverage_before": 0.9618943076681825,
+                "coverage_after": 0.9665203073545554
+              },
+              {
+                "segment": "LAX",
+                "n": 13453,
+                "coverage_before": 0.9437300230431874,
+                "coverage_after": 0.9490076562848435
+              },
+              {
+                "segment": "LGA",
+                "n": 9446,
+                "coverage_before": 0.9477027313148423,
+                "coverage_after": 0.9525725174677112
+              },
+              {
+                "segment": "MCO",
+                "n": 12971,
+                "coverage_before": 0.9520468737953898,
+                "coverage_after": 0.956980957520623
+              },
+              {
+                "segment": "MDW",
+                "n": 4487,
+                "coverage_before": 0.9643414308000892,
+                "coverage_after": 0.9681301537775797
+              },
+              {
+                "segment": "MIA",
+                "n": 9121,
+                "coverage_before": 0.9615173774805394,
+                "coverage_after": 0.9651354018199759
+              },
+              {
+                "segment": "MSP",
+                "n": 7817,
+                "coverage_before": 0.9353972112063451,
+                "coverage_after": 0.9400025585262889
+              },
+              {
+                "segment": "ORD",
+                "n": 25178,
+                "coverage_before": 0.9490030979426484,
+                "coverage_after": 0.9535308602748431
+              },
+              {
+                "segment": "PHL",
+                "n": 6271,
+                "coverage_before": 0.9585393079253708,
+                "coverage_after": 0.9625259129325466
+              },
+              {
+                "segment": "PHX",
+                "n": 15515,
+                "coverage_before": 0.9595230422172092,
+                "coverage_after": 0.9636480825008057
+              },
+              {
+                "segment": "SAN",
+                "n": 6921,
+                "coverage_before": 0.968068198237249,
+                "coverage_after": 0.9709579540528825
+              },
+              {
+                "segment": "SEA",
+                "n": 10885,
+                "coverage_before": 0.9613229214515389,
+                "coverage_after": 0.9653651814423518
+              },
+              {
+                "segment": "SFO",
+                "n": 10165,
+                "coverage_before": 0.9509099852434826,
+                "coverage_after": 0.9545499262174126
+              },
+              {
+                "segment": "SLC",
+                "n": 9054,
+                "coverage_before": 0.9469847581179589,
+                "coverage_after": 0.9506295559973492
+              },
+              {
+                "segment": "TPA",
+                "n": 6021,
+                "coverage_before": 0.964789902009633,
+                "coverage_after": 0.968609865470852
+              }
+            ]
+          }
+        }
+      },
+      "adjusted_crossing_rate_q080_q095": 7.669488015658026e-05,
+      "interval80": {
+        "method": "CQR (numpy; plan 5.4)",
+        "offset_min": 3.0,
+        "rank": 262016,
+        "coverage_fit_before": 0.7534517186841639,
+        "coverage_before": 0.7607365162731197,
+        "coverage_after": 0.8175398123122892,
+        "mean_width_min_before": 67.94328812425799,
+        "mean_width_min_after": 73.94328812425799,
+        "segments": {
+          "dimension": "Origin",
+          "min_n": 500,
+          "target": 0.8,
+          "tolerance": 0.05,
+          "share_within_tolerance_before": 0.6333333333333333,
+          "share_within_tolerance_after": 0.8666666666666667,
+          "rows": [
+            {
+              "segment": "ATL",
+              "n": 22633,
+              "coverage_before": 0.8109839614721867,
+              "coverage_after": 0.8624574736004949
+            },
+            {
+              "segment": "AUS",
+              "n": 6393,
+              "coverage_before": 0.776943531988112,
+              "coverage_after": 0.8329422806194275
+            },
+            {
+              "segment": "BNA",
+              "n": 7410,
+              "coverage_before": 0.7628879892037786,
+              "coverage_after": 0.8214574898785425
+            },
+            {
+              "segment": "BOS",
+              "n": 9379,
+              "coverage_before": 0.7252372321142979,
+              "coverage_after": 0.7766286384475957
+            },
+            {
+              "segment": "BWI",
+              "n": 6309,
+              "coverage_before": 0.708353146298938,
+              "coverage_after": 0.7788873038516405
+            },
+            {
+              "segment": "CLT",
+              "n": 12711,
+              "coverage_before": 0.7266934151522304,
+              "coverage_after": 0.7969475257650853
+            },
+            {
+              "segment": "DAL",
+              "n": 5111,
+              "coverage_before": 0.79612600273919,
+              "coverage_after": 0.8693015065544903
+            },
+            {
+              "segment": "DCA",
+              "n": 10507,
+              "coverage_before": 0.7639668792233749,
+              "coverage_after": 0.8035595317407442
+            },
+            {
+              "segment": "DEN",
+              "n": 22797,
+              "coverage_before": 0.7142606483309207,
+              "coverage_after": 0.787384304952406
+            },
+            {
+              "segment": "DFW",
+              "n": 21679,
+              "coverage_before": 0.7855528391530975,
+              "coverage_after": 0.846395128926611
+            },
+            {
+              "segment": "DTW",
+              "n": 8906,
+              "coverage_before": 0.6831349651920053,
+              "coverage_after": 0.7505052773411184
+            },
+            {
+              "segment": "EWR",
+              "n": 8503,
+              "coverage_before": 0.7645536869340233,
+              "coverage_after": 0.8114783017758438
+            },
+            {
+              "segment": "FLL",
+              "n": 7912,
+              "coverage_before": 0.8035894843276037,
+              "coverage_after": 0.8401162790697675
+            },
+            {
+              "segment": "IAH",
+              "n": 8871,
+              "coverage_before": 0.7765753579077894,
+              "coverage_after": 0.8406042159846692
+            },
+            {
+              "segment": "JFK",
+              "n": 6787,
+              "coverage_before": 0.7465743332842198,
+              "coverage_after": 0.7834094592603507
+            },
+            {
+              "segment": "LAS",
+              "n": 12754,
+              "coverage_before": 0.7948094715383409,
+              "coverage_after": 0.8491453661596362
+            },
+            {
+              "segment": "LAX",
+              "n": 13453,
+              "coverage_before": 0.7540325577938006,
+              "coverage_after": 0.8088158774994425
+            },
+            {
+              "segment": "LGA",
+              "n": 9446,
+              "coverage_before": 0.7855176794410332,
+              "coverage_after": 0.8278636459877197
+            },
+            {
+              "segment": "MCO",
+              "n": 12971,
+              "coverage_before": 0.8077249248323183,
+              "coverage_after": 0.8502813969624547
+            },
+            {
+              "segment": "MDW",
+              "n": 4487,
+              "coverage_before": 0.7416982393581457,
+              "coverage_after": 0.8152440383329619
+            },
+            {
+              "segment": "MIA",
+              "n": 9121,
+              "coverage_before": 0.8001315645214341,
+              "coverage_after": 0.8446442276066221
+            },
+            {
+              "segment": "MSP",
+              "n": 7817,
+              "coverage_before": 0.6828706664960983,
+              "coverage_after": 0.7534859920685685
+            },
+            {
+              "segment": "ORD",
+              "n": 25178,
+              "coverage_before": 0.7637222972436254,
+              "coverage_after": 0.8144808960203352
+            },
+            {
+              "segment": "PHL",
+              "n": 6271,
+              "coverage_before": 0.7407112103332801,
+              "coverage_after": 0.7912613618242704
+            },
+            {
+              "segment": "PHX",
+              "n": 15515,
+              "coverage_before": 0.7646148888172736,
+              "coverage_after": 0.8276506606509829
+            },
+            {
+              "segment": "SAN",
+              "n": 6921,
+              "coverage_before": 0.72460627077012,
+              "coverage_after": 0.7913596301112557
+            },
+            {
+              "segment": "SEA",
+              "n": 10885,
+              "coverage_before": 0.7562700964630225,
+              "coverage_after": 0.8137804317868627
+            },
+            {
+              "segment": "SFO",
+              "n": 10165,
+              "coverage_before": 0.7604525332021643,
+              "coverage_after": 0.8176094441711756
+            },
+            {
+              "segment": "SLC",
+              "n": 9054,
+              "coverage_before": 0.7122818643693395,
+              "coverage_after": 0.7853987187983212
+            },
+            {
+              "segment": "TPA",
+              "n": 6021,
+              "coverage_before": 0.8103305098820794,
+              "coverage_after": 0.8573326689918618
+            }
+          ]
+        }
+      }
+    }
+  }
+}

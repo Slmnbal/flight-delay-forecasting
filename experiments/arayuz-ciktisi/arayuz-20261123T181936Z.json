@@ -1,0 +1,711 @@
+{
+  "created_utc": "2026-11-23T18:19:36.253875+00:00",
+  "command": "python -m flight_delay.modeling.run_interface_export",
+  "mode": "full",
+  "out": "deliverables/src/web/veri",
+  "inputs": {
+    "results": {
+      "path": "experiments/son-test/son-test-20261122T105048Z/son-test-sonuclari.json",
+      "sha256": "a10f4b26f7ed88d6a58de0c33c5f4c655767247518f81aef356b6826839337e2"
+    },
+    "manifest": {
+      "path": "experiments/son-test-dondurma.json",
+      "sha256": "7bd24d2515d775f7bd558431eb2882e44c01aed5508aa3828d35369029e03721"
+    },
+    "lock": {
+      "path": "experiments/son-test-kilidi.json",
+      "sha256": "fee816c25ddf24c656e60d575c7840e0225ddadd19edc45f4c9bf67d564c1788"
+    },
+    "schema": {
+      "path": "experiments/arayuz-sozlesmesi.json",
+      "sha256": "aa3fa6affa017cdf6f6114aedadd3add080fbf37e5e4b1af86b5ebdc89f69dea"
+    },
+    "or_cells": {
+      "path": "deliverables/data/or/tampon-20261122T173803Z/hucre-tamponlari.parquet",
+      "sha256": "7fb5a63e1042e46c70d1ced30f823ee0e49293ba23bb48e66bf13b99a88a7fa7",
+      "aggregator": "mean"
+    },
+    "targets": [
+      "ORD",
+      "DEN",
+      "DFW",
+      "ATL",
+      "LAX",
+      "SEA",
+      "CLT",
+      "LAS",
+      "PHX",
+      "MCO",
+      "SFO",
+      "BOS",
+      "DCA",
+      "LGA",
+      "DTW",
+      "MSP",
+      "EWR",
+      "SLC",
+      "IAH",
+      "BNA",
+      "JFK",
+      "MIA",
+      "PHL",
+      "BWI",
+      "SAN",
+      "AUS",
+      "MDW",
+      "FLL",
+      "TPA",
+      "DAL"
+    ]
+  },
+  "files": [
+    {
+      "path": "veri/hata-analizi.json",
+      "bytes": 29633
+    },
+    {
+      "path": "veri/hava-deneyi.json",
+      "bytes": 1312
+    },
+    {
+      "path": "veri/havalimanlari.json",
+      "bytes": 8672
+    },
+    {
+      "path": "veri/kalibrasyon.json",
+      "bytes": 13910
+    },
+    {
+      "path": "veri/manifest.json",
+      "bytes": 5256
+    },
+    {
+      "path": "veri/ozet.json",
+      "bytes": 13442
+    },
+    {
+      "path": "veri/rotalar/ATL.json",
+      "bytes": 131290
+    },
+    {
+      "path": "veri/rotalar/AUS.json",
+      "bytes": 53113
+    },
+    {
+      "path": "veri/rotalar/BNA.json",
+      "bytes": 63840
+    },
+    {
+      "path": "veri/rotalar/BOS.json",
+      "bytes": 103567
+    },
+    {
+      "path": "veri/rotalar/BWI.json",
+      "bytes": 35754
+    },
+    {
+      "path": "veri/rotalar/CLT.json",
+      "bytes": 88929
+    },
+    {
+      "path": "veri/rotalar/DAL.json",
+      "bytes": 3909
+    },
+    {
+      "path": "veri/rotalar/DCA.json",
+      "bytes": 84634
+    },
+    {
+      "path": "veri/rotalar/DEN.json",
+      "bytes": 212374
+    },
+    {
+      "path": "veri/rotalar/DFW.json",
+      "bytes": 185875
+    },
+    {
+      "path": "veri/rotalar/DTW.json",
+      "bytes": 71287
+    },
+    {
+      "path": "veri/rotalar/EWR.json",
+      "bytes": 62563
+    },
+    {
+      "path": "veri/rotalar/FLL.json",
+      "bytes": 60048
+    },
+    {
+      "path": "veri/rotalar/IAH.json",
+      "bytes": 56264
+    },
+    {
+      "path": "veri/rotalar/JFK.json",
+      "bytes": 65906
+    },
+    {
+      "path": "veri/rotalar/LAS.json",
+      "bytes": 91129
+    },
+    {
+      "path": "veri/rotalar/LAX.json",
+      "bytes": 102446
+    },
+    {
+      "path": "veri/rotalar/LGA.json",
+      "bytes": 56673
+    },
+    {
+      "path": "veri/rotalar/MCO.json",
+      "bytes": 119289
+    },
+    {
+      "path": "veri/rotalar/MDW.json",
+      "bytes": 6512
+    },
+    {
+      "path": "veri/rotalar/MIA.json",
+      "bytes": 60333
+    },
+    {
+      "path": "veri/rotalar/MSP.json",
+      "bytes": 50858
+    },
+    {
+      "path": "veri/rotalar/ORD.json",
+      "bytes": 287677
+    },
+    {
+      "path": "veri/rotalar/PHL.json",
+      "bytes": 72848
+    },
+    {
+      "path": "veri/rotalar/PHX.json",
+      "bytes": 138889
+    },
+    {
+      "path": "veri/rotalar/SAN.json",
+      "bytes": 60851
+    },
+    {
+      "path": "veri/rotalar/SEA.json",
+      "bytes": 108899
+    },
+    {
+      "path": "veri/rotalar/SFO.json",
+      "bytes": 87145
+    },
+    {
+      "path": "veri/rotalar/SLC.json",
+      "bytes": 57851
+    },
+    {
+      "path": "veri/rotalar/TPA.json",
+      "bytes": 45487
+    }
+  ],
+  "total_bytes": 2698465,
+  "size_warnings": [],
+  "hidden_route_cells": {
+    "yayimlanamaz": 17671,
+    "n_ucus_az": 0,
+    "tamamlanan_az": 20,
+    "anahtar_eksik": 0,
+    "eksik_deger": 0,
+    "yayimlanan": 7074,
+    "per_origin_published": {
+      "ORD": 774,
+      "DEN": 573,
+      "DFW": 501,
+      "ATL": 354,
+      "LAX": 277,
+      "SEA": 294,
+      "CLT": 240,
+      "LAS": 246,
+      "PHX": 376,
+      "MCO": 321,
+      "SFO": 235,
+      "BOS": 279,
+      "DCA": 228,
+      "LGA": 152,
+      "DTW": 192,
+      "MSP": 137,
+      "EWR": 168,
+      "SLC": 156,
+      "IAH": 151,
+      "BNA": 172,
+      "JFK": 177,
+      "MIA": 162,
+      "PHL": 196,
+      "BWI": 96,
+      "SAN": 164,
+      "AUS": 143,
+      "MDW": 17,
+      "FLL": 161,
+      "TPA": 122,
+      "DAL": 10
+    }
+  },
+  "checks": {
+    "final_test": [
+      {
+        "name": "final_test_files:digest",
+        "now": "bc2db736f48ba3c57bf482209b972694ec59116983becefb14d5e5728af500a3",
+        "stored": "bc2db736f48ba3c57bf482209b972694ec59116983becefb14d5e5728af500a3",
+        "ok": true
+      },
+      {
+        "name": "arr_del15/T2:n",
+        "now": 2315618.0,
+        "stored": 2315618.0,
+        "abs_diff": 0.0,
+        "tolerance": 0,
+        "ok": true
+      },
+      {
+        "name": "arr_del15/T2:prevalence",
+        "now": 0.26262578715487617,
+        "stored": 0.26262578715487617,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_del15/T2:platt_rolling:mean_pred",
+        "now": 0.26016684793517664,
+        "stored": 0.26016684793517664,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_del15/T2:platt_rolling:brier",
+        "now": 0.17157213956328848,
+        "stored": 0.17157213956328848,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_del15/T2:platt_rolling:ece",
+        "now": 0.005203406471100859,
+        "stored": 0.005203406471100859,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_del15/T2:B1:platt_rolling:ece",
+        "now": 0.020245338466502293,
+        "stored": 0.020245338466502293,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "cancelled/plan:n",
+        "now": 2369002.0,
+        "stored": 2369002.0,
+        "abs_diff": 0.0,
+        "tolerance": 0,
+        "ok": true
+      },
+      {
+        "name": "cancelled/plan:prevalence",
+        "now": 0.018825226825473343,
+        "stored": 0.018825226825473343,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "cancelled/plan:platt_rolling:mean_pred",
+        "now": 0.022209769163130687,
+        "stored": 0.022209769163130687,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "cancelled/plan:platt_rolling:brier",
+        "now": 0.01843503523123066,
+        "stored": 0.01843503523123066,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "cancelled/plan:platt_rolling:ece",
+        "now": 0.006218019644625026,
+        "stored": 0.006218019644625026,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "cancelled/plan:B1:platt_rolling:ece",
+        "now": 0.00658918137717431,
+        "stored": 0.00658918137717431,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_del15/T2:ece_from_bins",
+        "now": 0.005203406471100858,
+        "stored": 0.005203406471100859,
+        "abs_diff": 8.673617379884035e-19,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:n",
+        "now": 2315618.0,
+        "stored": 2315618.0,
+        "abs_diff": 0.0,
+        "tolerance": 0,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:coverage_raw_q080",
+        "now": 0.7697612473214493,
+        "stored": 0.7697612473214493,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:rolling:q080",
+        "now": 0.7876903703460588,
+        "stored": 0.7876903703460588,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:rolling:q095",
+        "now": 0.9446799947141541,
+        "stored": 0.9446799947141541,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:rolling:interval80",
+        "now": 0.7956117978008462,
+        "stored": 0.7956117978008462,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q080:2026-03",
+        "now": 1.0455961751491267,
+        "stored": 1.0455961751491267,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q080:2026-04",
+        "now": 2.0294782474350574,
+        "stored": 2.0294782474350574,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q080:2026-05",
+        "now": 1.52513407885586,
+        "stored": 1.52513407885586,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q080:2026-06",
+        "now": -0.93517360597167,
+        "stored": -0.93517360597167,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q080:2026-07",
+        "now": 2.895658978713975,
+        "stored": 2.895658978713975,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q080:2026-08",
+        "now": 8.763969531979944,
+        "stored": 8.763969531979944,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q095:2026-03",
+        "now": 3.22126161151815,
+        "stored": 3.22126161151815,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q095:2026-04",
+        "now": 8.57906760913361,
+        "stored": 8.57906760913361,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q095:2026-05",
+        "now": 6.609890863187715,
+        "stored": 6.609890863187715,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q095:2026-06",
+        "now": -4.567940971548701,
+        "stored": -4.567940971548701,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q095:2026-07",
+        "now": 6.6258762150631725,
+        "stored": 6.6258762150631725,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:q095:2026-08",
+        "now": 23.319275753167332,
+        "stored": 23.319275753167332,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:interval80:2026-03",
+        "now": 0.959717313640688,
+        "stored": 0.959717313640688,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:interval80:2026-04",
+        "now": 1.4731087724618455,
+        "stored": 1.4731087724618455,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:interval80:2026-05",
+        "now": 1.141789867426784,
+        "stored": 1.141789867426784,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:interval80:2026-06",
+        "now": 0.30171019005273436,
+        "stored": 0.30171019005273436,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:interval80:2026-07",
+        "now": 0.8742566188025496,
+        "stored": 0.8742566188025496,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      },
+      {
+        "name": "arr_delay/plan:offset:interval80:2026-08",
+        "now": 2.0975922516293988,
+        "stored": 2.0975922516293988,
+        "abs_diff": 0.0,
+        "tolerance": 1e-09,
+        "ok": true
+      }
+    ],
+    "or_cells": {
+      "cells": 24765,
+      "cells_only_one_side": 0,
+      "n_differences": 0,
+      "max_abs_knot_diff_min": 0.0
+    },
+    "development": {
+      "arr_del15/T2:arr_del15-lgbm": {
+        "metric": "roc_auc",
+        "run": 0.6998189276008099,
+        "now": 0.6998189276008099,
+        "reproduces_run": true
+      },
+      "arr_del15/T2:B1:arr_del15": {
+        "metric": "roc_auc",
+        "run": 0.5999622358542739,
+        "now": 0.5999622358542739,
+        "reproduces_run": true
+      },
+      "arr_del15/T2:B1:arr_delay": {
+        "metric": "pinball_q080",
+        "run": 13.067268912003142,
+        "now": 13.067268912003142,
+        "reproduces_run": true
+      },
+      "arr_del15/T2:calibrator:model": {
+        "frozen": {
+          "intercept": 0.005094734488156419,
+          "slope": 0.9247885118002439
+        },
+        "refit_on_val_b": {
+          "intercept": 0.005094734488156419,
+          "slope": 0.9247885118002439,
+          "n_fit": 662410
+        },
+        "reproduces_run": true
+      },
+      "arr_del15/T2:calibrator:B1": {
+        "frozen": {
+          "intercept": -0.46936920608537813,
+          "slope": 0.6511888365470788
+        },
+        "refit_on_val_b": {
+          "intercept": -0.46936920608537813,
+          "slope": 0.6511888365470788,
+          "n_fit": 662410
+        },
+        "reproduces_run": true
+      },
+      "arr_delay/plan:arr_delay_q010-lgbm": {
+        "metric": "pinball_q010",
+        "run": 3.555198924148596,
+        "now": 3.555198924148596,
+        "reproduces_run": true
+      },
+      "arr_delay/plan:arr_delay_q050-lgbm": {
+        "metric": "pinball_q050",
+        "run": 11.99281430368178,
+        "now": 11.99281430368178,
+        "reproduces_run": true
+      },
+      "arr_delay/plan:arr_delay_q080-lgbm": {
+        "metric": "pinball_q080",
+        "run": 12.88326713637361,
+        "now": 12.88326713637361,
+        "reproduces_run": true
+      },
+      "arr_delay/plan:arr_delay_q090-lgbm": {
+        "metric": "pinball_q090",
+        "run": 10.66265441700432,
+        "now": 10.66265441700432,
+        "reproduces_run": true
+      },
+      "arr_delay/plan:arr_delay_q095-lgbm": {
+        "metric": "pinball_q095",
+        "run": 8.06340324747052,
+        "now": 8.06340324747052,
+        "reproduces_run": true
+      },
+      "arr_delay/plan:B1:arr_del15": {
+        "metric": "roc_auc",
+        "run": 0.5999622358542739,
+        "now": 0.5999622358542739,
+        "reproduces_run": true
+      },
+      "arr_delay/plan:B1:cancelled": {
+        "metric": "roc_auc",
+        "run": 0.6191792219340218,
+        "now": 0.6191792219340218,
+        "reproduces_run": true
+      },
+      "arr_delay/plan:B1:arr_delay": {
+        "metric": "pinball_q080",
+        "run": 13.067268912003142,
+        "now": 13.067268912003142,
+        "reproduces_run": true
+      },
+      "cancelled/plan:cancelled-lgbm": {
+        "metric": "roc_auc",
+        "run": 0.6322638863184042,
+        "now": 0.6322638863184042,
+        "reproduces_run": true
+      },
+      "cancelled/plan:B1:arr_del15": {
+        "metric": "roc_auc",
+        "run": 0.5999622358542739,
+        "now": 0.5999622358542739,
+        "reproduces_run": true
+      },
+      "cancelled/plan:B1:cancelled": {
+        "metric": "roc_auc",
+        "run": 0.6191792219340218,
+        "now": 0.6191792219340218,
+        "reproduces_run": true
+      },
+      "cancelled/plan:B1:arr_delay": {
+        "metric": "pinball_q080",
+        "run": 13.067268912003142,
+        "now": 13.067268912003142,
+        "reproduces_run": true
+      },
+      "cancelled/plan:calibrator:model": {
+        "frozen": {
+          "intercept": 1.6468550592161026,
+          "slope": 1.1270138358936086
+        },
+        "refit_on_val_b": {
+          "intercept": 1.6468550592161026,
+          "slope": 1.1270138358936086,
+          "n_fit": 689119
+        },
+        "reproduces_run": true
+      },
+      "cancelled/plan:calibrator:B1": {
+        "frozen": {
+          "intercept": -1.0264450245039363,
+          "slope": 0.4974331761998795
+        },
+        "refit_on_val_b": {
+          "intercept": -1.0264450245039363,
+          "slope": 0.4974331761998795,
+          "n_fit": 689119
+        },
+        "reproduces_run": true
+      }
+    }
+  },
+  "info": {
+    "single_carrier_share_over_090_origins": [
+      "DAL",
+      "MDW"
+    ],
+    "observed_arrdel15_vs_or_max_abs_diff": 0.0,
+    "observed_arrdel15_note": "BTS ArrDel15 label (this export) vs ArrDelay >= 15 (OR table); information only",
+    "timings_seconds": {
+      "fit_window": 10.4,
+      "development_checks": 108.9,
+      "final_test_predictions": 226.2,
+      "assemble": 8.5,
+      "reproduction_checks": 4.4,
+      "aggregates": 0.8
+    },
+    "peak_rss_gb": 3.606
+  },
+  "written": "deliverables/src/web/veri"
+}

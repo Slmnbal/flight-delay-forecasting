@@ -1,0 +1,6 @@
+# MLOps iskeleti bağımlılıkları (Python 3.12). Sürümler sabitlenmedi: ilk kurulumdan sonra `pip freeze` ile kaydedin.
+# Veri paketi bağımlılıkları (pandas, numpy, pyarrow, pydantic, pytest) için: deliverables/data/requirements-data.txt
+pydantic>=2
+pyyaml            # config/proje.yaml okumak için (mlflow de getirir; açıkça yazıldı: ayar testleri MLflow'suz çalışır)
+pytest
+mlflow            # yalnızca deney kaydı için; testler MLflow'suz geçer

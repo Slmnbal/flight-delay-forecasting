@@ -1,0 +1,527 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://havayolu-ds.local/experiments/arayuz-sozlesmesi.json",
+  "title": "havayolu-ds statik site veri sözleşmesi",
+  "description": "GitHub Pages'teki statik sitenin okuduğu, önceden hesaplanmış JSON dosyalarının şeması. Taslak (sema_surumu 0.1.x); 4. haftada dondurulur. Kurallar: ham veri ya da uçuş düzeyi satır yok; kuyruk numarası, uçuş numarası, taşıyıcı boyutu, sıralama yok; tüm nesnelerde tanımsız alan yasak. Birimler: süre ve kantiller dakika (1 ondalık), oranlar 0-1 (3 ondalık), tarihler YYYY-MM-DD, aylar YYYY-MM. Toplam boyut önerisi <= 10 MB; dosya başına sınır x-azami-boyut-kb notunda. Her dosya 'dosya_turu' alanıyla ayırt edilir.",
+  "x-dosyalar": {
+    "veri/manifest.json": "manifest",
+    "veri/ozet.json": "ozet",
+    "veri/havalimanlari.json": "havalimanlari",
+    "veri/rotalar/<IATA>.json": "rotalar",
+    "veri/kalibrasyon.json": "kalibrasyon",
+    "veri/hava-deneyi.json": "hava_deneyi",
+    "veri/hata-analizi.json": "hata_analizi"
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/manifest"},
+    {"$ref": "#/$defs/ozet"},
+    {"$ref": "#/$defs/havalimanlari"},
+    {"$ref": "#/$defs/rotalar"},
+    {"$ref": "#/$defs/kalibrasyon"},
+    {"$ref": "#/$defs/hava_deneyi"},
+    {"$ref": "#/$defs/hata_analizi"}
+  ],
+  "$defs": {
+    "tarih": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$", "format": "date"},
+    "ay": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}$"},
+    "iata": {"type": "string", "pattern": "^[A-Z0-9]{3}$"},
+    "oran": {"type": "number", "minimum": 0, "maximum": 1},
+    "oran_bos": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "dakika": {"type": "number", "minimum": -600, "maximum": 3000, "description": "Dakika; erken varış negatif."},
+    "dakika_bos": {"type": ["number", "null"], "minimum": -600, "maximum": 3000},
+    "sayi_n": {"type": "integer", "minimum": 0},
+    "saat_blogu": {
+      "type": "string",
+      "enum": ["00-06", "06-09", "09-12", "12-15", "15-18", "18-21", "21-24"],
+      "description": "CRS (tarifeli) kalkışın yerel saatine göre blok; BTS DepTimeBlk değil."
+    },
+    "mevsim": {"type": "string", "enum": ["tum", "kis", "ilkbahar", "yaz", "sonbahar"]},
+    "donem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["baslangic", "bitis"],
+      "properties": {
+        "baslangic": {"$ref": "#/$defs/tarih"},
+        "bitis": {"$ref": "#/$defs/tarih"}
+      }
+    },
+    "model_kimligi": {
+      "type": "string",
+      "enum": ["B0", "B1", "B2", "L", "lgbm_plan", "lgbm_T2", "lgbm_oracle", "xgb_T2"],
+      "description": "B0 genel; B1 rota x saat bloğu geçmiş; B2 B1+mevsim; L lojistik; lgbm_* LightGBM (sözleşmeye göre); xgb_T2 XGBoost."
+    },
+    "gorev": {"type": "string", "enum": ["arrdel15", "iptal", "kantil", "aksaklik"]},
+    "kume": {"type": "string", "enum": ["test", "dogrulama_a", "dogrulama_b", "backtest_k1", "backtest_k2", "backtest_k3", "backtest_k4"]},
+    "metrik_adi": {
+      "type": "string",
+      "enum": [
+        "roc_auc", "pr_auc", "yayginlik", "brier", "brier_skill", "log_loss", "ece",
+        "kalibrasyon_egimi", "kalibrasyon_kesisimi", "calibration_in_the_large",
+        "f1", "precision", "recall", "esik",
+        "pinball_p50", "pinball_p80", "pinball_p95", "mae_p50",
+        "kapsama_p80_ham", "kapsama_p95_ham", "kapsama_p80_conf", "kapsama_p95_conf",
+        "kapsama_aralik80", "aralik80_genislik_dk", "kantil_kesisme_orani", "roc_auc_farki_b1", "pr_auc_farki_b1"
+      ]
+    },
+    "metrik": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ad", "deger", "birim"],
+      "properties": {
+        "ad": {"$ref": "#/$defs/metrik_adi"},
+        "deger": {"type": ["number", "null"]},
+        "ga95_alt": {"type": ["number", "null"], "description": "Gün blok bootstrap %95 GA alt sınırı."},
+        "ga95_ust": {"type": ["number", "null"]},
+        "birim": {"type": "string", "enum": ["oran", "dakika", "skor"]}
+      }
+    },
+    "metrik_listesi": {"type": "array", "items": {"$ref": "#/$defs/metrik"}, "maxItems": 30},
+    "baslik": {
+      "type": "object",
+      "required": ["dosya_turu", "sema_surumu", "olusturma_zamani", "model_surumu"],
+      "properties": {
+        "dosya_turu": {"type": "string"},
+        "sema_surumu": {"type": "string", "pattern": "^0\\.1\\.[0-9]+$"},
+        "olusturma_zamani": {"type": "string", "format": "date-time"},
+        "model_surumu": {"type": "string", "maxLength": 64, "description": "git commit kısa özeti ya da MLflow run kimliği."},
+        "ornek": {"type": "boolean", "default": false, "description": "true ise sahte örnek veri (frontend geliştirme); gerçek sonuç gibi sunulmaz."}
+      }
+    },
+
+    "manifest": {
+      "type": "object",
+      "x-azami-boyut-kb": 8,
+      "allOf": [{"$ref": "#/$defs/baslik"}],
+      "required": ["dosya_turu", "dosyalar", "toplam_bayt"],
+      "properties": {
+        "dosya_turu": {"const": "manifest"},
+        "dosyalar": {
+          "type": "array",
+          "maxItems": 60,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["yol", "dosya_turu", "bayt", "sha256"],
+            "properties": {
+              "yol": {"type": "string", "pattern": "^veri/[a-z0-9_/.-]+\\.json$|^veri/rotalar/[A-Z0-9]{3}\\.json$"},
+              "dosya_turu": {"type": "string", "enum": ["ozet", "havalimanlari", "rotalar", "kalibrasyon", "hava_deneyi", "hata_analizi"]},
+              "bayt": {"type": "integer", "minimum": 0, "maximum": 307200},
+              "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+            }
+          }
+        },
+        "toplam_bayt": {"type": "integer", "minimum": 0, "maximum": 10485760}
+      },
+      "unevaluatedProperties": false
+    },
+
+    "ozet": {
+      "type": "object",
+      "x-azami-boyut-kb": 50,
+      "allOf": [{"$ref": "#/$defs/baslik"}],
+      "required": ["dosya_turu", "proje", "kapsam", "bolme", "bilgi_zamani_saat", "modeller", "sonuclar", "kabul"],
+      "properties": {
+        "dosya_turu": {"const": "ozet"},
+        "proje": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["baslik", "aciklama", "sorumluluk_reddi", "kaynaklar"],
+          "properties": {
+            "baslik": {"type": "string", "maxLength": 120},
+            "aciklama": {"type": "string", "maxLength": 2000},
+            "sorumluluk_reddi": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 1000,
+              "description": "Ör.: ABD DOT/BTS ve IEM kamu verisine dayalı analiz; hiçbir havayoluyla bağlantılı değildir; rötar nedenleri taşıyıcı beyanıdır; operasyonel karar aracı değildir."
+            },
+            "kaynaklar": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 10,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["ad", "url", "lisans_notu"],
+                "properties": {
+                  "ad": {"type": "string", "maxLength": 120},
+                  "url": {"type": "string", "format": "uri", "maxLength": 300},
+                  "lisans_notu": {"type": "string", "maxLength": 300}
+                }
+              }
+            }
+          }
+        },
+        "kapsam": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["havalimani_sayisi", "veri_donemi", "test_ucus_sayisi", "test_gun_sayisi"],
+          "properties": {
+            "havalimani_sayisi": {"type": "integer", "minimum": 1, "maximum": 40},
+            "veri_donemi": {"$ref": "#/$defs/donem"},
+            "test_ucus_sayisi": {"$ref": "#/$defs/sayi_n"},
+            "test_gun_sayisi": {"$ref": "#/$defs/sayi_n"}
+          }
+        },
+        "bolme": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["egitim", "dogrulama_a", "dogrulama_b", "test"],
+          "properties": {
+            "egitim": {"$ref": "#/$defs/donem"},
+            "dogrulama_a": {"$ref": "#/$defs/donem"},
+            "dogrulama_b": {"$ref": "#/$defs/donem"},
+            "test": {"$ref": "#/$defs/donem"}
+          }
+        },
+        "bilgi_zamani_saat": {"type": "number", "exclusiveMinimum": 0, "maximum": 48},
+        "modeller": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kimlik", "aciklama", "sozlesme"],
+            "properties": {
+              "kimlik": {"$ref": "#/$defs/model_kimligi"},
+              "aciklama": {"type": "string", "maxLength": 300},
+              "sozlesme": {"type": "string", "enum": ["plan", "T2", "oracle", "yok"]}
+            }
+          }
+        },
+        "sonuclar": {
+          "type": "array",
+          "maxItems": 60,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["gorev", "model", "kume", "metrikler"],
+            "properties": {
+              "gorev": {"$ref": "#/$defs/gorev"},
+              "model": {"$ref": "#/$defs/model_kimligi"},
+              "kume": {"$ref": "#/$defs/kume"},
+              "metrikler": {"$ref": "#/$defs/metrik_listesi"}
+            },
+            "not": {"properties": {"model": {"const": "lgbm_oracle"}}, "required": ["model"]},
+            "description": "Oracle modeli özet sonuçlarında yer alamaz; yalnızca hava-deneyi.json."
+          }
+        },
+        "kabul": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["olcut", "aciklama", "sonuc"],
+            "properties": {
+              "olcut": {"type": "string", "enum": ["K1", "K2", "K3", "K4", "K5", "K6", "K7"]},
+              "aciklama": {"type": "string", "maxLength": 300},
+              "sonuc": {"type": "string", "enum": ["gecti", "kaldi", "degerlendirilmedi"]}
+            }
+          }
+        },
+        "notlar": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 500}}
+      },
+      "unevaluatedProperties": false
+    },
+
+    "havalimanlari": {
+      "type": "object",
+      "x-azami-boyut-kb": 50,
+      "allOf": [{"$ref": "#/$defs/baslik"}],
+      "required": ["dosya_turu", "havalimanlari"],
+      "properties": {
+        "dosya_turu": {"const": "havalimanlari"},
+        "havalimanlari": {
+          "type": "array",
+          "maxItems": 40,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["iata", "ad", "enlem", "boylam", "saat_dilimi", "n_test_ucus", "gozlenen_arrdel15_orani", "tahmin_arrdel15_orani"],
+            "properties": {
+              "iata": {"$ref": "#/$defs/iata"},
+              "ad": {"type": "string", "maxLength": 120},
+              "enlem": {"type": "number", "minimum": -90, "maximum": 90},
+              "boylam": {"type": "number", "minimum": -180, "maximum": 180},
+              "saat_dilimi": {"type": "string", "maxLength": 40, "description": "IANA adı, ör. America/Chicago."},
+              "n_test_ucus": {"$ref": "#/$defs/sayi_n"},
+              "gozlenen_arrdel15_orani": {"$ref": "#/$defs/oran_bos", "description": "null: tek taşıyıcı ağırlıklı havalimanı (M10), bkz. gizleme_nedeni."},
+              "tahmin_arrdel15_orani": {"$ref": "#/$defs/oran_bos", "description": "T2 modelinin test ortalama olasılığı; null: M10, bkz. gizleme_nedeni."},
+              "iptal_orani": {"$ref": "#/$defs/oran_bos"},
+              "kapsama_p80": {"$ref": "#/$defs/oran_bos", "description": "Conformal ayarlı (kayan) P80 üst sınır kapsaması, plan modeli."},
+              "kapsama_p95": {"$ref": "#/$defs/oran_bos"},
+              "hava_eksik_orani": {"$ref": "#/$defs/oran_bos"},
+              "gizleme_nedeni": {"type": ["string", "null"], "maxLength": 300, "description": "Oranlar yayımlanmadıysa nedeni (ör. tek taşıyıcı payı > %90; 2026-11-23)."}
+            }
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+
+    "rotalar": {
+      "type": "object",
+      "x-azami-boyut-kb": 300,
+      "description": "Origin başına bir dosya: veri/rotalar/<IATA>.json. Hücre = dest x saat_blogu (x mevsim, isteğe bağlı). n_ucus < 50 olan hücreler yayımlanmaz. Kantiller plan modelinden (tarife zamanında bilinebilir).",
+      "allOf": [{"$ref": "#/$defs/baslik"}],
+      "required": ["dosya_turu", "origin", "kume", "hucreler"],
+      "properties": {
+        "dosya_turu": {"const": "rotalar"},
+        "origin": {"$ref": "#/$defs/iata"},
+        "kume": {"type": "string", "const": "test"},
+        "hucreler": {
+          "type": "array",
+          "maxItems": 3000,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["dest", "saat_blogu", "mevsim", "n_ucus", "gozlenen_arrdel15_orani", "tahmin_arrdel15_orani", "kantil_dk", "kantil_conf_dk", "kapsama", "planli_blok_sure_medyan_dk", "iptal_orani"],
+            "properties": {
+              "dest": {"$ref": "#/$defs/iata"},
+              "saat_blogu": {"$ref": "#/$defs/saat_blogu"},
+              "mevsim": {"$ref": "#/$defs/mevsim"},
+              "n_ucus": {"type": "integer", "minimum": 50},
+              "gozlenen_arrdel15_orani": {"$ref": "#/$defs/oran"},
+              "tahmin_arrdel15_orani": {"$ref": "#/$defs/oran"},
+              "kantil_dk": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["p50", "p80", "p95"],
+                "description": "Ham model kantilleri; hücredeki uçuş kantillerinin medyanı (karışım kantili değil).",
+                "properties": {
+                  "p50": {"$ref": "#/$defs/dakika"},
+                  "p80": {"$ref": "#/$defs/dakika"},
+                  "p95": {"$ref": "#/$defs/dakika"}
+                }
+              },
+              "kantil_conf_dk": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["p80", "p95"],
+                "description": "Tek yönlü conformal ayarlı üst sınırlar (kayan kalibrasyon).",
+                "properties": {
+                  "p80": {"$ref": "#/$defs/dakika"},
+                  "p95": {"$ref": "#/$defs/dakika"}
+                }
+              },
+              "aralik80_dk": {
+                "type": ["object", "null"],
+                "additionalProperties": false,
+                "required": ["alt", "ust"],
+                "description": "MAPIE CQR iki yönlü %80 aralık (medyan).",
+                "properties": {
+                  "alt": {"$ref": "#/$defs/dakika"},
+                  "ust": {"$ref": "#/$defs/dakika"}
+                }
+              },
+              "kapsama": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["p80", "p95"],
+                "description": "Testte gözlenen kapsama (conformal ayarlı üst sınırlar için).",
+                "properties": {
+                  "p80": {"$ref": "#/$defs/oran"},
+                  "p95": {"$ref": "#/$defs/oran"}
+                }
+              },
+              "planli_blok_sure_medyan_dk": {"type": "number", "minimum": 0, "maximum": 1500},
+              "tarife_fazlasi_dk": {"$ref": "#/$defs/dakika_bos"},
+              "iptal_orani": {"$ref": "#/$defs/oran"},
+              "tampon_onerisi_dk": {"$ref": "#/$defs/dakika_bos", "description": "OR çıktısı; varsayımlı maliyetlerle; yoksa null."}
+            }
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+
+    "kalibrasyon": {
+      "type": "object",
+      "x-azami-boyut-kb": 100,
+      "allOf": [{"$ref": "#/$defs/baslik"}],
+      "required": ["dosya_turu", "siniflandirma", "kapsama_aylik"],
+      "properties": {
+        "dosya_turu": {"const": "kalibrasyon"},
+        "siniflandirma": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["gorev", "model", "kume", "kutular"],
+            "properties": {
+              "gorev": {"$ref": "#/$defs/gorev"},
+              "model": {"$ref": "#/$defs/model_kimligi"},
+              "kume": {"$ref": "#/$defs/kume"},
+              "kutular": {
+                "type": "array",
+                "maxItems": 20,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["alt", "ust", "ortalama_tahmin", "gozlenen_oran", "n"],
+                  "properties": {
+                    "alt": {"$ref": "#/$defs/oran"},
+                    "ust": {"$ref": "#/$defs/oran"},
+                    "ortalama_tahmin": {"$ref": "#/$defs/oran"},
+                    "gozlenen_oran": {"$ref": "#/$defs/oran"},
+                    "n": {"$ref": "#/$defs/sayi_n"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "kapsama_aylik": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["ay", "model", "yontem", "tur", "hedef", "kapsama", "n"],
+            "properties": {
+              "ay": {"$ref": "#/$defs/ay"},
+              "model": {"$ref": "#/$defs/model_kimligi"},
+              "yontem": {"type": "string", "enum": ["kayan", "statik", "ham"]},
+              "tur": {"type": "string", "enum": ["tek_yonlu_ust", "iki_yonlu"]},
+              "hedef": {"type": "number", "enum": [0.8, 0.95]},
+              "kapsama": {"$ref": "#/$defs/oran"},
+              "n": {"$ref": "#/$defs/sayi_n"}
+            }
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+
+    "hava_deneyi": {
+      "type": "object",
+      "x-azami-boyut-kb": 30,
+      "description": "plan (hava yok) / T2 (kalkış-2s METAR) / oracle (tarifeli anda gözlenmiş hava). Oracle gerçekte elde edilemez; yalnızca üst sınırdır.",
+      "allOf": [{"$ref": "#/$defs/baslik"}],
+      "required": ["dosya_turu", "kume", "varyantlar", "farklar"],
+      "properties": {
+        "dosya_turu": {"const": "hava_deneyi"},
+        "kume": {"$ref": "#/$defs/kume"},
+        "varyantlar": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["varyant", "oracle", "etiket", "metrikler"],
+            "properties": {
+              "varyant": {"type": "string", "enum": ["plan", "T2", "T6", "T12", "oracle"]},
+              "oracle": {"type": "boolean"},
+              "etiket": {"type": "string", "maxLength": 200},
+              "metrikler": {"$ref": "#/$defs/metrik_listesi"}
+            },
+            "if": {"properties": {"varyant": {"const": "oracle"}}},
+            "then": {"properties": {"oracle": {"const": true}, "etiket": {"pattern": "[Üü]st sınır"}}},
+            "else": {"properties": {"oracle": {"const": false}}}
+          }
+        },
+        "farklar": {
+          "type": "array",
+          "maxItems": 30,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["karsilastirma", "metrik"],
+            "properties": {
+              "karsilastirma": {"type": "string", "enum": ["T2-plan", "oracle-T2", "oracle-plan", "T6-plan", "T12-plan"]},
+              "metrik": {"$ref": "#/$defs/metrik"}
+            }
+          }
+        },
+        "yakalanan_pay": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["metrik_adi", "deger"],
+            "properties": {
+              "metrik_adi": {"$ref": "#/$defs/metrik_adi"},
+              "deger": {"type": ["number", "null"], "description": "(T2-plan)/(oracle-plan); payda küçükse null."}
+            }
+          }
+        },
+        "hava_segmentleri": {
+          "type": "array",
+          "maxItems": 30,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["segment", "varyant", "n", "metrikler"],
+            "properties": {
+              "segment": {"type": "string", "enum": ["tum", "IFR", "VFR", "TS", "SN"]},
+              "varyant": {"type": "string", "enum": ["plan", "T2", "T6", "T12", "oracle"]},
+              "n": {"$ref": "#/$defs/sayi_n"},
+              "metrikler": {"$ref": "#/$defs/metrik_listesi"}
+            }
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    },
+
+    "hata_analizi": {
+      "type": "object",
+      "x-azami-boyut-kb": 200,
+      "description": "Segment kırılımlı hata analizi. Taşıyıcı boyutu bilinçli olarak YOK (M2 sunum kuralları).",
+      "allOf": [{"$ref": "#/$defs/baslik"}],
+      "required": ["dosya_turu", "kume", "boyutlar"],
+      "properties": {
+        "dosya_turu": {"const": "hata_analizi"},
+        "kume": {"$ref": "#/$defs/kume"},
+        "boyutlar": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["boyut", "model", "segmentler"],
+            "properties": {
+              "boyut": {"type": "string", "enum": ["origin", "dest", "saat_blogu", "ay", "haftanin_gunu", "mesafe_grubu", "rota", "hava_T2", "olay_gunu"]},
+              "model": {"$ref": "#/$defs/model_kimligi"},
+              "segmentler": {
+                "type": "array",
+                "maxItems": 500,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["segment", "n", "metrikler"],
+                  "properties": {
+                    "segment": {"type": "string", "maxLength": 32, "description": "Ör. 'ORD', '15-18', '2026-07', 'ORD-LGA', 'IFR', 'olay'."},
+                    "n": {"$ref": "#/$defs/sayi_n"},
+                    "metrikler": {"$ref": "#/$defs/metrik_listesi"},
+                    "fdr_bayrak": {"type": "boolean", "description": "Kapsama sapması Benjamini-Hochberg (FDR %5) sonrası anlamlı (keşifsel)."}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en_kotu": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["boyut", "segment", "n", "metrik"],
+            "properties": {
+              "boyut": {"type": "string", "enum": ["origin", "dest", "saat_blogu", "ay", "haftanin_gunu", "mesafe_grubu", "rota", "hava_T2", "olay_gunu"]},
+              "segment": {"type": "string", "maxLength": 32},
+              "n": {"$ref": "#/$defs/sayi_n"},
+              "metrik": {"$ref": "#/$defs/metrik"}
+            }
+          }
+        }
+      },
+      "unevaluatedProperties": false
+    }
+  }
+}

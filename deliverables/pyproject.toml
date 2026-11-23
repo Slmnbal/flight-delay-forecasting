@@ -1,0 +1,141 @@
+# flight-delay: flight delay forecasting (BTS On-Time + IEM weather). Python project root = deliverables/.
+# Install (from the project root projects/havayolu-ds/):  pip install -e "deliverables[dev]"
+#
+# Dependency policy (M3 decision): requirements files + a `pip freeze` lock file stay the source of truth for
+# exact versions; the lists below mirror them so that `pip install -e` works. Mapping:
+#   deliverables/data/requirements-data.txt     = dependencies (pandas, numpy, pyarrow, pydantic, tzdata) + extra "geo"
+#   deliverables/data/requirements-katman.txt   = requirements-data + extra "query" (duckdb)
+#   deliverables/config/requirements-mlops.txt  = pydantic, pyyaml (dependencies) + extra "mlflow"
+#   (new) a modeling requirements file            = extra "modeling" (scikit-learn, lightgbm, mapie); see the task report
+# pytest moved from the requirements files into the "dev" extra (it is a development tool).
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flight-delay"
+version = "0.1.0"
+description = "US flight delay risk (BTS + METAR): calibrated LightGBM, conformal quantiles and schedule-buffer optimisation"
+requires-python = ">=3.12"
+dependencies = [
+    "pandas",
+    "numpy",
+    "pyarrow",
+    "pydantic>=2",
+    "pyyaml",
+    "tzdata",       # IANA database for zoneinfo (needed on Windows; harmless elsewhere)
+]
+
+[project.optional-dependencies]
+geo = ["timezonefinder"]      # derive airport time zones from coordinates (optional)
+query = ["duckdb"]            # flight_delay.data.query
+mlflow = ["mlflow"]           # local experiment tracking; tests pass without it
+modeling = [                  # flight_delay.modeling (plan: experiments/modelleme-plani.md 4.2 and 5.4)
+    "scikit-learn",           # baseline L, calibration, metrics
+    "lightgbm>=4",            # main models (classification, quantile); 4.x is the current major line
+    "mapie",                  # two-sided CQR interval; version is pinned in the lock file (API differs v0 vs v1)
+    "scipy",                  # flight_delay.optimization tests (LP cross-check); already pinned in the lock file
+]
+optimization = [              # flight_delay.optimization solver extension (run_solver; experiments/or-tampon-formulasyonu.md §17)
+    "pyomo",                  # LP / MILP modelling
+    "highspy",                # HiGHS solver used by Pyomo (appsi_highs)
+    "matplotlib",             # PNG plots
+]
+dev = [
+    "pytest>=8",
+    "ruff",
+    "mypy",
+    "types-PyYAML",
+    "duckdb",
+    "timezonefinder",
+    "scikit-learn",           # modeling tests run under "dev" too (same as duckdb/timezonefinder above)
+    "lightgbm>=4",
+    "mapie",
+]
+all = ["timezonefinder", "duckdb", "mlflow", "scikit-learn", "lightgbm>=4", "mapie", "scipy", "pyomo", "highspy", "matplotlib"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["flight_delay*"]   # only the flight_delay package is packaged
+namespaces = false
+
+[tool.setuptools.package-data]
+flight_delay = ["mlops/project.yaml"]
+
+# ----------------------------------------------------------------------------
+# pytest
+# ----------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests/unit"]    # tests/unit/{data,mlops,modeling}
+addopts = "-ra"
+
+# ----------------------------------------------------------------------------
+# ruff (lint + format)
+# ----------------------------------------------------------------------------
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+# pycodestyle, pyflakes, isort, pep8-naming, bugbear, comprehensions, pyupgrade, simplify
+select = ["E", "W", "F", "I", "N", "B", "C4", "UP", "SIM"]
+ignore = ["E501"]             # line length is handled by the formatter
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ----------------------------------------------------------------------------
+# mypy: gradual adoption (python-code-style: do not switch strict on for the whole tree at once)
+# ----------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "src"
+files = ["src/flight_delay"]
+warn_return_any = true
+warn_unused_ignores = true
+check_untyped_defs = true
+no_implicit_optional = true
+# NOT strict yet: the package was translated from untyped-pandas scripts and has never been type-checked.
+# Plan: fix the first report, then tighten module by module with the override below, finally set strict = true.
+
+[[tool.mypy.overrides]]
+# Libraries without type information or stubs
+module = [
+    "timezonefinder", "duckdb", "mlflow", "mlflow.*", "pyarrow", "pyarrow.*", "pandas", "pandas.*",
+    "sklearn", "sklearn.*", "lightgbm", "lightgbm.*", "mapie", "mapie.*",  # typing status unverified; harmless if typed
+]
+# pandas: no pandas-stubs yet (M3 decision)
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Modules written fully typed (small, no pandas internals): hold them to a stricter bar from day one
+module = [
+    "flight_delay.paths",
+    "flight_delay.mlops.*",
+    "flight_delay.data.feature_contract",
+    "flight_delay.data.csv_io",
+]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[[tool.mypy.overrides]]
+# pandas-heavy modules: pandas without pandas-stubs makes many calls look untyped; keep them lenient
+# until pandas-stubs is added as a dev dependency (separate decision) and the first mypy report is triaged.
+module = [
+    "flight_delay.data.time_conversion",
+    "flight_delay.data.layer",
+    "flight_delay.data.quality",
+    "flight_delay.data.size_measurement",
+    "flight_delay.data.utc_check",
+    "flight_delay.data.airports",
+    "flight_delay.data.iem_matching",
+    "flight_delay.data.query",
+]
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
