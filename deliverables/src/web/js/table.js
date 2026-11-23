@@ -2,7 +2,7 @@
 // Sıralama sütuna göredir (sade bir tablo özelliği); hiçbir kuruluşun sıralaması değildir.
 
 import { el } from './dom.js';
-import { T } from './metin.js';
+import { T, getLang } from './metin.js';
 import { fmtInt } from './fmt.js';
 
 /**
@@ -104,7 +104,7 @@ export function createTable({ columns, groups, caption, label, rows = [], sort =
       const yNull = y === null || y === undefined;
       if (xNull || yNull) return xNull && yNull ? 0 : xNull ? 1 : -1; // boş değerler hep sonda
       if (typeof x === 'string' || typeof y === 'string') {
-        return String(x).localeCompare(String(y), 'tr', { numeric: true }) * dir;
+        return String(x).localeCompare(String(y), getLang(), { numeric: true }) * dir;
       }
       return (x - y) * dir;
     });

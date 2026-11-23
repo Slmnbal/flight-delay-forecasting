@@ -1,6 +1,6 @@
 // Kalibrasyon ve kapsama: güvenilirlik diyagramları ve kantil üst sınırlarının aylık kapsaması.
 
-import { el, fill, selectField, sozlukLink } from '../dom.js';
+import { el, fill, selectField, sozlukLink, anlamKutusu } from '../dom.js';
 import { loadKalibrasyon } from '../data.js';
 import { fmtPct, fmtInt, monthLabel, modelLabel, NA } from '../fmt.js';
 import { T } from '../metin.js';
@@ -8,27 +8,33 @@ import { xyChart, legend, niceDomain, mountChart } from '../charts.js';
 
 const t = T.kal;
 
-const TASKS = [
-  { value: 'arrdel15', label: t.gorevler.arrdel15 },
-  { value: 'iptal', label: t.gorevler.iptal },
-];
-
 const SERIES_STYLE = [
   { cls: 'ser-a', marker: 'circle', hollow: false, dash: false },
   { cls: 'ser-b', marker: 'diamond', hollow: true, dash: true },
 ];
 
-const METHOD = {
-  ham: { name: t.yontem.ham, cls: 'ser-c', marker: 'triangle', dash: true },
-  statik: { name: t.yontem.statik, cls: 'ser-d', marker: 'square', dash: true },
-  kayan: { name: t.yontem.kayan, cls: 'ser-a', marker: 'circle', dash: false },
-};
+// Etiketler seçili dilde okunur; mount() her çağrıldığında (dil değişince de) yeniden kurulur.
+let TASKS = [];
+let METHOD = {};
+
+function initLabels() {
+  TASKS = [
+    { value: 'arrdel15', label: t.gorevler.arrdel15 },
+    { value: 'iptal', label: t.gorevler.iptal },
+  ];
+  METHOD = {
+    ham: { name: t.yontem.ham, cls: 'ser-c', marker: 'triangle', dash: true },
+    statik: { name: t.yontem.statik, cls: 'ser-d', marker: 'square', dash: true },
+    kayan: { name: t.yontem.kayan, cls: 'ser-a', marker: 'circle', dash: false },
+  };
+}
 
 function explainText(series) {
   return series.length && series[0].bins.length ? t.aciklama(fmtInt(series[0].bins[0].n)) : t.aciklamaYok;
 }
 
 export async function mount(root) {
+  initLabels();
   const kal = await loadKalibrasyon();
 
   // Güvenilirlik
@@ -219,6 +225,7 @@ export async function mount(root) {
 
   fill(
     root,
+    anlamKutusu('kalibrasyon', ['olasilik-kalibrasyon', 'kapsama', 'conformal']),
     el(
       'section',
       { 'aria-labelledby': 'cal-rel' },
@@ -227,7 +234,7 @@ export async function mount(root) {
       relChartBox,
       relLegend,
       relText,
-      el('p', { class: 'note' }, T.ortak.sozluk, sozlukLink('olasilik-kalibrasyon', 'Olasılık ve kalibrasyon'), ', ', sozlukLink('platt', 'Platt (aylık kayan)'), '.'),
+      el('p', { class: 'note' }, T.ortak.sozluk, sozlukLink('olasilik-kalibrasyon'), ', ', sozlukLink('platt'), '.'),
       relTable,
     ),
     el(

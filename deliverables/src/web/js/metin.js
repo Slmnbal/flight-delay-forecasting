@@ -1,19 +1,41 @@
-// Tüm arayüz metinleri tek yerde (Türkçe). İleride başka bir dil istenirse bu dosyanın
-// bir kopyası çevrilir; başka modüllerde kullanıcıya görünen sabit metin bulunmaz.
-// Sade bir sözlük nesnesidir: i18n çatısı yok. Parametre alan metinler küçük işlevlerdir.
-// Veri dosyalarından gelen metinler (ozet.json notları vb.) zaten Türkçedir ve burada değildir.
+// Tüm arayüz metinleri tek yerde. Türkçe metinler bu dosyadadır (TR); İngilizce karşılıkları aynı
+// yapıda metin-en.js içindedir (EN). Başka modüllerde kullanıcıya görünen sabit metin bulunmaz.
+//
+// T, sayfa boyunca aynı nesnedir: dil değişince setLang() içeriğini yerinde günceller; böylece
+// "const t = T.kal" gibi modül düzeyindeki başvurular geçerli kalır. EN'de karşılığı olmayan bir
+// anahtar Türkçe değerinde kalır. Parametre alan metinler küçük işlevlerdir; i18n çatısı yoktur.
+// Veri dosyalarından gelen metinler (ozet.json notları vb.) Türkçedir; İngilizce karşılıkları
+// veri dosyalarındaki *_en alanlarından gelir (yerel.js).
+
+import { EN } from './metin-en.js';
 
 export const BUFFER_WARNING = 'varsayılmış maliyet oranı; operasyonel öneri değildir';
 
-export const T = {
+const TR = {
   // ------------------------------------------------------------------ site
   siteBasligi: 'Uçuş rötarı riski ve tarife tamponları',
   sorumluluk: 'Kamu verisine dayalı; havayollarıyla bağlantısız.',
+  tamponUyari: BUFFER_WARNING,
+  atla: 'İçeriğe geç',
+  nav: 'Bölümler',
+  ornekBanner: 'Bu dosyalar örnek veri olarak işaretli. Sayılar gerçek sonuç değildir.',
+  meta: {
+    aciklama: 'ABD iç hat uçuşları için rötar riski ve tarife tamponu analizi; kamu verisine dayalı, havayollarıyla bağlantısız.',
+  },
+  dil: {
+    grup: 'Dil',
+    tr: 'Türkçe',
+    en: 'English',
+  },
+  birim: { dk: 'dk' },
+  harita: { kuzey: '°K', bati: '°B' },
 
   bolumler: {
+    story: 'Hikâye',
     overview: 'Genel bakış',
     airports: 'Havalimanları',
     routes: 'Rotalar',
+    optimization: 'Tampon optimizasyonu (OR)',
     calibration: 'Kalibrasyon ve kapsama',
     weather: 'Hava deneyi',
     errors: 'Hata analizi',
@@ -56,6 +78,18 @@ export const T = {
 
   altBilgi: {
     uretim: (zaman, surum) => `Sonuçlar ${zaman} tarihinde üretildi; model sürümü ${surum}.`,
+  },
+
+  // ------------------------------------------------------------------ "Ne anlama geliyor?" kutuları
+  anlam: {
+    baslik: 'Ne anlama geliyor?',
+    genel: 'Model, bir uçuşun 15 dakika ya da daha geç varıp varmayacağını önceden tahmin etmeye çalışır. Bu sayfada modelin basit bir geçmiş-kuralından (B1) ne kadar iyi olduğu ve hangi ölçütlerin tutmadığı görünür.',
+    havalimanlari: 'Her nokta bir havalimanıdır; renk seçtiğiniz oranı gösterir, büyük nokta daha çok uçuş demektir. Bir havalimanında uçuşların çoğu tek havayoluna aitse, oranlar yayımlanmaz.',
+    rotalar: 'Her satır, bir rotanın belirli bir saat bloğundaki ve mevsimdeki uçuşlarıdır. P50 ortadaki uçuşun rötarıdır; P80 ve P95, uçuşların %80’inin ve %95’inin en fazla ne kadar geç geldiğini gösterir. Önerilen tampon sütunu varsayımlara dayanır, öneri değildir.',
+    tampon: 'Tampon, tarifeye eklenen fazladan dakikadır. Burada, aynı toplam tampon bütçesiyle farklı dağıtma yollarının rötarı ne kadar azalttığı karşılaştırılır. Sonuç, varsayılmış maliyetlere bağlıdır.',
+    kalibrasyon: 'Model “%30 risk” dediğinde bu tür uçuşların gerçekten yaklaşık %30’unun geç gelmesi gerekir. Noktalar çapraz çizgiye yakınsa model tutarlıdır. Kapsama grafikleri, rötar sınırlarının hedefi tutup tutmadığını gösterir.',
+    hava: 'Hava raporu, tarife yapıldıktan sonra ve kalkıştan kısa süre önce bilinir. Bu bölüm, o raporun tahmine ne kadar katkı yaptığını aynı uçuşlarda ölçer.',
+    hata: 'Model her yerde aynı iyilikte değildir. Bu bölüm sonuçları havalimanı, saat, ay gibi dilimlere ayırır. Farklar hava, trafik ve uçuş sayısından da gelir; hiçbir havalimanı hakkında hüküm değildir.',
   },
 
   // ------------------------------------------------------------------ biçimler
@@ -164,6 +198,7 @@ export const T = {
       bulgu: 'Ana bulgu: ',
       notYok: 'Tampon optimizasyonu bulgusunu içeren not veri dosyasında bulunamadı; Hakkında bölümündeki notlara bakın.',
       varsayim: 'Rotalar sayfasındaki önerilen tamponlar, varsayılmış bir maliyet oranında (τ = 0,80) plan modelinden gelir. Bir dakika tamponun bir dakika rötarı ortadan kaldırdığı, maliyetlerin varsayım olduğu ve uçak rotasyonu, ekip ve ağ etkilerinin yok sayıldığı varsayımlarına dayanır; operasyonel öneri değildir.',
+      ayrintiLink: 'Ayrıntılar: Tampon optimizasyonu (OR) sekmesi.',
     },
     guven: {
       baslik: 'Bu sayılara nasıl güvenmeli',
@@ -440,4 +475,201 @@ export const T = {
     nerede: 'Bu sitede: ',
     grupEtiket: (ad) => `${ad} terimleri`,
   },
+
+  // ------------------------------------------------------------------ hikâye (basit anlatım)
+  hikaye: {
+    giris: 'Bu sayfa, konuyu hiç bilmeyen biri için: altı kısa adım ve birkaç kaydırıcı. Ayrıntılar teknik sekmelerdedir; her adımın sonunda oraya bağlantı vardır.',
+    veriYok: 'Bu adımın verisi yüklenemedi. Sayfayı yenileyin ya da teknik sekmelere bakın.',
+    adim: (n) => `Adım ${n}`,
+    s1: {
+      baslik: 'Sorun: uçaklar neden geç kalır, bu neden önemli?',
+      p1: 'Hava, yoğunluk, önceki uçuşun gecikmesi, teknik işler: bir uçağın geç kalmasının pek çok nedeni olabilir. Bu sitede nedenlere bakılmaz; yalnızca ne kadar geç kalındığına bakılır.',
+      p2: 'Tarifeden 15 dakika ya da daha geç inen uçuş “geç varış” sayılır. Bu, ABD’nin resmi rötar tanımıdır.',
+      p3: 'Geç varış; kaçırılan aktarmalar, bekleyen ekipler ve sonraki uçuşlara yayılan gecikmeler demektir. Tarifedeki uçuş süresine fazladan dakikalar (tampon) eklemek bunu azaltabilir; ama tampon da zamana mal olur.',
+      olgu: (n, oran) => `Test döneminde ${n} tarifeli uçuş izlendi; bunların ${oran} kadarı geç vardı.`,
+    },
+    s2: {
+      baslik: 'Model ne yapıyor? Bir uçuş türü seçin',
+      p1: 'Model geçmiş uçuşlardan öğrenir ve “bu tür bir uçuş geç kalır mı?” sorusuna bir olasılık verir. Bir kalkış havalimanı, varış yeri, saat bloğu ve mevsim seçin; modelin tahmini, test döneminde gerçekleşenle yan yana görünür.',
+      secim: 'Uçuş türü seçimi',
+      gerceklesen: 'Gerçekleşen',
+      modelTahmini: 'Model tahmini (T2)',
+      ikonBaslik: (x) => `100 uçuştan geç varan: ${x}`,
+      ikonEtiket: (ad, x) => `${ad}: 100 uçuştan ${x} tanesi geç vardı.`,
+      ikonAnahtar: 'Dolu daire: 15 dakika ya da daha geç varan uçuş. Boş daire: zamanında ya da daha az geç varan uçuş.',
+      cumle: (x, y, n) => `Bu tür 100 uçuştan yaklaşık ${x} tanesi 15 dakika ya da daha geç vardı. Model ${y} bekliyordu. Test dönemindeki ${n} uçuşa dayanır.`,
+      rotarBaslik: 'Rötar kaç dakika sürer?',
+      rotarCumle: (p50, p80, p95, p50Erken) => p50Erken
+        ? `Bu tür uçuşların yarısı tarifeden en az ${p50} erken varır; %80’i en fazla ${p80}, %95’i en fazla ${p95} gecikir.`
+        : `Bu tür uçuşların yarısı en fazla ${p50}, %80’i en fazla ${p80}, %95’i en fazla ${p95} gecikir.`,
+      eksi: 'Eksi değer, erken varış demektir.',
+      yarisi: 'Yarısı',
+      seksen: '%80’i',
+      doksanbes: '%95’i',
+      grafikBaslik: 'Rötar süresi: uçuşların yarısı, %80’i ve %95’i en fazla kaç dakika geç varır',
+      grafikAciklama: (p50, p80, p95) => `Yatay çubuklar: yarısı ${p50}, %80’i ${p80}, %95’i ${p95}.`,
+      kantilNotu: 'P80 ve P95 değerleri conformal ayarlı üst sınırlardır; P50 ham model kantilidir. Aynı hücre Rotalar sekmesinde de görünür.',
+      hucreYok: 'Bu seçim için yayımlanmış bir hücre yok.',
+      yukleniyor: (iata) => `${iata} çıkışlı rotalar yükleniyor…`,
+    },
+    s3: {
+      baslik: 'Hava bilgisi işe yarıyor mu?',
+      p1: (saat) => `Plan modeli yalnızca tarife yapılırken bilinenleri görür. T2 modeli ayrıca kalkıştan ${saat} saat önceki hava raporunu görür. İkisi aynı uçuşlarda karşılaştırıldı.`,
+      puan: 'Puan, ROC-AUC: modelin geç kalacak bir uçuşa, zamanında gelecek bir uçuştan daha yüksek risk verme olasılığı. 0,5 yazı tura, 1 kusursuz demektir.',
+      plan: 'Plan modeli (hava yok)',
+      t2: 'T2 modeli (hava var)',
+      fark: (f, aralik) => `Havanın kattığı: ${f}; %95 aralık ${aralik}.`,
+      anlamli: 'Aralık sıfırı dışlıyor: hava bilgisi puanı artırıyor.',
+      anlamsiz: 'Aralık sıfırı içeriyor: fark, gürültüden ayırt edilemiyor.',
+      ters: 'Aralık sıfırı dışlıyor, ancak fark negatif: hava bilgisi puanı artırmıyor.',
+      yok: 'Hava deneyi verisi bulunamadı.',
+      olcek: (deger) => `${deger}, 0,5 ile 1 arasındaki ölçekte`,
+    },
+    s4: {
+      baslik: 'Tampon: ne kadar eklemeli?',
+      p1: 'Tarifeye eklenen fazladan dakikaya tampon denir. Tampon rötarı azaltır, ama uçak ve ekip zamanını boşa harcayabilir. Hangisinin daha pahalı olduğuna siz karar verin.',
+      baslikSonuc: (kat) => `Rötar dakikası, boş dakikadan ${kat} kat kötü sayılırsa`,
+      tamponYok: 'Tampon yok',
+      planModeli: 'Plan modeliyle',
+      oranlar: (a, b) => `Geç varış oranı: tampon yokken ${a}, plan modeliyle ${b}.`,
+      ek: 'Uçuş başına eklenen tampon',
+      bosa: 'Uçuş başına boşa giden dakika',
+      kalan: 'Uçuş başına kalan rötar',
+      rotalarNotu: (kat) => `Rotalar sekmesindeki “Önerilen tampon” sütunu ${kat} kat varsayar.`,
+      yok: 'Tampon optimizasyonu verisi bulunamadı.',
+    },
+    s5: {
+      baslik: 'Dürüstlük: neler işe yaramadı?',
+      p1: 'Başarı ölçütleri test öncesinde yazıldı. Tutmayanlar saklanmadı:',
+      kabulSatiri: (olcut, aciklama) => `${olcut}: ${aciklama}`,
+      kapanis: 'Bu site bir operasyon aracı değildir. Sayılar geçmiş kamu verisinden gelir; hiçbir havayolu hakkında bir şey söylemez.',
+    },
+    s6: {
+      baslik: 'Daha fazlası',
+      p1: 'Ayrıntılar için teknik sekmelere geçin.',
+      acik: {
+        overview: 'Tüm sonuçlar ve kabul ölçütleri',
+        airports: 'Havalimanı haritası ve tablosu',
+        routes: 'Rota hücreleri ve önerilen tamponlar',
+        optimization: 'Tampon optimizasyonunun ayrıntıları',
+        calibration: 'Olasılıklar güvenilir mi?',
+        weather: 'Hava bilgisi deneyi',
+        errors: 'Model nerede güçlü, nerede zayıf?',
+        about: 'Sınırlar, kaynaklar ve notlar',
+        sozluk: 'Terimlerin sade açıklamaları',
+      },
+    },
+  },
+
+  // ------------------------------------------------------------------ tampon optimizasyonu (OR)
+  or: {
+    problemBaslik: 'Sorun ve varsayımlar',
+    problem: 'Tarife yapılırken uçuş süresine kaç dakika tampon eklenmeli? Çok tampon uçak ve ekip zamanını boşa harcar; az tampon rötar bırakır. Politikalar test döneminden önce dondurulmuştur ve burada test dönemindeki uçuşlarda değerlendirilir.',
+    rotalarLink: 'Önerilen tampon sütunu Rotalar sekmesindedir.',
+    bulgu: 'Ana bulgu: ',
+    bulguYok: 'Tampon optimizasyonu bulgusunu içeren not Genel bakış verisinde bulunamadı.',
+    notlarBaslik: 'Varsayımlar ve notlar',
+    notlarGiris: 'Veri dosyasında kaydedilen notlar, olduğu gibi:',
+    sayilar: {
+      tarifeli: 'Tarifeli uçuş',
+      tamamlanan: 'Tamamlanan uçuş',
+      iptal: 'İptal edilen',
+      sapma: 'Yönü değişen (sapma)',
+    },
+    tauBaslik: 'Maliyet oranı',
+    slider: {
+      soru: 'Bir dakika rötar, bir dakika boş beklemeden kaç kat daha kötü?',
+      kat: (x) => `${x} kat`,
+      deger: (x) => `Bir dakika rötar, bir dakika boş beklemeden ${x} kat daha kötü`,
+      tau: (t) => `τ = ${t}`,
+      ipucu: 'Kaydırıcı yalnızca veri dosyasındaki hesaplanmış maliyet oranlarına oturur; ara değer yoktur. Ok tuşlarıyla değiştirebilirsiniz.',
+    },
+    politikaBaslik: (kat) => `Politikalar, maliyet oranı ${kat}`,
+    politikaCaption: (kat) => `Politikaların test dönemi değerlendirmesi, maliyet oranı ${kat}`,
+    politikaEtiket: 'Politikalar tablosu, kaydırılabilir',
+    kolon: {
+      politika: 'Politika',
+      ek: 'Ek tampon (dk/uçuş)',
+      kalan: 'Kalan rötar (dk/uçuş)',
+      bosa: 'Boşa giden (dk/uçuş)',
+      arr: 'Geç varış oranı (15+ dk)',
+      emilen: 'Zamanında ya da erken varan',
+      maliyet: 'Maliyet',
+      butce: 'Bütçe (dk/uçuş)',
+    },
+    karsilastirmaBaslik: 'Karşılaştırmalar: fark ve %95 aralık',
+    karsilastirmaCaption: (kat) => `Politika farkları, maliyet oranı ${kat}`,
+    karsilastirmaEtiket: 'Karşılaştırmalar tablosu, kaydırılabilir',
+    karsilastirma: 'Karşılaştırma',
+    olcut: {
+      maliyet: 'Maliyet',
+      kalan_rotar_dk: 'Kalan rötar (dk)',
+      arrdel15_orani: 'Geç varış oranı',
+      kullanilmayan_dk: 'Boşa giden (dk)',
+    },
+    farkNotu: 'Fark, ilk politika eksi ikinci politikadır. Her ölçüt için düşük değer daha iyidir; bu yüzden eksi bir fark, ilk politikanın daha iyi olduğu anlamına gelir. Aralık sıfırı dışlamıyorsa fark, gürültüden ayırt edilemez.',
+    diger: 'Diğer karşılaştırmalar',
+    yokKarsilastirma: 'Bu maliyet oranı için karşılaştırma yok.',
+    butceBaslik: 'Bütçe eğrisi: aynı toplam tampon, farklı dağıtım',
+    butceGiris: 'Her nokta, uçuş başına ortalama bir tampon bütçesidir (dakika). Bütçe sabitken, tamponun hücrelere nasıl dağıtıldığı karşılaştırılır.',
+    olcutSec: 'Grafikte gösterilen ölçüt',
+    olcutArr: 'Geç varış oranı (15+ dk)',
+    olcutKalan: 'Kalan rötar (dk/uçuş)',
+    xEtiket: 'Tampon bütçesi (dk/uçuş)',
+    grafikBaslik: (olcut) => `Bütçe eğrisi: ${olcut}`,
+    grafikAciklama: (adlar) => `Tampon bütçesine karşı ölçüt değeri; seriler: ${adlar}. Grafiğin ardından aynı değerleri içeren bir tablo gelir.`,
+    nokta: (butce, deger) => `bütçe ${butce}: ${deger}`,
+    tabloGoster: 'Değerleri tablo olarak göster',
+    butceCaption: (olcut) => `Bütçe eğrisi değerleri: ${olcut}`,
+    esitBaslik: 'Aynı bütçede: plan modeli ile B1 arasındaki fark',
+    esitGiris: 'Fark, plan modelinin bütçe politikası eksi B1’in bütçe politikasıdır; her satır bir bütçe noktasıdır.',
+    esit: {
+      anlamsiz: (n) => `${n} bütçe noktasının hiçbirinde aralık sıfırı dışlamıyor: aynı bütçede plan modeli ile B1 arasındaki fark anlamlı değil.`,
+      anlamli: (k, n) => `${n} bütçe noktasının ${k} tanesinde aralık sıfırı dışlıyor. Yön ve büyüklük için aşağıdaki tabloya bakın.`,
+      yok: 'Bu karşılaştırma veri dosyasında yok.',
+    },
+    esitCaption: (olcut) => `Plan modeli eksi B1, aynı bütçede: ${olcut}`,
+    kesifsel: {
+      rozet: 'Keşifsel',
+      baslik: 'Keşifsel bölüm',
+      uyari: 'Bu bölüm keşifseldir (post hoc) ve nihai test sonucu sayılmaz; yukarıdaki ana sonuçlardan ayrı tutulur.',
+      beklenen: 'beklenen',
+      gerceklesen: 'gerçekleşen',
+      seri: (ad, tur) => `${ad}, ${tur}`,
+      grafikBaslik: 'Keşifsel bütçe eğrisi: geç varış oranı, beklenen ve gerçekleşen',
+      tabloCaption: 'Keşifsel bütçe eğrisi değerleri, geç varış oranı',
+    },
+    veriYok: 'Tampon optimizasyonu verisi bulunamadı.',
+  },
 };
+
+// Dil ve metin nesnesi. T yerinde güncellenir; başvurular geçerli kalır.
+export const T = {};
+
+let current = 'tr';
+
+function isPlain(v) {
+  return v !== null && typeof v === 'object' && !Array.isArray(v);
+}
+
+function merge(target, source) {
+  for (const [key, value] of Object.entries(source)) {
+    if (isPlain(value)) {
+      if (!isPlain(target[key])) target[key] = {};
+      merge(target[key], value);
+    } else {
+      target[key] = value;
+    }
+  }
+}
+
+export function setLang(lang) {
+  current = lang === 'en' ? 'en' : 'tr';
+  merge(T, TR);
+  if (current === 'en') merge(T, EN);
+  return current;
+}
+
+export const getLang = () => current;
+
+setLang('tr');

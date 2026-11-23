@@ -4,6 +4,7 @@ import { el, fill, sozlukLink } from '../dom.js';
 import { loadOzet, loadHavalimanlari, loadManifest } from '../data.js';
 import { fmtInt, fmtPlain, safeHttpsUrl, txt } from '../fmt.js';
 import { T } from '../metin.js';
+import { notlar, kaynakLisansNotu, sorumlulukReddi } from '../yerel.js';
 
 export async function mount(root) {
   const t = T.hakkinda;
@@ -14,14 +15,14 @@ export async function mount(root) {
   const sources = el(
     'ul',
     { class: 'source-list' },
-    ozet.proje.kaynaklar.map((s) => {
+    ozet.proje.kaynaklar.map((s, i) => {
       const href = safeHttpsUrl(s.url);
       return el(
         'li',
         null,
         el('p', null, el('strong', null, s.ad)),
         el('p', { class: 'src-url' }, href ? el('a', { href, rel: 'noopener noreferrer' }, s.url) : s.url),
-        el('p', null, s.lisans_notu),
+        el('p', null, kaynakLisansNotu(ozet, i)),
       );
     }),
     // Harita atfı: eyalet sınırları yerel dosyadan okunur (Natural Earth, kamu malı).
@@ -29,7 +30,7 @@ export async function mount(root) {
   );
 
   const kb = (manifest.toplam_bayt / 1024).toFixed(0);
-  const notes = Array.isArray(ozet.notlar) ? ozet.notlar : [];
+  const notes = notlar(ozet);
 
   fill(
     root,
@@ -38,7 +39,7 @@ export async function mount(root) {
       { class: 'stack', 'aria-labelledby': 'ab-scope' },
       el('h3', { id: 'ab-scope' }, t.nedirBaslik),
       el('p', null, t.nedir(fmtInt(k.havalimani_sayisi), txt(k.veri_donemi.baslangic), txt(k.veri_donemi.bitis))),
-      el('p', { class: 'notice' }, ozet.proje.sorumluluk_reddi),
+      el('p', { class: 'notice' }, sorumlulukReddi(ozet)),
     ),
     el(
       'section',
@@ -48,7 +49,7 @@ export async function mount(root) {
         'ul',
         { class: 'points' },
         t.gosterilmez.map((line) => el('li', null, line)),
-        withheld.length ? el('li', null, t.gizlenen(withheld.join(', ')), ' ', sozlukLink('tek-havayolu-kurali', 'Tek havayolu kuralı')) : null,
+        withheld.length ? el('li', null, t.gizlenen(withheld.join(', ')), ' ', sozlukLink('tek-havayolu-kurali')) : null,
         el('li', null, t.tamponGosterilmez),
       ),
     ),

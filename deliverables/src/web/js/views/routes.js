@@ -1,10 +1,11 @@
 // Rotalar: bir kalkış havalimanı seçilir, sonra varış x kalkış bloğu x mevsim hücrelerine bakılır.
 // Sütunlar sıralanabilir; bu bir tablo özelliğidir, hiçbir kuruluşun sıralaması değildir.
 
-import { el, fill, selectField, fillSelect, loadingNode, sozlukLink } from '../dom.js';
+import { el, fill, selectField, fillSelect, loadingNode, sozlukLink, anlamKutusu } from '../dom.js';
 import { loadHavalimanlari, loadManifest, loadRoutes, routeOrigins } from '../data.js';
 import { fmtPct, fmtMin, fmtInt, NA, seasonLabel, SEASON_ORDER, blockLabel, BLOCK_ORDER, txt } from '../fmt.js';
-import { T, BUFFER_WARNING } from '../metin.js';
+import { T } from '../metin.js';
+import { gizlemeNedeni } from '../yerel.js';
 import { createTable } from '../table.js';
 
 let names = new Map();
@@ -37,7 +38,8 @@ export async function mount(root, params) {
 
   fill(
     root,
-    el('p', null, t.giris, ' ', T.ortak.sozluk, sozlukLink('hucre', 'Hücre'), ', ', sozlukLink('kantil', 'Kantil'), ', ', sozlukLink('conformal', 'Conformal ayar'), '.'),
+    anlamKutusu('rotalar', ['blok-sure-tamponu']),
+    el('p', null, t.giris, ' ', T.ortak.sozluk, sozlukLink('hucre'), ', ', sozlukLink('kantil'), ', ', sozlukLink('conformal'), '.'),
     el('form', { class: 'controls', onsubmit: (e) => e.preventDefault(), 'aria-label': t.filtreler }, originField.wrap, destField.wrap, blockField.wrap, seasonField.wrap),
     el(
       'div',
@@ -45,8 +47,9 @@ export async function mount(root, params) {
       el('strong', null, t.uyariBaslik),
       t.uyari,
       ' ',
-      sozlukLink('maliyet-orani', 'Maliyet oranı (τ)'),
-      '.',
+      sozlukLink('maliyet-orani'),
+      '. ',
+      el('a', { href: '#optimization' }, T.bolumler.optimization),
     ),
     el('p', { class: 'note' }, t.gizlemeNotu),
     airportNote,
@@ -77,7 +80,7 @@ async function setOrigin(iata, updateHash) {
   const a = airportByCode.get(iata);
   fill(
     ui.airportNote,
-    a && a.gizleme_nedeni ? el('div', { class: 'notice warn', role: 'note' }, el('strong', null, `${iata}: `), t.havalimaniNotu(a.gizleme_nedeni)) : null,
+    a && a.gizleme_nedeni ? el('div', { class: 'notice warn', role: 'note' }, el('strong', null, `${iata}: `), t.havalimaniNotu(gizlemeNedeni(a))) : null,
   );
 
   let file;
@@ -173,7 +176,7 @@ function buildTable(rows) {
       { key: 'cov95', label: tb.p95Kapsama, title: tb.p95KapsamaIpucu, numeric: true, render: pct('cov95') },
       { key: 'canc', label: tb.iptal, numeric: true, render: pct('canc') },
       { key: 'blk', label: tb.blok, title: tb.blokIpucu, numeric: true, render: mins('blk') },
-      { key: 'buf', label: tb.tampon, title: tb.tamponIpucu(BUFFER_WARNING), numeric: true, render: (r) => (r.buf === null ? NA : fmtMin(r.buf)) },
+      { key: 'buf', label: tb.tampon, title: tb.tamponIpucu(T.tamponUyari), numeric: true, render: (r) => (r.buf === null ? NA : fmtMin(r.buf)) },
     ],
   });
 }

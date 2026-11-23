@@ -539,11 +539,23 @@ def build_payloads(
     results = plan.results
     version = ie.model_version(results)
     notes = [] if tables is not None else ["Özet kipinde üretildi: rota dosyaları ve güvenilirlik kutuları yok."]
+    notes_en = [] if tables is not None else ["Generated in summary mode: no route files and no reliability bins."]
     # M10 at airport level needs the test-period carrier shares (layer data): unknown in summary mode
     hidden_origins: list[str] = [] if tables is None else list(tables.info["single_carrier_share_over_090_origins"])
     payloads: dict[str, dict[str, Any]] = {
         ie.FILE_PATHS["ozet"]: ie.build_ozet(
-            results, n_airports=len(plan.targets), created=created, version=version, extra_notes=notes
+            results,
+            n_airports=len(plan.targets),
+            created=created,
+            version=version,
+            extra_notes=notes,
+            extra_notes_en=notes_en,
+        ),
+        ie.FILE_PATHS["optimizasyon"]: ie.build_optimizasyon(
+            json.loads((PROJECT_ROOT / ie.OR_RESULTS).read_text(encoding="utf-8")),
+            json.loads((PROJECT_ROOT / ie.OR_SOLVER_RESULTS).read_text(encoding="utf-8")),
+            created=created,
+            version=version,
         ),
         ie.FILE_PATHS["havalimanlari"]: ie.build_havalimanlari(
             results,
@@ -649,7 +661,7 @@ def main(argv: list[str] | None = None) -> int:
         "created_utc": created.isoformat(),
         "command": f"{COMMAND} {' '.join(argv) if argv is not None else ''}".strip(),
         "mode": "dry_run" if args.dry_run else ("summary_only" if args.summary_only else "full"),
-        "out": str(args.out),
+        "out": fl._relative(Path(args.out), PROJECT_ROOT),  # relative: no local user path in published records
         "inputs": plan.record,
         "files": listing,
         "total_bytes": sum(len(d) for d in files.values()),
@@ -668,7 +680,7 @@ def main(argv: list[str] | None = None) -> int:
             "nothing is written. Use the full run, or --dry-run to inspect."
         )
     written = ie.write_site(files, args.out, stamp=stamp)
-    record["written"] = str(written)
+    record["written"] = fl._relative(Path(written), PROJECT_ROOT)
     path = _write_record(args.log_dir, stamp, record)
     print(f"Site data: {written}\nRun record: {path}")
     return 0

@@ -2,11 +2,11 @@
 
 import { el, fill } from '../dom.js';
 import { T } from '../metin.js';
-import { GRUPLAR } from '../sozluk-terimleri.js';
+import { GRUPLAR, grupAdi, terimMetni } from '../sozluk-terimleri.js';
 
 const t = T.sozluk;
 
-/** Aramayı Türkçe harflere duyarsız yapar: "ısı" ve "isi", "şans" ve "sans" eşleşir. */
+/** Aramayı Türkçe harflere duyarsız yapar: "ısı" ve "isi", "şans" ve "sans" eşleşir (İngilizce metinde de zararsız). */
 function normalize(text) {
   return String(text)
     .toLocaleLowerCase('tr')
@@ -55,7 +55,8 @@ export async function mount(root, params) {
   GRUPLAR.forEach((group, gi) => {
     const list = el('dl', { class: 'gloss-list' });
     const groupEntries = [];
-    for (const term of group.terimler) {
+    for (const raw of group.terimler) {
+      const term = { id: raw.id, ...terimMetni(raw) };
       const node = el(
         'div',
         { class: 'term', id: `terim-${term.id}`, tabindex: '-1' },
@@ -69,7 +70,7 @@ export async function mount(root, params) {
       list.append(node);
     }
     const headingId = `sz-g-${gi}`;
-    const section = el('section', { class: 'stack gloss-group', 'aria-labelledby': headingId }, el('h3', { id: headingId }, group.ad), list);
+    const section = el('section', { class: 'stack gloss-group', 'aria-labelledby': headingId }, el('h3', { id: headingId }, grupAdi(group)), list);
     groups.push({ section, entries: groupEntries });
     groupEls.push(section);
   });

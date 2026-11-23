@@ -2,6 +2,7 @@
 // setAttribute); veri değerleri asla işaretleme olarak çözümlenmez.
 
 import { T } from './metin.js';
+import { terimAdi } from './sozluk-terimleri.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -56,9 +57,28 @@ export function fill(node, ...children) {
   node.replaceChildren(...toNodes(children));
 }
 
-/** Sözlükte bir terime bağlantı. */
+/** Sözlükte bir terime bağlantı; metin verilmezse terimin seçili dildeki adı kullanılır. */
 export function sozlukLink(id, text) {
-  return el('a', { href: `#sozluk/${id}`, class: 'term-link' }, text);
+  return el('a', { href: `#sozluk/${id}`, class: 'term-link' }, text === undefined ? terimAdi(id) : text);
+}
+
+/**
+ * Teknik sekmelerin başındaki kısa "Ne anlama geliyor?" kutusu.
+ * key: T.anlam içindeki metin anahtarı; terimler: sözlük kimlikleri (isteğe bağlı).
+ */
+export function anlamKutusu(key, terimler = []) {
+  const links = [];
+  terimler.forEach((id, i) => {
+    if (i > 0) links.push(', ');
+    links.push(sozlukLink(id));
+  });
+  return el(
+    'aside',
+    { class: 'meaning', 'aria-label': T.anlam.baslik },
+    el('h3', { class: 'meaning-title' }, T.anlam.baslik),
+    el('p', null, T.anlam[key]),
+    links.length ? el('p', { class: 'note' }, T.ortak.sozluk, links, '.') : null,
+  );
 }
 
 let counter = 0;

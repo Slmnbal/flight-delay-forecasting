@@ -1,9 +1,10 @@
 // Hava deneyi: plan (yalnızca tarife) ile T2 (kalkıştan önce gözlenen hava eklenir) karşılaştırması.
 
-import { el, svg, fill, sozlukLink } from '../dom.js';
+import { el, svg, fill, sozlukLink, anlamKutusu } from '../dom.js';
 import { loadHava } from '../data.js';
 import { fmtMetricValue, fmtInterval, metricLabel, betterLabel, NA, txt } from '../fmt.js';
 import { T } from '../metin.js';
+import { varyantEtiketi } from '../yerel.js';
 
 const t = T.hava;
 
@@ -99,8 +100,9 @@ export async function mount(root) {
 
   fill(
     root,
-    el('p', null, t.giris, ' ', T.ortak.sozluk, sozlukLink('plan-modeli', 'Plan modeli'), ', ', sozlukLink('t2-modeli', 'T2 modeli'), ', ', sozlukLink('metar', 'METAR'), '.'),
-    el('ul', { class: 'points' }, variants.map((v) => el('li', null, el('strong', null, `${t.varyant[v.varyant] || txt(v.varyant)}: `), v.etiket))),
+    anlamKutusu('hava', ['t2-modeli', 'metar']),
+    el('p', null, t.giris, ' ', T.ortak.sozluk, sozlukLink('plan-modeli'), ', ', sozlukLink('t2-modeli'), ', ', sozlukLink('metar'), '.'),
+    el('ul', { class: 'points' }, variants.map((v) => el('li', null, el('strong', null, `${t.varyant[v.varyant] || txt(v.varyant)}: `), varyantEtiketi(v)))),
     el('section', { class: 'stack', 'aria-labelledby': 'wx-values' }, el('h3', { id: 'wx-values' }, t.degerBaslik), variantTable),
     el('section', { class: 'stack', 'aria-labelledby': 'wx-diff' }, el('h3', { id: 'wx-diff' }, t.farkBaslik), diffTable, el('p', { class: 'note' }, t.farkNotu)),
     el('div', { class: 'notice' }, el('p', null, hasOracle ? t.oracleVar : t.oracleYok), el('p', { class: 'note' }, t.notlarYonlendirme)),

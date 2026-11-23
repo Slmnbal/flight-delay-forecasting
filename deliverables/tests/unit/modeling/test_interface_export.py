@@ -10,6 +10,7 @@ import copy
 import datetime as dt
 import hashlib
 import json
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -677,3 +678,29 @@ def test_carrier_dominated_airport_rates_are_hidden(validator: ie.SchemaValidato
     validator.validate(errors, "hata_analizi")
     text = json.dumps(errors)
     assert '"ATL"' not in text
+
+
+def test_optimizasyon_file_from_the_committed_or_results(validator: ie.SchemaValidator) -> None:
+    """optimizasyon.json from the committed OR runs: schema-valid, numbers copied, exploratory part labelled."""
+    root = Path(__file__).resolve().parents[4]
+    or_results = json.loads((root / ie.OR_RESULTS).read_text(encoding="utf-8"))
+    solver = json.loads((root / ie.OR_SOLVER_RESULTS).read_text(encoding="utf-8"))
+    payload = ie.build_optimizasyon(or_results, solver, created=CREATED, version=VERSION)
+    validator.validate(payload, "optimizasyon")
+    level = next(g for g in payload["tau_izgarasi"] if g["tau"] == 0.8)
+    plan = next(p for p in level["politikalar"] if p["kimlik"] == "plan")
+    source = or_results["periods"]["test"]["levels"]["t080"]["policies"]["plan"]
+    assert plan["arrdel15_orani"] == round(source["arr_del15_rate"], 3)
+    assert "Keşifsel" in payload["kesifsel"]["etiket"] and payload["kesifsel"]["etiket_en"].startswith("Exploratory")
+    unlabelled = dict(solver, exploratory_post_hoc=False)
+    with pytest.raises(ie.ExportError, match="exploratory"):
+        ie.build_optimizasyon(or_results, unlabelled, created=CREATED, version=VERSION)
+
+
+def test_ozet_carries_english_texts(validator: ie.SchemaValidator) -> None:
+    payload = ie.build_ozet(_fake_results(), n_airports=30, created=CREATED, version=VERSION)
+    validator.validate(payload, "ozet")
+    en = payload["ceviri_en"]
+    assert en["proje"]["sorumluluk_reddi"].startswith("Based on public data; not affiliated with any airline.")
+    assert [k["olcut"] for k in en["kabul"]] == [f"K{i}" for i in range(1, 8)]
+    assert len(en["notlar"]) == len(payload["notlar"])

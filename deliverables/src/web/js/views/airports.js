@@ -1,15 +1,15 @@
 // Havalimanları: harita ve sıralanabilir tablo (gözlenen ve tahmin edilen geç varış oranı, iptal, kapsama).
 
-import { el, fill, selectField } from '../dom.js';
+import { el, fill, selectField, anlamKutusu } from '../dom.js';
 import { loadHavalimanlari, loadEyaletler } from '../data.js';
 import { fmtPct, fmtInt, fmtNum, NA } from '../fmt.js';
 import { T } from '../metin.js';
+import { gizlemeNedeni } from '../yerel.js';
 import { buildMap, rampBar } from '../map.js';
 import { mountChart } from '../charts.js';
 import { createTable } from '../table.js';
 
 const METRIC_KEYS = ['gozlenen_arrdel15_orani', 'tahmin_arrdel15_orani', 'iptal_orani', 'kapsama_p80', 'kapsama_p95'];
-const METRICS = METRIC_KEYS.map((key) => ({ key, label: T.havalimani.olcutler[key] }));
 
 export async function mount(root) {
   // Eyalet sınırları isteğe bağlıdır: yüklenemezse (null) harita ızgarayla çalışır.
@@ -17,6 +17,8 @@ export async function mount(root) {
   const airports = file.havalimanlari;
   const byCode = new Map(airports.map((a) => [a.iata, a]));
   const t = T.havalimani;
+  // Etiketler seçili dilde okunur (dil değişince görünüm yeniden kurulur).
+  const METRICS = METRIC_KEYS.map((key) => ({ key, label: t.olcutler[key] }));
   let metric = METRICS[0];
   let selected = null;
 
@@ -74,7 +76,7 @@ export async function mount(root) {
       el('h3', null, a.iata),
       el('p', null, a.ad),
       el('p', { class: 'muted' }, a.saat_dilimi),
-      a.gizleme_nedeni ? el('p', { class: 'notice warn' }, a.gizleme_nedeni) : null,
+      a.gizleme_nedeni ? el('p', { class: 'notice warn' }, gizlemeNedeni(a)) : null,
       el('dl', null, rows.flatMap(([term, v]) => [el('dt', null, term), el('dd', null, v)])),
       el('p', null, el('a', { href: `#routes/${a.iata}` }, t.rotalariGoster(a.iata))),
     );
@@ -136,7 +138,7 @@ export async function mount(root) {
         'div',
         { class: 'notice warn stack', role: 'note' },
         el('p', null, el('strong', null, t.yayimlanmayanlar), hidden.map((a) => a.iata).join(', ') + t.yayimlanmayanSonu),
-        hidden.map((a) => el('p', null, el('strong', null, `${a.iata}: `), a.gizleme_nedeni)),
+        hidden.map((a) => el('p', null, el('strong', null, `${a.iata}: `), gizlemeNedeni(a))),
       )
     : null;
 
@@ -145,6 +147,7 @@ export async function mount(root) {
 
   fill(
     root,
+    anlamKutusu('havalimanlari', ['tek-havayolu-kurali', 'kapsama']),
     el('p', null, t.giris),
     el('div', { class: 'controls' }, metricField.wrap),
     el('div', { class: 'map-layout' }, el('div', null, mapHolder, rampHolder), detail),

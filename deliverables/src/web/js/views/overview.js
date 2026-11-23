@@ -1,22 +1,25 @@
 // Genel bakış: sorun, öne çıkan sonuçlar, kabul ölçütleri K1-K7, bu sayılara nasıl güvenmeli.
 
-import { el, fill, sozlukLink } from '../dom.js';
+import { el, fill, sozlukLink, anlamKutusu } from '../dom.js';
 import { loadOzet, loadHava, metricOf } from '../data.js';
-import { fmtMetricValue, fmtInterval, fmtInt, fmtPeriod, fmtPlain, NA } from '../fmt.js';
+import { fmtMetricValue, fmtInterval, fmtInt, fmtPct, fmtPeriod, fmtPlain, NA } from '../fmt.js';
 import { T } from '../metin.js';
+import { OR_NOTE_PREFIX, notBul, projeBaslik, projeAciklama, modelAciklamasi, kabulAciklamasi } from '../yerel.js';
 
-// Optimizasyon bulgusu, veri dosyasındaki notlar arasından bu önekle bulunur (sayfaya elle yazılmaz).
-const OR_NOTE_PREFIX = 'Tampon optimizasyonu (OR):';
+// Optimizasyon bulgusu, veri dosyasındaki notlar arasından OR_NOTE_PREFIX önekiyle bulunur (yerel.js;
+// sayfaya elle yazılmaz). İngilizce metin, aynı sıradaki İngilizce nottan gelir.
 
-const VERDICT = {
-  gecti: { label: T.genel.kabul.gecti, cls: 'pass', symbol: '✓' },
-  kaldi: { label: T.genel.kabul.kaldi, cls: 'fail', symbol: '✕' },
-  degerlendirilmedi: { label: T.genel.kabul.degerlendirilmedi, cls: 'na', symbol: '–' },
+// Etiketler dile göre okunur (dil değişince görünüm yeniden kurulur).
+const verdictOf = (sonuc) => {
+  const k = T.genel.kabul;
+  if (sonuc === 'gecti') return { label: k.gecti, cls: 'pass', symbol: '✓' };
+  if (sonuc === 'kaldi') return { label: k.kaldi, cls: 'fail', symbol: '✕' };
+  return { label: k.degerlendirilmedi, cls: 'na', symbol: '–' };
 };
 
 export async function mount(root) {
   const [ozet, hava] = await Promise.all([loadOzet(), loadHava()]);
-  fill(root, hero(ozet), headline(ozet, hava), acceptance(ozet), bufferFinding(ozet), trust(ozet));
+  fill(root, anlamKutusu('genel', ['b1', 'kabul-olcutleri']), hero(ozet), headline(ozet, hava), acceptance(ozet), bufferFinding(ozet), trust(ozet));
 }
 
 function hero(ozet) {
@@ -34,9 +37,9 @@ function hero(ozet) {
   return el(
     'section',
     { class: 'hero', 'aria-labelledby': 'ov-hero' },
-    el('h3', { id: 'ov-hero' }, ozet.proje.baslik),
+    el('h3', { id: 'ov-hero' }, projeBaslik(ozet)),
     el('p', { class: 'lede' }, T.genel.kahramanSoru(saat)),
-    el('p', { class: 'method' }, ozet.proje.aciklama),
+    el('p', { class: 'method' }, projeAciklama(ozet)),
     el('dl', { class: 'facts' }, facts.map(([term, value]) => el('div', null, el('dt', null, term), el('dd', null, value)))),
   );
 }
@@ -70,8 +73,8 @@ function headline(ozet, hava) {
     boardRow(p.brierSatiri, fmtMetricValue(m('arrdel15', 'lgbm_T2', 'brier_skill')), fmtInterval(m('arrdel15', 'lgbm_T2', 'brier_skill')), p.sifirUstu),
     boardRow(p.egimSatiri, fmtMetricValue(m('arrdel15', 'lgbm_T2', 'kalibrasyon_egimi')), fmtInterval(m('arrdel15', 'lgbm_T2', 'kalibrasyon_egimi')), p.ideal('1')),
     boardRow(p.citlSatiri, fmtMetricValue(m('arrdel15', 'lgbm_T2', 'calibration_in_the_large')), fmtInterval(m('arrdel15', 'lgbm_T2', 'calibration_in_the_large')), p.ideal('0')),
-    boardRow(p.p80Satiri, fmtMetricValue(m('kantil', 'lgbm_plan', 'kapsama_p80_conf')), fmtInterval(m('kantil', 'lgbm_plan', 'kapsama_p80_conf')), p.hedef('%80,0')),
-    boardRow(p.p95Satiri, fmtMetricValue(m('kantil', 'lgbm_plan', 'kapsama_p95_conf')), fmtInterval(m('kantil', 'lgbm_plan', 'kapsama_p95_conf')), p.hedef('%95,0')),
+    boardRow(p.p80Satiri, fmtMetricValue(m('kantil', 'lgbm_plan', 'kapsama_p80_conf')), fmtInterval(m('kantil', 'lgbm_plan', 'kapsama_p80_conf')), p.hedef(fmtPct(0.8))),
+    boardRow(p.p95Satiri, fmtMetricValue(m('kantil', 'lgbm_plan', 'kapsama_p95_conf')), fmtInterval(m('kantil', 'lgbm_plan', 'kapsama_p95_conf')), p.hedef(fmtPct(0.95))),
   ];
   if (weatherGap) {
     rows.push(boardRow(p.havaSatiri, fmtMetricValue(weatherGap.metrik, true), fmtInterval(weatherGap.metrik, true), p.ayniUcuslar));
@@ -97,13 +100,13 @@ function headline(ozet, hava) {
       p.not,
       ' ',
       T.ortak.sozluk,
-      sozlukLink('guven-araligi', 'Güven aralığı'),
+      sozlukLink('guven-araligi'),
       ', ',
-      sozlukLink('roc-auc', 'ROC-AUC'),
+      sozlukLink('roc-auc'),
       ', ',
-      sozlukLink('b1', 'B1'),
+      sozlukLink('b1'),
       ', ',
-      sozlukLink('citl', 'CITL'),
+      sozlukLink('citl'),
       '.',
     ),
   );
@@ -118,13 +121,13 @@ function acceptance(ozet) {
 
   const list = el('ul', { class: 'criteria' });
   for (const item of kabul) {
-    const verdict = VERDICT[item.sonuc] || VERDICT.degerlendirilmedi;
+    const verdict = verdictOf(item.sonuc);
     list.append(
       el(
         'li',
         { class: item.sonuc === 'kaldi' ? 'is-fail' : null },
         el('span', { class: 'cid' }, item.olcut),
-        el('span', { class: 'ctitle' }, item.aciklama),
+        el('span', { class: 'ctitle' }, kabulAciklamasi(ozet, item)),
         el('span', { class: `badge ${verdict.cls}` }, el('span', { 'aria-hidden': 'true' }, `${verdict.symbol} `), verdict.label),
       ),
     );
@@ -149,8 +152,7 @@ function acceptance(ozet) {
 
 function bufferFinding(ozet) {
   const t = T.genel.tampon;
-  const notes = Array.isArray(ozet.notlar) ? ozet.notlar : [];
-  const orNote = notes.find((n) => typeof n === 'string' && n.startsWith(OR_NOTE_PREFIX));
+  const orNote = notBul(ozet, OR_NOTE_PREFIX);
   return el(
     'section',
     { 'aria-labelledby': 'ov-buffer' },
@@ -160,6 +162,7 @@ function bufferFinding(ozet) {
       { class: 'notice stack' },
       orNote ? el('p', null, orNote) : el('p', { class: 'muted' }, t.notYok),
       el('p', null, t.varsayim),
+      el('p', null, el('a', { href: '#optimization' }, t.ayrintiLink)),
     ),
   );
 }
@@ -184,7 +187,7 @@ function trust(ozet) {
       el('tbody', null, splits.map(([name, d]) => el('tr', null, el('th', { scope: 'row' }, name), el('td', null, d.baslangic), el('td', null, d.bitis)))),
     ),
   );
-  const modelList = el('dl', { class: 'stack' }, ozet.modeller.flatMap((md) => [el('dt', null, el('strong', null, md.kimlik)), el('dd', null, md.aciklama)]));
+  const modelList = el('dl', { class: 'stack' }, ozet.modeller.flatMap((md) => [el('dt', null, el('strong', null, md.kimlik)), el('dd', null, modelAciklamasi(ozet, md))]));
   return el(
     'section',
     { 'aria-labelledby': 'ov-trust' },

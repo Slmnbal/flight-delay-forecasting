@@ -184,12 +184,12 @@ export function buildMap(o) {
     root.append(svg('path', { class: 'grid', d: line(pts) }));
     if (g.kind === 'lat') {
       const [x, y] = pts[0];
-      const text = `${g.value}°K`;
+      const text = `${g.value}${T.harita.kuzey}`;
       root.append(svg('text', { class: 'grid-label', x: x + 4, y: y - 4 }, text));
       obstacles.push({ x0: x + 3, y0: y - 14, x1: x + 3 + text.length * 6.4, y1: y - 1 });
     } else {
       const [x, y] = pts[0];
-      const text = `${Math.abs(g.value)}°B`;
+      const text = `${Math.abs(g.value)}${T.harita.bati}`;
       const w = text.length * 6.4;
       root.append(svg('text', { class: 'grid-label', x: x - w / 2, y: y + 14 }, text));
       obstacles.push({ x0: x - w / 2 - 1, y0: y + 4, x1: x + w / 2 + 1, y1: y + 17 });

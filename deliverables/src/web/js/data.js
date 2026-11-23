@@ -14,6 +14,7 @@ export const FILES = Object.freeze({
   kalibrasyon: 'kalibrasyon.json',
   hava: 'hava-deneyi.json',
   hata: 'hata-analizi.json',
+  optimizasyon: 'optimizasyon.json',
 });
 
 const EYALETLER = 'abd-eyaletler.json';
@@ -62,6 +63,7 @@ export const loadHavalimanlari = () => getJson(FILES.havalimanlari);
 export const loadKalibrasyon = () => getJson(FILES.kalibrasyon);
 export const loadHava = () => getJson(FILES.hava);
 export const loadHata = () => getJson(FILES.hata);
+export const loadOptimizasyon = () => getJson(FILES.optimizasyon);
 
 /** Eyalet sınırları (Natural Earth, kamu malı). Yüklenemezse null döner; harita ızgarayla çalışır. */
 export function loadEyaletler() {

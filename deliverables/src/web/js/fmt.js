@@ -1,8 +1,10 @@
-// Sayı ve etiket biçimleri (Türkçe): ondalık virgül, binlik ayırıcı nokta, yüzde "%24,2", eksi "−".
-// Sitenin tek yuvarlama ilkesi: oranlar ve kapsama yüzde olarak 1 ondalık, skorlar 4 ondalık,
-// dakikalar 1 ondalık. Eksik değer her yerde "–" olur; ekrana "null" ya da "undefined" yazılmaz.
+// Sayı ve etiket biçimleri. Dile göre:
+//   Türkçe:    ondalık virgül, binlik ayırıcı nokta, yüzde "%24,2" (0,712 · 2.369.002)
+//   İngilizce: ondalık nokta, binlik ayırıcı virgül, yüzde "24.2%" (0.712 · 2,369,002)
+// Eksi işareti "−". Sitenin tek yuvarlama ilkesi: oranlar ve kapsama yüzde olarak 1 ondalık, skorlar
+// 4 ondalık, dakikalar 1 ondalık. Eksik değer her yerde "–" olur; ekrana "null" ya da "undefined" yazılmaz.
 
-import { T } from './metin.js';
+import { T, getLang } from './metin.js';
 
 export const NA = '–';
 export const MINUS = '−';
@@ -16,7 +18,9 @@ function parts(x, digits, plus) {
   const s = Math.abs(x).toFixed(digits);
   const isZero = Number(s) === 0;
   const [whole, dec] = s.split('.');
-  const body = whole.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (dec ? `,${dec}` : '');
+  const en = getLang() === 'en';
+  const group = en ? ',' : '.';
+  const body = whole.replace(/\B(?=(\d{3})+(?!\d))/g, group) + (dec ? (en ? `.${dec}` : `,${dec}`) : '');
   let sign = '';
   if (x < 0 && !isZero) sign = MINUS;
   else if (plus && x > 0 && !isZero) sign = '+';
@@ -32,10 +36,13 @@ export const fmtNum = (x, d = 4, plus = false) => (missing(x) ? NA : signed(x, d
 export const fmtPct = (x, d = 1, plus = false) => {
   if (missing(x)) return NA;
   const p = parts(x * 100, d, plus);
-  return `${p.sign}%${p.body}`;
+  return getLang() === 'en' ? `${p.sign}${p.body}%` : `${p.sign}%${p.body}`;
 };
-export const fmtMin = (x, d = 1, plus = false) => (missing(x) ? NA : `${signed(x, d, plus)} dk`);
+export const fmtMin = (x, d = 1, plus = false) => (missing(x) ? NA : `${signed(x, d, plus)} ${T.birim.dk}`);
 export const fmtInt = (x) => (missing(x) ? NA : signed(Math.round(x), 0, false));
+
+/** Maliyet oranı gibi: tam sayıysa ondalıksız, değilse 2 ondalık ("4", "1,22"). */
+export const fmtRatio = (x) => (missing(x) ? NA : signed(x, Number.isInteger(x) ? 0 : 2, false));
 
 /** Bir metrik nesnesinin {ad, birim} birimiyle değer biçimi. */
 export function fmtValue(value, name, unit, plus = false) {

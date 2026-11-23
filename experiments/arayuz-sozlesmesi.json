@@ -10,11 +10,13 @@
     "veri/rotalar/<IATA>.json": "rotalar",
     "veri/kalibrasyon.json": "kalibrasyon",
     "veri/hava-deneyi.json": "hava_deneyi",
-    "veri/hata-analizi.json": "hata_analizi"
+    "veri/hata-analizi.json": "hata_analizi",
+    "veri/optimizasyon.json": "optimizasyon"
   },
   "oneOf": [
     {"$ref": "#/$defs/manifest"},
     {"$ref": "#/$defs/ozet"},
+    {"$ref": "#/$defs/optimizasyon"},
     {"$ref": "#/$defs/havalimanlari"},
     {"$ref": "#/$defs/rotalar"},
     {"$ref": "#/$defs/kalibrasyon"},
@@ -104,7 +106,7 @@
             "required": ["yol", "dosya_turu", "bayt", "sha256"],
             "properties": {
               "yol": {"type": "string", "pattern": "^veri/[a-z0-9_/.-]+\\.json$|^veri/rotalar/[A-Z0-9]{3}\\.json$"},
-              "dosya_turu": {"type": "string", "enum": ["ozet", "havalimanlari", "rotalar", "kalibrasyon", "hava_deneyi", "hata_analizi"]},
+              "dosya_turu": {"type": "string", "enum": ["ozet", "havalimanlari", "rotalar", "kalibrasyon", "hava_deneyi", "hata_analizi", "optimizasyon"]},
               "bayt": {"type": "integer", "minimum": 0, "maximum": 307200},
               "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
             }
@@ -220,7 +222,20 @@
             }
           }
         },
-        "notlar": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 500}}
+        "notlar": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 500}},
+        "ceviri_en": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "İngilizce metinler (site dil düğmesi; 2026-11-24). Sayılar Türkçe alanlardakiyle aynıdır.",
+          "required": ["proje", "kaynak_lisans_notlari", "modeller", "kabul", "notlar"],
+          "properties": {
+            "proje": {"type": "object", "additionalProperties": false, "required": ["baslik", "aciklama", "sorumluluk_reddi"], "properties": {"baslik": {"type": "string", "maxLength": 120}, "aciklama": {"type": "string", "maxLength": 2000}, "sorumluluk_reddi": {"type": "string", "minLength": 20, "maxLength": 1000}}},
+            "kaynak_lisans_notlari": {"type": "array", "maxItems": 10, "items": {"type": "string", "maxLength": 300}},
+            "modeller": {"type": "array", "maxItems": 12, "items": {"type": "object", "additionalProperties": false, "required": ["kimlik", "aciklama"], "properties": {"kimlik": {"$ref": "#/$defs/model_kimligi"}, "aciklama": {"type": "string", "maxLength": 300}}}},
+            "kabul": {"type": "array", "maxItems": 12, "items": {"type": "object", "additionalProperties": false, "required": ["olcut", "aciklama"], "properties": {"olcut": {"type": "string", "enum": ["K1", "K2", "K3", "K4", "K5", "K6", "K7"]}, "aciklama": {"type": "string", "maxLength": 300}}}},
+            "notlar": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 500}}
+          }
+        }
       },
       "unevaluatedProperties": false
     },
@@ -252,7 +267,8 @@
               "kapsama_p80": {"$ref": "#/$defs/oran_bos", "description": "Conformal ayarlı (kayan) P80 üst sınır kapsaması, plan modeli."},
               "kapsama_p95": {"$ref": "#/$defs/oran_bos"},
               "hava_eksik_orani": {"$ref": "#/$defs/oran_bos"},
-              "gizleme_nedeni": {"type": ["string", "null"], "maxLength": 300, "description": "Oranlar yayımlanmadıysa nedeni (ör. tek taşıyıcı payı > %90; 2026-11-23)."}
+              "gizleme_nedeni": {"type": ["string", "null"], "maxLength": 300, "description": "Oranlar yayımlanmadıysa nedeni (ör. tek taşıyıcı payı > %90; 2026-11-23)."},
+              "gizleme_nedeni_en": {"type": ["string", "null"], "maxLength": 300}
             }
           }
         }
@@ -416,6 +432,7 @@
               "varyant": {"type": "string", "enum": ["plan", "T2", "T6", "T12", "oracle"]},
               "oracle": {"type": "boolean"},
               "etiket": {"type": "string", "maxLength": 200},
+              "etiket_en": {"type": "string", "maxLength": 200},
               "metrikler": {"$ref": "#/$defs/metrik_listesi"}
             },
             "if": {"properties": {"varyant": {"const": "oracle"}}},
@@ -468,6 +485,28 @@
       "unevaluatedProperties": false
     },
 
+    "optimizasyon": {
+      "type": "object",
+      "x-azami-boyut-kb": 80,
+      "description": "Blok süre tamponu optimizasyonu (OR): test döneminden önce dondurulmuş politikaların test dönemi değerlendirmesi; 'kesifsel' bölümü post hoc (son test sonucu değil). 2026-11-24.",
+      "allOf": [{"$ref": "#/$defs/baslik"}],
+      "required": ["dosya_turu", "kume", "sayilar", "politikalar", "tau_izgarasi", "butce_egrisi", "notlar", "notlar_en"],
+      "properties": {
+        "dosya_turu": {"const": "optimizasyon"},
+        "kume": {"$ref": "#/$defs/kume"},
+        "sayilar": {"type": "object", "additionalProperties": false, "required": ["tarifeli", "tamamlanan", "iptal", "sapma"], "properties": {"tarifeli": {"type": "integer", "minimum": 0}, "tamamlanan": {"type": "integer", "minimum": 0}, "iptal": {"type": "integer", "minimum": 0}, "sapma": {"type": "integer", "minimum": 0}}},
+        "politikalar": {"type": "array", "maxItems": 12, "items": {"type": "object", "additionalProperties": false, "required": ["kimlik", "etiket", "etiket_en"], "properties": {"kimlik": {"$ref": "#/$defs/or_politika"}, "etiket": {"type": "string", "maxLength": 120}, "etiket_en": {"type": "string", "maxLength": 120}}}},
+        "tau_izgarasi": {"type": "array", "minItems": 1, "maxItems": 30, "items": {"type": "object", "additionalProperties": false, "required": ["tau", "maliyet_orani", "politikalar", "karsilastirmalar"], "properties": {"tau": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1}, "maliyet_orani": {"type": "number", "minimum": 0}, "politikalar": {"type": "array", "maxItems": 12, "items": {"$ref": "#/$defs/or_satir"}}, "karsilastirmalar": {"type": "array", "maxItems": 60, "items": {"$ref": "#/$defs/or_karsilastirma"}}}}},
+        "butce_egrisi": {"type": "array", "maxItems": 30, "items": {"type": "object", "additionalProperties": false, "required": ["butce_dk", "politikalar", "karsilastirmalar"], "properties": {"butce_dk": {"type": "number", "minimum": 0}, "politikalar": {"type": "array", "maxItems": 12, "items": {"$ref": "#/$defs/or_satir"}}, "karsilastirmalar": {"type": "array", "maxItems": 60, "items": {"$ref": "#/$defs/or_karsilastirma"}}}}},
+        "kesifsel": {"type": "object", "additionalProperties": false, "required": ["etiket", "etiket_en", "butce_egrisi"], "properties": {"etiket": {"type": "string", "maxLength": 300}, "etiket_en": {"type": "string", "maxLength": 300}, "butce_egrisi": {"type": "array", "maxItems": 30, "items": {"type": "object", "additionalProperties": false, "required": ["butce_dk", "politikalar"], "properties": {"butce_dk": {"type": "number", "minimum": 0}, "politikalar": {"type": "array", "maxItems": 12, "items": {"$ref": "#/$defs/or_satir"}}}}}}},
+        "notlar": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 500}},
+        "notlar_en": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 500}}
+      },
+      "unevaluatedProperties": false
+    },
+    "or_politika": {"type": "string", "enum": ["none", "b1", "plan", "plan_conformal", "b1_conformal", "plan_flight", "plan_budget", "b1_budget", "plan_arrdel15_budget", "plan_arrdel15_mixture"]},
+    "or_satir": {"type": "object", "additionalProperties": false, "required": ["kimlik", "ek_tampon_dk", "kalan_rotar_dk", "kullanilmayan_dk", "arrdel15_orani", "emilen_orani", "maliyet"], "properties": {"kimlik": {"$ref": "#/$defs/or_politika"}, "ek_tampon_dk": {"$ref": "#/$defs/dakika_bos"}, "kalan_rotar_dk": {"$ref": "#/$defs/dakika_bos"}, "kullanilmayan_dk": {"$ref": "#/$defs/dakika_bos"}, "arrdel15_orani": {"$ref": "#/$defs/oran_bos"}, "emilen_orani": {"$ref": "#/$defs/oran_bos"}, "maliyet": {"type": ["number", "null"]}, "beklenen_arrdel15_orani": {"$ref": "#/$defs/oran_bos"}}},
+    "or_karsilastirma": {"type": "object", "additionalProperties": false, "required": ["karsilastirma", "ad", "deger"], "properties": {"karsilastirma": {"type": "string", "maxLength": 80}, "ad": {"type": "string", "enum": ["maliyet", "kalan_rotar_dk", "arrdel15_orani", "kullanilmayan_dk"]}, "deger": {"type": ["number", "null"]}, "ga95_alt": {"type": ["number", "null"]}, "ga95_ust": {"type": ["number", "null"]}}},
     "hata_analizi": {
       "type": "object",
       "x-azami-boyut-kb": 200,

@@ -108,6 +108,7 @@ FILE_PATHS: dict[str, str] = {
     "kalibrasyon": "veri/kalibrasyon.json",
     "hava_deneyi": "veri/hava-deneyi.json",
     "hata_analizi": "veri/hata-analizi.json",
+    "optimizasyon": "veri/optimizasyon.json",
 }
 _ROUTE_PATH = re.compile(r"^veri/rotalar/([A-Z0-9]{3})\.json$")
 FORBIDDEN_KEY_PARTS: tuple[str, ...] = (
@@ -124,6 +125,18 @@ FORBIDDEN_KEY_PARTS: tuple[str, ...] = (
     "ucus_numara",
     "logo",
 )
+DISCLAIMER_EN = (
+    "Based on public data; not affiliated with any airline. An independent analysis of US DOT/BTS flight data and "
+    "Iowa Environmental Mesonet (IEM) ASOS/METAR observations. No per-carrier results or rankings are published; "
+    "BTS delay-cause fields are the carrier's own declaration and are not used here. Not an operational decision "
+    "tool; buffer suggestions rest on assumed cost ratios."
+)
+
+CARRIER_DOMINATED_NOTE_EN = (
+    "Not published: more than 90% of this airport's test-period flights belong to one carrier, so airport-level "
+    "figures would show that carrier's performance (presentation rule)."
+)
+
 CARRIER_DOMINATED_NOTE = (
     "Yayımlanmadı: bu havalimanında test dönemindeki uçuşların %90'ından fazlası tek bir havayoluna ait; "
     "havalimanı düzeyindeki sayılar o havayolunun performansını göstermiş olurdu (sunum kuralı)."
@@ -837,6 +850,66 @@ def _summary_results(block: Mapping[str, Any]) -> list[dict[str, Any]]:
 
 _VERDICT = {True: "gecti", False: "kaldi", None: "degerlendirilmedi"}
 
+PROJECT_TITLE_EN = "US domestic flight delays: schedule-time and pre-departure prediction (30 airports)"
+PROJECT_TEXT_EN = (
+    "The probability that a flight arrives 15+ minutes late (ArrDel15), the cancellation probability and arrival-delay "
+    "quantiles (P50/P80/P95) are predicted at two moments: when the schedule is set (plan) and 2 hours before "
+    "departure (T2, with METAR weather observations). Models were trained on a time-ordered split; the final test "
+    "period (2026-03..08) was evaluated once with locked models and results are published without tuning. "
+    "Probabilities are calibrated with monthly rolling Platt scaling; upper quantile bounds use a monthly rolling "
+    "one-sided conformal adjustment. Buffer suggestions come from the plan model's cell quantiles with an assumed "
+    "cost ratio (tau = 0.80)."
+)
+_SOURCE_LICENCES_EN = (
+    "US federal government work; data.gov lists it as public domain; the licence text on the BTS page could not be "
+    "read (partly verified).",
+    "Public domain according to IEM; attribution requested (verified).",
+    "Public domain according to the site; the page could not be read directly (partly verified).",
+)
+_MODELS_EN = {
+    "B1": "Baseline (B1): historical delay rate / empirical quantile of route x hour block in the training period "
+    "(falls back to a coarser group when data are thin).",
+    "lgbm_plan": "LightGBM, plan contract: only information known when the schedule is set (no weather). Quantiles "
+    "and buffer suggestions come from this model.",
+    "lgbm_T2": "LightGBM, T2 contract: schedule information + METAR weather observations 2 hours before scheduled "
+    "departure.",
+}
+ACCEPTANCE_TEXT_EN = {
+    "K1": "The T2 model ranks late arrivals better than B1: ROC-AUC and PR-AUC differences are positive, the lower "
+    "bound of the confidence interval is above zero and they remain significant after Holm correction.",
+    "K2": "The Brier skill gain of the calibrated probabilities over B1 is positive with a lower confidence bound "
+    "above zero.",
+    "K3": "Probabilities are calibrated: calibration-in-the-large within +/-0.01 and calibration slope between 0.9 "
+    "and 1.1.",
+    "K4": "The plan model's P50, P80 and P95 quantiles have lower pinball loss than B1; all three significant.",
+    "K5": "Conformal upper bounds hit their targets: P80 coverage 0.78-0.82, P95 coverage 0.94-0.96, and at least "
+    "80% of airport x month segments within +/-0.05 of target.",
+    "K6": "Schedule-only (plan) cancellation prediction beats B1: PR-AUC difference positive with a lower confidence "
+    "bound above zero.",
+    "K7": "No leakage: leakage tests passed and no unresolved suspicion in the locked models.",
+}
+NOTES_EN = (
+    "The final test was run once; the numbers in this file are test-period results of the locked models, nothing "
+    "was tuned on the test.",
+    "Probability metrics (Brier, log-loss, ECE, calibration) use monthly rolling Platt; ranking metrics (ROC-AUC, "
+    "PR-AUC) and the F1 threshold use raw scores.",
+    "95% confidence intervals come from a calendar-day block bootstrap (B = 1000, seed 42) and are given only for "
+    "metrics that have them in the source; brier_skill and *_farki_b1 metrics are relative to B1.",
+    "The oracle (observed weather) model was not locked, so the weather experiment has no oracle result.",
+    "The calendar-feature cancellation sensitivity model (cancelled/T2_calendar) is not published because the "
+    "schema has no model id for it.",
+    "Route cells and segments with fewer than 50 flights, and cells where one carrier has more than 90% of the "
+    "flights, are not published.",
+    "Event day: a test day whose delay rate exceeds the 95th percentile of daily delay rates in the training period; "
+    "other days are 'other'.",
+    "Conformal schemes: 'rolling' recomputes the offset each month from the window 2-57 days before that month "
+    "(primary); 'static' is one offset computed in the calibration period (2026-01..02); 'raw' is the unadjusted "
+    "model quantile.",
+    "Buffer optimisation (OR): adding buffer clearly lowers the late-arrival rate, but at the same minute budget the "
+    "plan model's suggestions are not significantly better than the simple historical rule B1. The model's main value "
+    "is in the T-2h (T2) prediction. Details: docs/optimization.md.",
+)
+
 # Plain-language criterion texts for the site (pre-registered rules: experiments/son-test-on-kayit.md, plan 5.3).
 ACCEPTANCE_TEXT = {
     "K1": "T2 modeli geç varışları B1'den daha iyi sıralıyor: ROC-AUC ve PR-AUC farkı pozitif, güven aralığının alt "
@@ -878,6 +951,7 @@ def build_ozet(
     created: dt.datetime,
     version: str,
     extra_notes: Sequence[str] = (),
+    extra_notes_en: Sequence[str] = (),
     sample: bool = False,
 ) -> dict[str, Any]:
     """``ozet.json`` from the final-test results (no number is computed here except rounding)."""
@@ -940,6 +1014,13 @@ def build_ozet(
         "asıl katkısı kalkıştan 2 saat önceki (T2) tahmindedir. Ayrıntı: docs/optimization.md.",
     ]
     payload["notlar"] = [_truncate(n, 500) for n in [*notes, *extra_notes]][:20]
+    payload["ceviri_en"] = {
+        "proje": {"baslik": PROJECT_TITLE_EN, "aciklama": PROJECT_TEXT_EN, "sorumluluk_reddi": DISCLAIMER_EN},
+        "kaynak_lisans_notlari": [_truncate(t, 300) for t in _SOURCE_LICENCES_EN],
+        "modeller": [{"kimlik": k, "aciklama": _truncate(v, 300)} for k, v in _MODELS_EN.items()],
+        "kabul": [{"olcut": k, "aciklama": _truncate(v, 300)} for k, v in sorted(ACCEPTANCE_TEXT_EN.items())],
+        "notlar": [_truncate(n, 500) for n in [*NOTES_EN, *extra_notes_en]][:20],
+    }
     return payload
 
 
@@ -996,6 +1077,7 @@ def build_havalimanlari(
             item["gozlenen_arrdel15_orani"] = None
             item["tahmin_arrdel15_orani"] = None
             item.update(iptal_orani=None, kapsama_p80=None, kapsama_p95=None, gizleme_nedeni=CARRIER_DOMINATED_NOTE)
+            item["gizleme_nedeni_en"] = CARRIER_DOMINATED_NOTE_EN
             items.append(item)
             continue
         cancelled = cancel.get(code)
@@ -1203,12 +1285,14 @@ def build_hava_deneyi(
             "varyant": "plan",
             "oracle": False,
             "etiket": "Plan: yalnızca tarife yapılırken bilinen bilgi (hava yok)",
+            "etiket_en": "Plan: only information known when the schedule is set (no weather)",
             "metrikler": variant(fe.ROLE_ARR_DEL15_PLAN, fe.ROLE_QUANTILES_PLAN),
         },
         {
             "varyant": "T2",
             "oracle": False,
             "etiket": "T2: tarifeli kalkıştan 2 saat önceki METAR hava gözlemleri eklenmiş",
+            "etiket_en": "T2: adds METAR weather observations 2 hours before scheduled departure",
             "metrikler": variant(fe.ROLE_ARR_DEL15_T2, fe.ROLE_QUANTILES_T2),
         },
     ]
@@ -1772,3 +1856,168 @@ def write_site(files: Mapping[str, bytes], out_dir: Path, *, stamp: str) -> Path
         raise ExportError(f"output folder appeared while writing, will not overwrite: {out} (files are in {staging})")
     os.rename(staging, out)
     return out
+
+
+# ----------------------------------------------------------------------------
+# optimizasyon.json (block-time buffer optimisation; added 2026-11-24)
+# ----------------------------------------------------------------------------
+
+OR_RESULTS = "experiments/or/tampon-20261122T173803Z/tampon-sonuclari.json"  # policies frozen before the test
+OR_SOLVER_RESULTS = "experiments/or/cozucu-20261122T181720Z/cozucu-sonuclari.json"  # exploratory (post hoc)
+
+OR_POLICY_LABELS: dict[str, tuple[str, str]] = {
+    "none": ("Ek tampon yok (bugünkü tarife)", "No extra buffer (current schedule)"),
+    "b1": ("Basit kural B1 (geçmiş istatistik)", "Simple rule B1 (historical statistics)"),
+    "plan": ("Plan modeli", "Plan model"),
+    "plan_conformal": ("Plan modeli + conformal", "Plan model + conformal"),
+    "b1_conformal": ("B1 + conformal", "B1 + conformal"),
+    "plan_flight": ("Plan modeli, uçuş düzeyi (ikincil)", "Plan model, flight level (secondary)"),
+    "plan_budget": ("Plan modeli, dakika hedefli", "Plan model, minutes objective"),
+    "b1_budget": ("B1, dakika hedefli", "B1, minutes objective"),
+    "plan_arrdel15_budget": (
+        "Sırt çantası (15 dk hedefi), ortalama dağılım",
+        "Knapsack (15-min objective), averaged cells",
+    ),
+    "plan_arrdel15_mixture": (
+        "Sırt çantası (15 dk hedefi), karışım dağılımı",
+        "Knapsack (15-min objective), mixture cells",
+    ),
+}
+_OR_COMPARISON_METRICS = {
+    "d_cost": "maliyet",
+    "d_residual": "kalan_rotar_dk",
+    "d_late15": "arrdel15_orani",
+    "d_unused": "kullanilmayan_dk",
+}
+OR_NOTES: tuple[tuple[str, str], ...] = (
+    (
+        "Maliyetler varsayımdır: yalnızca τ = c_u/(c_u + c_o) oranı seçilir; maliyet c_u = τ, c_o = 1 − τ ile "
+        "normalize edilmiş 'ağırlıklı dakika'dır, para değildir.",
+        "Costs are assumptions: only the ratio tau = c_u/(c_u + c_o) is chosen; cost is in normalised 'weighted "
+        "minutes' (c_u = tau, c_o = 1 - tau), not money.",
+    ),
+    (
+        "Varsayım: 1 dakika tampon = 1 dakika daha az varış rötarı; uçak rotasyonu, ekip ve ağ etkileri yoktur.",
+        "Assumption: 1 minute of buffer = 1 minute less arrival delay; no aircraft rotation, crew or network effects.",
+    ),
+    (
+        "Politikalar test döneminden önce donduruldu; test dönemi (2026-03..08) yalnızca değerlendirme için okundu.",
+        "Policies were frozen before the test period; the test period (2026-03..08) was only used for evaluation.",
+    ),
+    (
+        "Maliyet ve tampon dakikaları tamamlanan uçuşlar üzerinden; iptal ve sapan uçuşlar rötar maliyetine girmez.",
+        "Costs and buffer minutes are over completed flights; cancelled and diverted flights carry no delay cost.",
+    ),
+)
+
+
+def _or_policy_row(key: str, policy: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "kimlik": key,
+        "ek_tampon_dk": _minutes(policy.get("buffer_completed_mean_min")),
+        "kalan_rotar_dk": _minutes(policy.get("residual_mean_min")),
+        "kullanilmayan_dk": _minutes(policy.get("unused_mean_min")),
+        "arrdel15_orani": _rate(policy.get("arr_del15_rate")),
+        "emilen_orani": _rate(policy.get("absorbed_rate")),
+        "maliyet": None if policy.get("cost_mean") is None else round(float(policy["cost_mean"]), 3),
+    }
+
+
+def _or_comparisons(comparisons: Mapping[str, Any]) -> list[dict[str, Any]]:
+    out = []
+    for name, entry in comparisons.items():
+        for source, metric_name in _OR_COMPARISON_METRICS.items():
+            ci = (entry or {}).get(source)
+            if not ci:
+                continue
+            row = metric(metric_name, ci.get("estimate"), "skor", ci=ci)
+            row.pop("birim", None)
+            out.append({"karsilastirma": name, **row})
+    return out
+
+
+def build_optimizasyon(
+    or_results: Mapping[str, Any],
+    solver_results: Mapping[str, Any] | None,
+    *,
+    created: dt.datetime,
+    version: str,
+    sample: bool = False,
+) -> dict[str, Any]:
+    """``optimizasyon.json``: frozen OR policies evaluated on the final-test period (tau grid, equal-budget curve)
+    and, separately labelled, the exploratory solver extension (mixture-cell knapsack). Numbers are copied and
+    rounded only."""
+    test = _get(or_results, "periods", "test")
+    counts = _get(test, "counts")
+    payload = header("optimizasyon", created, version, sample)
+    payload["kume"] = KUME
+    payload["sayilar"] = {
+        "tarifeli": int(counts["scheduled"]),
+        "tamamlanan": int(counts["completed_with_arr_delay"]),
+        "iptal": int(counts["cancelled"]),
+        "sapma": int(counts["diverted"]),
+    }
+    used: set[str] = set()
+    grid = []
+    for _key, level in sorted(_get(test, "levels").items(), key=lambda kv: float(kv[1]["level"])):
+        policies = []
+        for key, policy in level["policies"].items():
+            if key not in OR_POLICY_LABELS:
+                raise ExportError(f"unknown OR policy {key!r}")
+            used.add(key)
+            policies.append(_or_policy_row(key, policy))
+        grid.append(
+            {
+                "tau": round(float(level["level"]), 3),
+                "maliyet_orani": round(float(level["cost_weights"]["c_u_over_c_o"]), 3),
+                "politikalar": policies,
+                "karsilastirmalar": _or_comparisons(level.get("comparisons") or {}),
+            }
+        )
+    payload["tau_izgarasi"] = grid
+    curve = []
+    for _key, step in sorted(_get(test, "budget_curve").items(), key=lambda kv: float(kv[1]["budget_per_flight_min"])):
+        rows = []
+        for key, policy in step["policies"].items():
+            used.add(key)
+            rows.append(_or_policy_row(key, policy))
+        curve.append(
+            {
+                "butce_dk": float(step["budget_per_flight_min"]),
+                "politikalar": rows,
+                "karsilastirmalar": _or_comparisons(step.get("comparisons") or {}),
+            }
+        )
+    payload["butce_egrisi"] = curve
+    if solver_results is not None:
+        if solver_results.get("exploratory_post_hoc") is not True:
+            raise ExportError("solver results are not labelled exploratory_post_hoc")
+        solver_curve = []
+        solver_test = _get(solver_results, "periods", "test", "solver", "curve")
+        for _key, step in sorted(solver_test.items(), key=lambda kv: float(kv[1]["budget_per_flight_min"])):
+            expected = step.get("expected_vs_realized") or {}
+            rows = []
+            for key, policy in step["policies"].items():
+                if key not in OR_POLICY_LABELS:
+                    continue
+                used.add(key)
+                row = _or_policy_row(key, policy)
+                exp = (expected.get(key) or {}).get("expected_rate_completed_rows")
+                row["beklenen_arrdel15_orani"] = _rate(exp)
+                rows.append(row)
+            solver_curve.append({"butce_dk": float(step["budget_per_flight_min"]), "politikalar": rows})
+        payload["kesifsel"] = {
+            "etiket": "Keşifsel (post hoc): bu test dönemi bu politikalar için daha önce görüldü; son test sonucu değildir.",
+            "etiket_en": "Exploratory (post hoc): this test period had already been seen for these policies; "
+            "not a final-test result.",
+            "butce_egrisi": solver_curve,
+        }
+    payload["politikalar"] = [
+        {"kimlik": key, "etiket": OR_POLICY_LABELS[key][0], "etiket_en": OR_POLICY_LABELS[key][1]}
+        for key in OR_POLICY_LABELS
+        if key in used
+    ]
+    payload["notlar"] = [tr for tr, _ in OR_NOTES]
+    payload["notlar_en"] = [en for _, en in OR_NOTES]
+    assert_no_forbidden_keys(payload, where="optimizasyon")
+    return payload

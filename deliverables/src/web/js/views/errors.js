@@ -1,7 +1,7 @@
 // Hata analizi: model başarımının segment kırılımları ve veri dosyasından alınan iki kısa liste,
 // tarafsız başlıklar altında. Segmentler betimleyicidir; kalite sıralaması değildir.
 
-import { el, fill, selectField, fillSelect, sozlukLink } from '../dom.js';
+import { el, fill, selectField, fillSelect, sozlukLink, anlamKutusu } from '../dom.js';
 import { loadHata, loadHavalimanlari } from '../data.js';
 import { fmtValue, fmtMetricValue, fmtInt, metricLabel, blockLabel, monthLabel, modelLabel, NA, txt } from '../fmt.js';
 import { T } from '../metin.js';
@@ -106,7 +106,7 @@ export async function mount(root) {
     // "Olay günü" tanımı sayfada elle yazılmaz: Hakkında bölümündeki Notlar kutusu ve Sözlük kullanılır.
     const notes = [];
     if (block.boyut === 'olay_gunu') {
-      notes.push(el('p', { class: 'note' }, T.ortak.sozluk, sozlukLink('olay-gunu', 'Olay günü'), '.'));
+      notes.push(el('p', { class: 'note' }, T.ortak.sozluk, sozlukLink('olay-gunu'), '.'));
     }
     if (block.boyut === 'origin') {
       const shown = new Set(block.segmentler.map((s) => s.segment));
@@ -172,7 +172,8 @@ export async function mount(root) {
 
   fill(
     root,
-    el('p', null, t.giris, ' ', T.ortak.sozluk, sozlukLink('segment', 'Segment'), ', ', sozlukLink('kesifsel', 'Keşifsel (post hoc)'), '.'),
+    anlamKutusu('hata', ['segment', 'kesifsel']),
+    el('p', null, t.giris, ' ', T.ortak.sozluk, sozlukLink('segment'), ', ', sozlukLink('kesifsel'), '.'),
     el('div', { class: 'controls' }, dimField.wrap, metricSelect.wrap),
     chartBox,
     chartNote,

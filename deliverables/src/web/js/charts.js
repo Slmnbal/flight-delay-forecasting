@@ -150,6 +150,25 @@ export function legend(series) {
 }
 
 /**
+ * 100 daireli birim grafiği (10 x 10): `count` daire dolu (geç varan uçuş), kalanı boş.
+ * Dolu ve boş daire biçimce de ayrışır (renge bağımlı değil). o: {count, title, cls}
+ */
+export function pictograph(o) {
+  const filled = Math.max(0, Math.min(100, Math.round(o.count)));
+  const step = 20;
+  const tid = uniqueId('pg');
+  const root = svg(
+    'svg',
+    { viewBox: '0 0 200 200', class: o.cls ? `picto ${o.cls}` : 'picto', role: 'img', 'aria-labelledby': tid, focusable: 'false' },
+    svg('title', { id: tid }, o.title),
+  );
+  for (let i = 0; i < 100; i += 1) {
+    root.append(svg('circle', { class: i < filled ? 'dot late' : 'dot ok', cx: (i % 10) * step + 10, cy: Math.floor(i / 10) * step + 10, r: 7 }));
+  }
+  return root;
+}
+
+/**
  * Horizontal bars in the order of `items` (no sorting).
  * o: {width, items: [{label, value, text}], refs: [{value}], title, desc}
  */
