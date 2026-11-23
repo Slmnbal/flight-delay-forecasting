@@ -1,5 +1,12 @@
 # Flight delay risk and schedule buffers (US domestic, BTS data)
 
+[![CI](https://github.com/Slmnbal/flight-delay-forecasting/actions/workflows/ci.yml/badge.svg)](https://github.com/Slmnbal/flight-delay-forecasting/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/live%20demo-GitHub%20Pages-1f6feb)](https://slmnbal.github.io/flight-delay-forecasting/)
+![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+**Live demo:** <https://slmnbal.github.io/flight-delay-forecasting/> (Turkish by default; English: [`?lang=en`](https://slmnbal.github.io/flight-delay-forecasting/?lang=en)). Start with the *Story* tab for a plain-language walkthrough.
+
 > Based on public data; not affiliated with any airline.
 
 **Problem.** Given only the schedule, past statistics and weather observed 2 hours before departure, how well can we
@@ -12,7 +19,7 @@ recalibration and conformal prediction bounds; a pre-registered, one-shot evalua
 (2026-03 to 2026-08) against a hard-to-beat baseline (B1: route x hour-block history); and an operations-research
 (OR) extension that turns the quantiles into schedule buffer policies (newsvendor, knapsack, LP / MILP in Pyomo + HiGHS).
 
-Status (2026-11-23): modelling and OR results are final; a static web interface (Turkish for now) is in `deliverables/src/web/`.
+Status (2026-11-23): modelling and OR results are final; a bilingual (Turkish/English) static web interface is in `deliverables/src/web/` and live on GitHub Pages.
 
 ## Headline results (final test, 2026-03..08, 184 days, 2,315,618 completed flights)
 
@@ -182,7 +189,7 @@ Code: [MIT License](LICENSE). Author: Slmnbal. Data sources keep their own terms
 ## Web interface
 
 A static site (`deliverables/src/web/`, no build step, no external requests) reads precomputed JSON files produced by
-`python -m flight_delay.modeling.run_interface_export`. Interface language is Turkish for now. Preview locally:
+`python -m flight_delay.modeling.run_interface_export`. The interface has a Turkish/English switch. Preview locally:
 `cd deliverables/src/web && python -m http.server 8137`. Map outlines: Natural Earth (public domain).
 
 Turkish summary: [`docs/README.tr.md`](deliverables/docs/README.tr.md).
