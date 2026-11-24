@@ -1,116 +1,91 @@
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <meta name="description" content="ABD iç hat uçuşları için rötar riski ve tarife tamponu analizi; kamu verisine dayalı, havayollarıyla bağlantısız.">
-  <title>Uçuş rötarı riski ve tarife tamponları</title>
+  <meta name="description" content="How well can public data predict US flight delays, and does that help set better schedules? Not affiliated with any airline.">
+  <title>Flight delay risk and schedule buffers</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./css/style.css">
   <script src="./js/theme-init.js"></script>
   <script type="module" src="./js/main.js"></script>
 </head>
 <body>
-  <!-- Sabit metinler Türkçe yazılıdır (varsayılan dil ve JavaScript'siz görünüm). data-t / data-t-aria
-       öznitelikleri js/metin.js içindeki anahtarlardır; dil düğmesiyle İngilizceye çevrilir. -->
-  <a class="skip" href="#main" id="skip-link" data-t="atla">İçeriğe geç</a>
+  <!-- Sabit metinler İngilizce yazılıdır (varsayılan dil ve JavaScript'siz görünüm). data-t / data-t-aria
+       öznitelikleri js/metin.js içindeki anahtarlardır; dil düğmesiyle Türkçeye çevrilir. -->
+  <a class="skip" href="#main" id="skip-link" data-t="atla">Skip to content</a>
 
   <header class="masthead">
     <div class="masthead-inner">
       <div class="brand">
-        <h1 id="site-title" data-t="siteBasligi">Uçuş rötarı riski ve tarife tamponları</h1>
-        <p class="disclaimer" data-t="sorumluluk">Kamu verisine dayalı; havayollarıyla bağlantısız.</p>
+        <h1 id="site-title" data-t="siteBasligi">Flight delay risk and schedule buffers</h1>
+        <p class="disclaimer" data-t="sorumluluk">Based on public data; not affiliated with any airline.</p>
       </div>
       <div class="header-tools">
-        <div class="lang-switch" role="group" aria-label="Dil" data-t-aria="dil.grup">
-          <button type="button" class="btn lang-btn" id="lang-tr" data-lang="tr" lang="tr" aria-label="Türkçe" aria-pressed="true">TR</button>
-          <button type="button" class="btn lang-btn" id="lang-en" data-lang="en" lang="en" aria-label="English" aria-pressed="false">EN</button>
+        <div class="lang-switch" role="group" aria-label="Language" data-t-aria="dil.grup">
+          <button type="button" class="btn lang-btn" id="lang-en" data-lang="en" lang="en" aria-label="English" aria-pressed="true">EN</button>
+          <button type="button" class="btn lang-btn" id="lang-tr" data-lang="tr" lang="tr" aria-label="Türkçe" aria-pressed="false">TR</button>
         </div>
-        <button type="button" class="btn theme-btn" id="theme-toggle">Tema: otomatik</button>
+        <button type="button" class="btn theme-btn" id="theme-toggle">Theme: auto</button>
       </div>
     </div>
-    <nav aria-label="Bölümler" class="tabs" data-t-aria="nav">
+    <nav aria-label="Sections" class="tabs" data-t-aria="nav">
       <ul>
-        <li><a href="#story" data-nav="story" data-t="bolumler.story">Hikâye</a></li>
-        <li><a href="#overview" data-nav="overview" data-t="bolumler.overview">Genel bakış</a></li>
-        <li><a href="#airports" data-nav="airports" data-t="bolumler.airports">Havalimanları</a></li>
-        <li><a href="#routes" data-nav="routes" data-t="bolumler.routes">Rotalar</a></li>
-        <li><a href="#optimization" data-nav="optimization" data-t="bolumler.optimization">Tampon optimizasyonu (OR)</a></li>
-        <li><a href="#calibration" data-nav="calibration" data-t="bolumler.calibration">Kalibrasyon ve kapsama</a></li>
-        <li><a href="#weather" data-nav="weather" data-t="bolumler.weather">Hava deneyi</a></li>
-        <li><a href="#errors" data-nav="errors" data-t="bolumler.errors">Hata analizi</a></li>
-        <li><a href="#about" data-nav="about" data-t="bolumler.about">Hakkında ve sınırlar</a></li>
-        <li><a href="#sozluk" data-nav="sozluk" data-t="bolumler.sozluk">Sözlük</a></li>
+        <li><a href="#story" data-nav="story"><span class="tab-ico" data-ico="route"></span><span data-t="bolumler.story">Story</span></a></li>
+        <li><a href="#results" data-nav="results"><span class="tab-ico" data-ico="chart"></span><span data-t="bolumler.results">Results</span></a></li>
+        <li><a href="#explore" data-nav="explore"><span class="tab-ico" data-ico="pin"></span><span data-t="bolumler.explore">Explore</span></a></li>
+        <li><a href="#buffers" data-nav="buffers"><span class="tab-ico" data-ico="buffer"></span><span data-t="bolumler.buffers">Buffers (OR)</span></a></li>
+        <li><a href="#method" data-nav="method"><span class="tab-ico" data-ico="target"></span><span data-t="bolumler.method">Method</span></a></li>
+        <li><a href="#sozluk" data-nav="sozluk"><span class="tab-ico" data-ico="info"></span><span data-t="bolumler.sozluk">Glossary</span></a></li>
       </ul>
     </nav>
   </header>
 
   <div id="sample-banner" class="sample-banner" role="note" hidden data-t="ornekBanner">
-    Bu dosyalar örnek veri olarak işaretli. Sayılar gerçek sonuç değildir.
+    These files are marked as sample data. The numbers are not real results.
   </div>
 
   <main id="main" tabindex="-1">
     <noscript>
-      <p class="error">Bu site, önceden hesaplanmış JSON dosyalarını JavaScript ile okur. Sonuçları görmek için JavaScript’i etkinleştirin.</p>
-      <p class="error" lang="en">This site reads precomputed JSON files with JavaScript. Enable JavaScript to see the results. Based on public data; not affiliated with any airline.</p>
+      <p class="error">This site reads precomputed JSON files with JavaScript. Enable JavaScript to see the results. Based on public data; not affiliated with any airline.</p>
     </noscript>
 
     <section id="view-story" class="view" aria-labelledby="h-story">
-      <h2 id="h-story" tabindex="-1" data-t="bolumler.story">Hikâye</h2>
+      <h2 id="h-story" class="visually-hidden" tabindex="-1" data-t="bolumler.story">Story</h2>
       <div data-view-body></div>
     </section>
 
-    <section id="view-overview" class="view" aria-labelledby="h-overview" hidden>
-      <h2 id="h-overview" tabindex="-1" data-t="bolumler.overview">Genel bakış</h2>
+    <section id="view-results" class="view" aria-labelledby="h-results" hidden>
+      <h2 id="h-results" tabindex="-1" data-t="bolumler.results">Results</h2>
       <div data-view-body></div>
     </section>
 
-    <section id="view-airports" class="view" aria-labelledby="h-airports" hidden>
-      <h2 id="h-airports" tabindex="-1" data-t="bolumler.airports">Havalimanları</h2>
+    <section id="view-explore" class="view" aria-labelledby="h-explore" hidden>
+      <h2 id="h-explore" tabindex="-1" data-t="bolumler.explore">Explore</h2>
       <div data-view-body></div>
     </section>
 
-    <section id="view-routes" class="view" aria-labelledby="h-routes" hidden>
-      <h2 id="h-routes" tabindex="-1" data-t="bolumler.routes">Rotalar</h2>
+    <section id="view-buffers" class="view" aria-labelledby="h-buffers" hidden>
+      <h2 id="h-buffers" tabindex="-1" data-t="bolumler.buffers">Buffers (OR)</h2>
       <div data-view-body></div>
     </section>
 
-    <section id="view-optimization" class="view" aria-labelledby="h-optimization" hidden>
-      <h2 id="h-optimization" tabindex="-1" data-t="bolumler.optimization">Tampon optimizasyonu (OR)</h2>
-      <div data-view-body></div>
-    </section>
-
-    <section id="view-calibration" class="view" aria-labelledby="h-calibration" hidden>
-      <h2 id="h-calibration" tabindex="-1" data-t="bolumler.calibration">Kalibrasyon ve kapsama</h2>
-      <div data-view-body></div>
-    </section>
-
-    <section id="view-weather" class="view" aria-labelledby="h-weather" hidden>
-      <h2 id="h-weather" tabindex="-1" data-t="bolumler.weather">Hava deneyi</h2>
-      <div data-view-body></div>
-    </section>
-
-    <section id="view-errors" class="view" aria-labelledby="h-errors" hidden>
-      <h2 id="h-errors" tabindex="-1" data-t="bolumler.errors">Hata analizi</h2>
-      <div data-view-body></div>
-    </section>
-
-    <section id="view-about" class="view" aria-labelledby="h-about" hidden>
-      <h2 id="h-about" tabindex="-1" data-t="bolumler.about">Hakkında ve sınırlar</h2>
+    <section id="view-method" class="view" aria-labelledby="h-method" hidden>
+      <h2 id="h-method" tabindex="-1" data-t="bolumler.method">Method</h2>
       <div data-view-body></div>
     </section>
 
     <section id="view-sozluk" class="view" aria-labelledby="h-sozluk" hidden>
-      <h2 id="h-sozluk" tabindex="-1" data-t="bolumler.sozluk">Sözlük</h2>
+      <h2 id="h-sozluk" tabindex="-1" data-t="bolumler.sozluk">Glossary</h2>
       <div data-view-body></div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <p data-t="sorumluluk">Kamu verisine dayalı; havayollarıyla bağlantısız.</p>
     <p id="footer-disclaimer"></p>
+    <p id="footer-author"></p>
     <p id="footer-build"></p>
   </footer>
 </body>

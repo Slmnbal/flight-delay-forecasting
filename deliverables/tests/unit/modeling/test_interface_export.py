@@ -704,3 +704,11 @@ def test_ozet_carries_english_texts(validator: ie.SchemaValidator) -> None:
     assert en["proje"]["sorumluluk_reddi"].startswith("Based on public data; not affiliated with any airline.")
     assert [k["olcut"] for k in en["kabul"]] == [f"K{i}" for i in range(1, 8)]
     assert len(en["notlar"]) == len(payload["notlar"])
+
+
+def test_destination_points_file(validator: ie.SchemaValidator) -> None:
+    points = [{"iata": "LGA", "ad": "LaGuardia Airport", "enlem": 40.777245, "boylam": -73.872608}]
+    payload = ie.build_varis_noktalari(points, missing=["XYZ"], created=CREATED, version=VERSION)
+    validator.validate(payload, "varis_noktalari")
+    assert payload["noktalar"][0] == {"iata": "LGA", "ad": "LaGuardia Airport", "enlem": 40.7772, "boylam": -73.8726}
+    assert payload["eksik"] == ["XYZ"]

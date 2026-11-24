@@ -1,12 +1,19 @@
-// Rotalar: bir kalkış havalimanı seçilir, sonra varış x kalkış bloğu x mevsim hücrelerine bakılır.
-// Sütunlar sıralanabilir; bu bir tablo özelliğidir, hiçbir kuruluşun sıralaması değildir.
+// Rotalar (Keşfet sekmesinin alt yarısı): bir kalkış havalimanı seçilir, sonra varış x kalkış bloğu x
+// mevsim hücrelerine bakılır. Sütunlar sıralanabilir; bu bir tablo özelliğidir, hiçbir kuruluşun sıralaması değildir.
 
-import { el, fill, selectField, fillSelect, loadingNode, sozlukLink, anlamKutusu } from '../dom.js';
+import { el, svg, fill, selectField, fillSelect, loadingNode, sozlukLink } from '../dom.js';
 import { loadHavalimanlari, loadManifest, loadRoutes, routeOrigins } from '../data.js';
 import { fmtPct, fmtMin, fmtInt, NA, seasonLabel, SEASON_ORDER, blockLabel, BLOCK_ORDER, txt } from '../fmt.js';
 import { T } from '../metin.js';
 import { gizlemeNedeni } from '../yerel.js';
 import { createTable } from '../table.js';
+import { icon } from '../simgeler.js';
+import { riskClass, riskLevel, RISK_LOW, RISK_HIGH } from '../kesfet-hesap.js';
+
+const BAR_W = 56; // hücre içi küçük çubukların genişliği (piksel)
+const BAR_H = 8;
+const RATE_BAR_MAX = 0.5; // oran çubuğu bu orana kadar dolar
+const LEVEL_ICON = { low: 'shield', medium: 'info', high: 'alert' };
 
 let names = new Map();
 let airportByCode = new Map();
@@ -34,23 +41,15 @@ export async function mount(root, params) {
   const airportNote = el('div');
   const tableHolder = el('div');
 
-  state.ui = { originField, destField, blockField, seasonField, summary, airportNote, tableHolder, table: null };
+  const heading = el('h3', { id: 'ex-routes', tabindex: '-1' }, txt(t.baslik(first)));
+  state.ui = { originField, destField, blockField, seasonField, summary, airportNote, tableHolder, heading, table: null };
 
   fill(
     root,
-    anlamKutusu('rotalar', ['blok-sure-tamponu']),
-    el('p', null, t.giris, ' ', T.ortak.sozluk, sozlukLink('hucre'), ', ', sozlukLink('kantil'), ', ', sozlukLink('conformal'), '.'),
+    heading,
     el('form', { class: 'controls', onsubmit: (e) => e.preventDefault(), 'aria-label': t.filtreler }, originField.wrap, destField.wrap, blockField.wrap, seasonField.wrap),
-    el(
-      'div',
-      { class: 'notice warn', role: 'note' },
-      el('strong', null, t.uyariBaslik),
-      t.uyari,
-      ' ',
-      sozlukLink('maliyet-orani'),
-      '. ',
-      el('a', { href: '#optimization' }, T.bolumler.optimization),
-    ),
+    scaleLegend(),
+    el('p', { class: 'note note-ico', role: 'note' }, icon('buffer', { size: 16 }), el('span', null, el('strong', null, t.uyariBaslik), T.tamponUyari, ' ', sozlukLink('blok-sure-tamponu'), ', ', sozlukLink('kantil'), '.')),
     el('p', { class: 'note' }, t.gizlemeNotu),
     airportNote,
     summary,
@@ -67,12 +66,20 @@ export function onParams(params) {
   }
 }
 
+/** Başlığa odaklanır (haritadan "rotalara git" için). */
+export function focusHeading() {
+  if (!state) return;
+  state.ui.heading.scrollIntoView();
+  state.ui.heading.focus({ preventScroll: true });
+}
+
 async function setOrigin(iata, updateHash) {
   const ui = state.ui;
   const t = T.rota;
   state.origin = iata;
   const ticket = ++state.request;
-  if (updateHash) history.replaceState(null, '', `#routes/${iata}`);
+  ui.heading.textContent = txt(t.baslik(iata));
+  if (updateHash) history.replaceState(null, '', `#explore/${iata}`);
   fill(ui.tableHolder, loadingNode(t.yukleniyor(iata)));
   ui.summary.textContent = '';
 
@@ -142,10 +149,73 @@ function applyFilters() {
   ui.summary.textContent = T.rota.ozet(fmtInt(rows.length), fmtInt(state.rows.length), txt(state.origin));
 }
 
+// ---------------------------------------------------------------------- hücre içi görseller
+function barSvg(...children) {
+  return svg('svg', { class: 'cbar', width: BAR_W, height: BAR_H, viewBox: `0 0 ${BAR_W} ${BAR_H}`, 'aria-hidden': 'true', focusable: 'false' }, ...children);
+}
+
+/** Geç varış oranı hücresi: yüzde, risk rozeti (simge + metin + renk) ve küçük yatay çubuk. */
+function riskCell(rate) {
+  const level = riskLevel(rate);
+  const cls = riskClass(rate);
+  if (level === null) return NA;
+  const filled = Math.max(1, Math.min(1, rate / RATE_BAR_MAX) * BAR_W);
+  return el(
+    'span',
+    { class: 'risk-cell' },
+    fmtPct(rate),
+    el('span', { class: `risk-badge rb${cls}` }, icon(LEVEL_ICON[level], { size: 14 }), T.rota.risk[level]),
+    barSvg(svg('rect', { class: 'cbar-bg', x: 0, y: 0, width: BAR_W, height: BAR_H, rx: 2 }), svg('rect', { class: `cbar-fill r${cls}`, x: 0, y: 0, width: filled.toFixed(1), height: BAR_H, rx: 2 })),
+  );
+}
+
+/** Kantil hücresi: dakika ve sıfır çizgisinden başlayan küçük çubuk (eksi = erken, ayrı renk). */
+function quantileCell(value, scale) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return NA;
+  const span = scale.neg + scale.pos;
+  const perMin = span > 0 ? BAR_W / span : 0;
+  const zero = scale.neg * perMin;
+  const w = Math.max(Math.abs(value) * perMin, value === 0 ? 0 : 1);
+  const x = value >= 0 ? zero : zero - w;
+  return el(
+    'span',
+    { class: 'q-cell' },
+    fmtMin(value),
+    barSvg(svg('rect', { class: 'cbar-bg', x: 0, y: 0, width: BAR_W, height: BAR_H, rx: 2 }), svg('rect', { class: value < 0 ? 'qbar-fill early' : 'qbar-fill late', x: x.toFixed(1), y: 0, width: w.toFixed(1), height: BAR_H }), svg('line', { class: 'qbar-zero', x1: zero.toFixed(1), x2: zero.toFixed(1), y1: 0, y2: BAR_H })),
+  );
+}
+
+/** Sade sütun başlığı: ana ad ve altında küçük teknik etiket (ör. P50). */
+function head(main, tag) {
+  return el('span', { class: 'th-stack' }, el('span', { class: 'th-main' }, main), tag ? el('span', { class: 'th-tag' }, tag) : null);
+}
+
+/** Gecikme sütunlarının ne anlama geldiği, risk rozetinin eşikleri ve sözlük bağlantıları. */
+function scaleLegend() {
+  const o = T.rota.olcek;
+  const tb = T.rota.tablo;
+  const items = [
+    [tb.p50, 'P50', o.p50],
+    [tb.p80, 'P80', o.p80],
+    [tb.p95, 'P95', o.p95],
+  ];
+  return el(
+    'div',
+    { class: 'p-legend', role: 'note' },
+    el('p', { class: 'p-legend-title' }, icon('clock', { size: 16 }), el('strong', null, o.baslik)),
+    el('dl', { class: 'p-list' }, items.map(([name, tag, text]) => el('div', null, el('dt', null, name, ' ', el('span', { class: 'th-tag' }, tag)), el('dd', null, text)))),
+    el('p', { class: 'note' }, o.erken, ' ', T.rota.risk.aciklama(fmtPct(RISK_LOW, 0), fmtPct(RISK_HIGH, 0)), ' ', T.ortak.sozluk, sozlukLink('kantil'), ', ', sozlukLink('conformal'), ', ', sozlukLink('kapsama'), '.'),
+  );
+}
+
 function buildTable(rows) {
   const tb = T.rota.tablo;
   const pct = (key) => (r) => fmtPct(r[key]);
   const mins = (key) => (r) => fmtMin(r[key]);
+  // Kantil çubukları tek ölçeği paylaşır: sıfırın solu (erken) ve sağı (geç) için en büyük değerler.
+  const quantiles = rows.flatMap((r) => [r.p50, r.p80, r.p95, r.c80, r.c95]).filter((v) => typeof v === 'number' && Number.isFinite(v));
+  const scale = { neg: Math.max(0, ...quantiles.map((v) => -v)), pos: Math.max(0, ...quantiles) };
+  const qcol = (key, main, tag, hint) => ({ key, label: head(main, tag), title: hint, numeric: true, render: (r) => quantileCell(r[key], scale) });
   return createTable({
     caption: tb.baslik(state.origin),
     label: tb.etiket,
@@ -165,18 +235,24 @@ function buildTable(rows) {
       { key: 'block', label: tb.kalkis, title: tb.kalkisIpucu, sortValue: (r) => BLOCK_ORDER.indexOf(r.block), render: (r) => blockLabel(r.block) },
       { key: 'seasonIdx', label: tb.mevsim, render: (r) => seasonLabel(r.season) },
       { key: 'n', label: tb.ucus, numeric: true, render: (r) => fmtInt(r.n) },
-      { key: 'obs', label: tb.gozlenen, numeric: true, render: pct('obs') },
-      { key: 'pred', label: tb.tahmin, numeric: true, render: pct('pred') },
-      { key: 'p50', label: 'P50', numeric: true, render: mins('p50') },
-      { key: 'p80', label: 'P80', numeric: true, render: mins('p80') },
-      { key: 'p95', label: 'P95', numeric: true, render: mins('p95') },
-      { key: 'c80', label: tb.p80Sinir, title: tb.p80SinirIpucu, numeric: true, render: mins('c80') },
-      { key: 'c95', label: tb.p95Sinir, title: tb.p95SinirIpucu, numeric: true, render: mins('c95') },
-      { key: 'cov80', label: tb.p80Kapsama, title: tb.p80KapsamaIpucu, numeric: true, render: pct('cov80') },
-      { key: 'cov95', label: tb.p95Kapsama, title: tb.p95KapsamaIpucu, numeric: true, render: pct('cov95') },
+      { key: 'obs', label: head(tb.gozlenen), title: tb.gozlenenIpucu, numeric: true, render: (r) => riskCell(r.obs) },
+      { key: 'pred', label: head(tb.tahmin, 'T2'), numeric: true, render: pct('pred') },
+      qcol('p50', tb.p50, 'P50', tb.p50Ipucu),
+      qcol('p80', tb.p80, 'P80', tb.p80Ipucu),
+      qcol('p95', tb.p95, 'P95', tb.p95Ipucu),
+      qcol('c80', tb.p80Sinir, 'P80', tb.p80SinirIpucu),
+      qcol('c95', tb.p95Sinir, 'P95', tb.p95SinirIpucu),
+      { key: 'cov80', label: head(tb.p80Kapsama, 'P80'), title: tb.p80KapsamaIpucu, numeric: true, render: pct('cov80') },
+      { key: 'cov95', label: head(tb.p95Kapsama, 'P95'), title: tb.p95KapsamaIpucu, numeric: true, render: pct('cov95') },
       { key: 'canc', label: tb.iptal, numeric: true, render: pct('canc') },
       { key: 'blk', label: tb.blok, title: tb.blokIpucu, numeric: true, render: mins('blk') },
-      { key: 'buf', label: tb.tampon, title: tb.tamponIpucu(T.tamponUyari), numeric: true, render: (r) => (r.buf === null ? NA : fmtMin(r.buf)) },
+      {
+        key: 'buf',
+        label: el('span', { class: 'th-stack' }, el('span', { class: 'th-main th-ico' }, icon('buffer', { size: 14 }), tb.tampon)),
+        title: tb.tamponIpucu(T.tamponUyari),
+        numeric: true,
+        render: (r) => (r.buf === null ? NA : el('span', { class: 'buf-cell' }, icon('buffer', { size: 14 }), fmtMin(r.buf))),
+      },
     ],
   });
 }

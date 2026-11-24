@@ -157,10 +157,12 @@ export function pictograph(o) {
   const filled = Math.max(0, Math.min(100, Math.round(o.count)));
   const step = 20;
   const tid = uniqueId('pg');
+  const did = uniqueId('pd');
   const root = svg(
     'svg',
-    { viewBox: '0 0 200 200', class: o.cls ? `picto ${o.cls}` : 'picto', role: 'img', 'aria-labelledby': tid, focusable: 'false' },
+    { viewBox: '0 0 200 200', class: o.cls ? `picto ${o.cls}` : 'picto', role: 'img', 'aria-labelledby': o.desc ? `${tid} ${did}` : tid, focusable: 'false' },
     svg('title', { id: tid }, o.title),
+    o.desc ? svg('desc', { id: did }, o.desc) : null,
   );
   for (let i = 0; i < 100; i += 1) {
     root.append(svg('circle', { class: i < filled ? 'dot late' : 'dot ok', cx: (i % 10) * step + 10, cy: Math.floor(i / 10) * step + 10, r: 7 }));
@@ -174,14 +176,16 @@ export function pictograph(o) {
  */
 export function barChart(o) {
   const W = o.width;
-  const rowH = 24;
-  const m = { t: 8, r: 84, b: 30, l: o.labelWidth || 78 };
+  const rowH = o.rowH || 24;
+  const axisLines = Array.isArray(o.xLabel) ? o.xLabel : o.xLabel ? [o.xLabel] : [];
+  const m = { t: 8, r: 84, b: 30 + axisLines.length * 15, l: o.labelWidth || 78 };
   const H = m.t + m.b + o.items.length * rowH;
   const values = o.items.map((i) => i.value).filter((v) => v !== null && v !== undefined);
   const refVals = (o.refs || []).map((r) => r.value);
-  const lo = Math.min(0, ...values, ...refVals);
-  const hi = Math.max(0, ...values, ...refVals);
-  const dom = niceDomain(lo, hi, 4);
+  const base = typeof o.base === 'number' ? o.base : 0; // çubukların başladığı değer
+  const lo = Math.min(base, ...values, ...refVals);
+  const hi = Math.max(base, ...values, ...refVals);
+  const dom = niceDomain(lo, hi, o.tickCount || 4);
   const sx = (v) => m.l + ((v - dom.lo) / (dom.hi - dom.lo)) * (W - m.l - m.r);
   const tid = uniqueId('bt');
   const did = uniqueId('bd');
@@ -200,20 +204,28 @@ export function barChart(o) {
   }
   o.items.forEach((item, i) => {
     const y = m.t + i * rowH;
-    root.append(svg('text', { x: m.l - 8, y: y + rowH / 2 + 4, 'text-anchor': 'end' }, item.label));
+    const lines = Array.isArray(item.label) ? item.label : [item.label];
+    const labelNode = svg('text', { x: m.l - 8, y: y + rowH / 2 + 4 - (lines.length - 1) * 6, 'text-anchor': 'end' });
+    lines.forEach((line, k) => labelNode.append(svg('tspan', { x: m.l - 8, dy: k === 0 ? 0 : 12 }, line)));
+    root.append(labelNode);
+    const plainLabel = lines.join(' ');
     if (item.value === null || item.value === undefined) {
-      root.append(svg('text', { class: 'bar-val', x: sx(0) + 4, y: y + rowH / 2 + 4 }, T.ortak.yok));
+      root.append(svg('text', { class: 'bar-val', x: sx(base) + 4, y: y + rowH / 2 + 4 }, T.ortak.yok));
       return;
     }
-    const x = Math.min(sx(0), sx(item.value));
-    const w = Math.abs(sx(item.value) - sx(0));
-    const bar = svg('rect', { class: item.value < 0 ? 'bar neg' : 'bar', x, y: y + 4, width: Math.max(w, 1), height: rowH - 8 }, svg('title', null, `${item.label}: ${item.text}`));
-    const end = item.value < 0 ? x - 4 : x + w + 4;
-    root.append(bar, svg('text', { class: 'bar-val', x: end, y: y + rowH / 2 + 4, 'text-anchor': item.value < 0 ? 'end' : 'start' }, item.text));
+    const neg = item.value < base;
+    const x = Math.min(sx(base), sx(item.value));
+    const w = Math.abs(sx(item.value) - sx(base));
+    const bar = svg('rect', { class: `bar${neg ? ' neg' : ''}${item.emph ? ' emph' : ''}`, x, y: y + 4, width: Math.max(w, 1), height: rowH - 8 }, svg('title', null, `${plainLabel}: ${item.text}`));
+    const end = neg ? x - 4 : x + w + 4;
+    root.append(bar, svg('text', { class: 'bar-val', x: end, y: y + rowH / 2 + 4, 'text-anchor': neg ? 'end' : 'start' }, item.text));
   });
-  root.append(svg('line', { class: 'axis', x1: sx(0), x2: sx(0), y1: m.t, y2: H - m.b }));
+  root.append(svg('line', { class: 'axis', x1: sx(base), x2: sx(base), y1: m.t, y2: H - m.b }));
   for (const r of o.refs || []) {
     root.append(svg('line', { class: 'ref', x1: sx(r.value), x2: sx(r.value), y1: m.t, y2: H - m.b }));
   }
+  axisLines.forEach((line, k) => {
+    root.append(svg('text', { class: 'axis-title', x: (m.l + W - m.r) / 2, y: H - m.b + 34 + k * 15 }, line));
+  });
   return root;
 }

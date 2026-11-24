@@ -15,6 +15,7 @@ export const FILES = Object.freeze({
   hava: 'hava-deneyi.json',
   hata: 'hata-analizi.json',
   optimizasyon: 'optimizasyon.json',
+  varisNoktalari: 'varis-noktalari.json',
 });
 
 const EYALETLER = 'abd-eyaletler.json';
@@ -64,6 +65,17 @@ export const loadKalibrasyon = () => getJson(FILES.kalibrasyon);
 export const loadHava = () => getJson(FILES.hava);
 export const loadHata = () => getJson(FILES.hata);
 export const loadOptimizasyon = () => getJson(FILES.optimizasyon);
+
+/**
+ * Rota yaylarının varış koordinatları (veri/varis-noktalari.json). Dosya yoksa ya da bozuksa null döner;
+ * harita yaysız çalışır. Döner: Map(iata -> {ad, enlem, boylam}) ya da null.
+ */
+export function loadVarisNoktalari() {
+  return getJson(FILES.varisNoktalari).then(
+    (doc) => (doc && Array.isArray(doc.noktalar) ? new Map(doc.noktalar.map((p) => [p.iata, p])) : null),
+    () => null,
+  );
+}
 
 /** Eyalet sınırları (Natural Earth, kamu malı). Yüklenemezse null döner; harita ızgarayla çalışır. */
 export function loadEyaletler() {

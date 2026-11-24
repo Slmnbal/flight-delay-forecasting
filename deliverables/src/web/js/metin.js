@@ -1,15 +1,20 @@
 // Tüm arayüz metinleri tek yerde. Türkçe metinler bu dosyadadır (TR); İngilizce karşılıkları aynı
-// yapıda metin-en.js içindedir (EN). Başka modüllerde kullanıcıya görünen sabit metin bulunmaz.
+// yapıda metin-en.js içindedir (EN). Varsayılan dil İngilizcedir. Başka modüllerde kullanıcıya görünen
+// sabit metin bulunmaz.
 //
 // T, sayfa boyunca aynı nesnedir: dil değişince setLang() içeriğini yerinde günceller; böylece
-// "const t = T.kal" gibi modül düzeyindeki başvurular geçerli kalır. EN'de karşılığı olmayan bir
-// anahtar Türkçe değerinde kalır. Parametre alan metinler küçük işlevlerdir; i18n çatısı yoktur.
-// Veri dosyalarından gelen metinler (ozet.json notları vb.) Türkçedir; İngilizce karşılıkları
-// veri dosyalarındaki *_en alanlarından gelir (yerel.js).
+// "const t = T.kal" gibi modül düzeyindeki başvurular geçerli kalır. Parametre alan metinler küçük
+// işlevlerdir; i18n çatısı yoktur.
 
 import { EN } from './metin-en.js';
 
-export const BUFFER_WARNING = 'varsayılmış maliyet oranı; operasyonel öneri değildir';
+export const BUFFER_WARNING = 'Varsayılmış maliyet oranı; operasyonel öneri değildir.';
+
+// Yazar bağlantıları. LINKEDIN_URL boşsa LinkedIn bağlantısı hiç çizilmez.
+export const GITHUB_URL = 'https://github.com/Slmnbal';
+export const REPO_URL = 'https://github.com/Slmnbal/flight-delay-forecasting';
+export const LINKEDIN_URL = 'https://www.linkedin.com/in/selman-bal-069598222/';
+export const AUTHOR = 'Slmnbal';
 
 const TR = {
   // ------------------------------------------------------------------ site
@@ -20,7 +25,7 @@ const TR = {
   nav: 'Bölümler',
   ornekBanner: 'Bu dosyalar örnek veri olarak işaretli. Sayılar gerçek sonuç değildir.',
   meta: {
-    aciklama: 'ABD iç hat uçuşları için rötar riski ve tarife tamponu analizi; kamu verisine dayalı, havayollarıyla bağlantısız.',
+    aciklama: 'Kamu verisi ABD iç hat uçuşlarının rötarını ne kadar iyi tahmin eder ve bu, daha iyi tarifeler yapmaya yardım eder mi? Havayollarıyla bağlantısız.',
   },
   dil: {
     grup: 'Dil',
@@ -32,14 +37,10 @@ const TR = {
 
   bolumler: {
     story: 'Hikâye',
-    overview: 'Genel bakış',
-    airports: 'Havalimanları',
-    routes: 'Rotalar',
-    optimization: 'Tampon optimizasyonu (OR)',
-    calibration: 'Kalibrasyon ve kapsama',
-    weather: 'Hava deneyi',
-    errors: 'Hata analizi',
-    about: 'Hakkında ve sınırlar',
+    results: 'Sonuçlar',
+    explore: 'Keşfet',
+    buffers: 'Tampon (OR)',
+    method: 'Yöntem',
     sozluk: 'Sözlük',
   },
 
@@ -65,7 +66,7 @@ const TR = {
 
   hata: {
     baslik: 'Bu bölüm yüklenemedi. ',
-    diskUyarisi: 'index.html dosyasını doğrudan diskten açtıysanız tarayıcılar veri dosyalarını okumayı engeller. Klasörü yerel bir web sunucusuyla açın.',
+    diskUyarisi: 'Sayfayı doğrudan diskten açtıysanız tarayıcı sonuçların yüklenmesini engeller; yerel bir web sunucusu kullanın.',
     yenidenYukle: 'Bu bölümü yeniden yükle',
     yenidenDene: 'Yeniden dene',
     dosya: (yol, neden) => `${yol} yüklenemedi (${neden}).`,
@@ -73,23 +74,12 @@ const TR = {
     gecersizJson: 'geçerli JSON değil',
     ag: 'ağ ya da dosya erişim hatası',
     gecersizKod: 'geçersiz havalimanı kodu',
-    rotaDosyasiYok: 'Manifest hiçbir rota dosyası listelemiyor.',
+    rotaDosyasiYok: 'Hiç rota dosyası listelenmemiş.',
   },
 
   altBilgi: {
-    uretim: (zaman, surum) => `Sonuçlar ${zaman} tarihinde üretildi; model sürümü ${surum}.`,
-  },
-
-  // ------------------------------------------------------------------ "Ne anlama geliyor?" kutuları
-  anlam: {
-    baslik: 'Ne anlama geliyor?',
-    genel: 'Model, bir uçuşun 15 dakika ya da daha geç varıp varmayacağını önceden tahmin etmeye çalışır. Bu sayfada modelin basit bir geçmiş-kuralından (B1) ne kadar iyi olduğu ve hangi ölçütlerin tutmadığı görünür.',
-    havalimanlari: 'Her nokta bir havalimanıdır; renk seçtiğiniz oranı gösterir, büyük nokta daha çok uçuş demektir. Bir havalimanında uçuşların çoğu tek havayoluna aitse, oranlar yayımlanmaz.',
-    rotalar: 'Her satır, bir rotanın belirli bir saat bloğundaki ve mevsimdeki uçuşlarıdır. P50 ortadaki uçuşun rötarıdır; P80 ve P95, uçuşların %80’inin ve %95’inin en fazla ne kadar geç geldiğini gösterir. Önerilen tampon sütunu varsayımlara dayanır, öneri değildir.',
-    tampon: 'Tampon, tarifeye eklenen fazladan dakikadır. Burada, aynı toplam tampon bütçesiyle farklı dağıtma yollarının rötarı ne kadar azalttığı karşılaştırılır. Sonuç, varsayılmış maliyetlere bağlıdır.',
-    kalibrasyon: 'Model “%30 risk” dediğinde bu tür uçuşların gerçekten yaklaşık %30’unun geç gelmesi gerekir. Noktalar çapraz çizgiye yakınsa model tutarlıdır. Kapsama grafikleri, rötar sınırlarının hedefi tutup tutmadığını gösterir.',
-    hava: 'Hava raporu, tarife yapıldıktan sonra ve kalkıştan kısa süre önce bilinir. Bu bölüm, o raporun tahmine ne kadar katkı yaptığını aynı uçuşlarda ölçer.',
-    hata: 'Model her yerde aynı iyilikte değildir. Bu bölüm sonuçları havalimanı, saat, ay gibi dilimlere ayırır. Farklar hava, trafik ve uçuş sayısından da gelir; hiçbir havalimanı hakkında hüküm değildir.',
+    uretim: (zaman) => `Sonuçlar ${zaman} tarihinde üretildi.`,
+    yazar: 'Yazar: ',
   },
 
   // ------------------------------------------------------------------ biçimler
@@ -148,67 +138,208 @@ const TR = {
     durum: (gosterilen, toplam) => `${toplam} satırın ${gosterilen} tanesi gösteriliyor.`,
   },
 
-  // ------------------------------------------------------------------ genel bakış
-  genel: {
-    kahramanSoru: (saat) => `Bir ABD iç hat uçuşunun varış rötarı, tarife yapılırken öngörülebilir mi; kalkıştan ${saat} saat önceki bir hava raporu buna bir şey katar mı? Aşağıdaki sonuçlar, modelin hiç görmediği bir test döneminde yapılan tek bir değerlendirmeden gelir; karşılanmayan ölçütler de dahildir.`,
-    olgular: {
-      havalimani: 'Havalimanı',
-      veriDonemi: 'Veri dönemi',
-      testDonemi: 'Nihai test dönemi (tek değerlendirme)',
-      testUcus: 'Test dönemindeki tarifeli uçuş',
-      testGun: 'Test dönemindeki gün',
-      havaZamani: 'Hava bilgisi zamanı (T2)',
-      havaDegeri: (saat) => `tarifeli kalkıştan ${saat} saat önce`,
+  // ------------------------------------------------------------------ hikâye: açılış
+  hero: {
+    soru: (saat) => `Kamu verisi, bir ABD iç hat uçuşunun geç varıp varmayacağını kalkıştan ${saat} saat önce ne kadar iyi tahmin edebilir; bu, daha iyi tarifeler yapmaya yardım eder mi?`,
+    ozet: 'Kaydırarak izleyin: sorun, bulgular ve sonraki adımlar.',
+    kapsam: (n, havalimani, donem) => `${havalimani} havalimanında ${n} test uçuşu; tek seferlik test (${donem}).`,
+    yuru: 'Adım adım gez',
+    kod: 'Kod GitHub’da',
+  },
+
+  // ------------------------------------------------------------------ hikâye: adımlar
+  hikaye: {
+    veriYok: 'Bu adımın verisi yüklenemedi.',
+    adim: (n) => `Slayt ${n}`,
+    ayrinti: 'Ayrıntılar →',
+    yok: 'Bu slaytın verisi yüklenemedi.',
+    // 1. sorun
+    s1: {
+      baslik: (n) => `Her ${n} uçuştan yaklaşık biri geç varıyor`,
+      p1: (esik, oran, n) => `Tarifeden ${esik} dakika ya da daha geç inen uçuş geç sayılır. Test döneminde ${n} uçuşun ${oran} kadarı geç vardı.`,
+      ikon: (x, toplam) => `${toplam} uçuştan ${x} tanesi geç vardı`,
+      ikonAciklama: (esik) => `Dolu daire: ${esik} dakika ya da daha geç varan uçuş. Boş daire: zamanında varan uçuş.`,
     },
+    // 2. ne zaman daha kötü
+    s2: {
+      baslik: (yuksek, dusuk, kat) => `${yuksek} arasında kalkan uçuşların geç varma olasılığı, ${dusuk} arasında kalkanlara göre yaklaşık ${kat} kat fazla`,
+      baslikDuz: 'Geç varma riski günün saatine göre değişiyor',
+      p1: (esik) => `Kalkış saatine göre, tarifeden ${esik} dakika ya da daha geç inen uçuşların payı.`,
+      olay: (a, b) => `Fırtına gibi olağandışı günlerde uçuşların ${a} kadarı geç varıyor; diğer günlerde ${b}.`,
+      eksen: 'Geç varan uçuşların payı',
+      grafikBaslik: 'Kalkış saatine göre geç varış oranı',
+      grafikAciklama: (yuksek, dusuk) => `Yatay çubuklar: en yüksek oran ${yuksek}, en düşük oran ${dusuk}.`,
+    },
+    // 3. model önceden görebiliyor mu
+    s3: {
+      baslik: (yuksek, dusuk) => `Modelin en riskli bulduğu uçuşlarda her ${yuksek.n} uçuştan yaklaşık ${yuksek.deger} tanesi geç varıyor; en güvenli grupta ${dusuk.n} uçuştan ${dusuk.deger} tanesi`,
+      baslikAz: (yuksek, dusuk) => `Modelin en riskli bulduğu uçuşlarda her ${yuksek.n} uçuştan yaklaşık ${yuksek.deger} tanesi geç varıyor; en güvenli grupta ${dusuk.n} uçuşun birinden azı geç varıyor`,
+      p1: 'Uçuşlar, modelin risk tahminine göre on eşit gruba ayrıldı. Her çubuk, o gruptaki uçuşların gerçekte ne kadarının geç vardığını gösteriyor.',
+      eksen: (ilk, son) => `Risk grubu (${ilk} = en düşük risk, ${son} = en yüksek)`,
+      grafikBaslik: 'Risk grubuna göre gerçekleşen geç varış oranı',
+      grafikAciklama: (dusuk, yuksek) => `Çubuklar soldan sağa yükselir: en güvenli grup ${dusuk}, en riskli grup ${yuksek}.`,
+    },
+    // 4. sayılara güvenilir mi
+    s4: {
+      baslik: (tahmin, gercek) => `Model “${tahmin}” dediğinde, bu uçuşların yaklaşık ${gercek} kadarı gerçekten geç varıyor`,
+      baslikGenel: (puan) => `Modelin risk yüzdeleri, gerçekleşenden en fazla ${puan} puan sapıyor`,
+      p1: (puan) => `On grubun hepsinde, modelin tahmini gerçekleşenden en fazla ${puan} puan farklı.`,
+      model: 'Modelin söylediği',
+      gercek: 'Gerçekleşen',
+      eksen: (ilk, son) => `Risk grubu (${ilk} = en düşük risk, ${son} = en yüksek)`,
+      grafikBaslik: 'Her risk grubunda modelin söylediği ve gerçekleşen geç varış oranı',
+      grafikAciklama: (puan) => `Her grup için iki çubuk; fark en fazla ${puan} puan.`,
+    },
+    // 5. hava bilgisi
+    s5: {
+      baslik: 'Hava bilgisi, modelin geç kalacak uçuşları önceden fark etmesine yardım ediyor',
+      baslikNotr: 'Hava bilgisi, modelin geç kalacak uçuşları fark etmesine belirgin bir katkı yapmıyor',
+      p1: (saat, a, b) => `Kalkıştan ${saat} saat önceki hava bilgisi, modelin ROC-AUC değerini, yani geç kalacak bir uçuşu zamanında gelecek olandan ne sıklıkla daha riskli bulduğunu, ${a} değerinden ${b} değerine çıkarıyor.`,
+      p1Notr: (saat, a, b) => `Kalkıştan ${saat} saat önceki hava bilgisi, modelin ROC-AUC değerini, yani geç kalacak bir uçuşu zamanında gelecek olandan ne sıklıkla daha riskli bulduğunu, ${a} değerinden ${b} değerine getiriyor; bu fark günlük dalgalanmadan ayırt edilemiyor.`,
+      gecmis: 'Yalnızca geçmiş kayıt',
+      tarife: 'Tarife modeli',
+      hava: (saat) => `Tarife + ${saat} saat önceki hava`,
+      eksen: (taban) => ['Geç ve zamanında uçuşları ayırma gücü', `(${taban} = yazı tura)`],
+      grafikBaslik: 'Geç ve zamanında uçuşları ayırma gücü, üç yaklaşım',
+      grafikAciklama: (a, b, c) => `Çubuklar: yalnızca geçmiş kayıt ${a}, tarife modeli ${b}, tarife ve hava ${c}.`,
+    },
+    // 6. tampon şeması
+    s6: {
+      baslik: 'Havayolları tarifeye fazladan süre ekler; böylece küçük gecikmeler uçuşu geç yapmaz',
+      p1: 'Tampon, havayolunun tarifedeki uçuş süresine eklediği fazladan dakikalar; küçük gecikmeleri karşılar, büyük gecikmelerde yetmez.',
+      planlanan: 'Tarifedeki varış',
+      satir1: 'Tarife: uçuş süresi + tampon',
+      satir2: 'Küçük gecikme tamponla karşılanır: zamanında varır',
+      satir3: 'Büyük gecikme tamponu aşar: geç varır',
+      ucus: 'Uçuş süresi',
+      tampon: 'Tampon',
+      gecikme: 'Gecikme',
+      asan: 'Tamponu aşan gecikme',
+      anahtar: (ad, dk) => `${ad} (${dk})`,
+      ornek: 'Örnek şema: dakikalar anlatım içindir, gerçek veri değildir.',
+      grafikBaslik: 'Tarife tamponunun nasıl çalıştığını gösteren örnek şema',
+      grafikAciklama: 'Üç satır: tarifedeki süre uçuş ve tampondan oluşur; küçük gecikme tamponun içinde kalır ve uçuş zamanında varır; büyük gecikme tamponu aşar ve uçuş geç varır.',
+    },
+    // 7. tampon ne kazandırır, ne kaybettirir
+    s7: {
+      baslik: 'Daha fazla tampon geç varışları azaltır, ama boşta bekleyen dakikaları artırır',
+      p1: 'Geç bir dakikanın boşta bir dakikadan ne kadar kötü sayıldığı arttıkça, daha fazla tampon eklenir.',
+      eksenX: 'Geç dakika, boş dakikadan kaç kat kötü',
+      gecPanel: 'Geç varan uçuşlar',
+      bosPanel: 'Uçuş başına boşta kalan dakika',
+      tamponYok: 'Tampon yok',
+      secili: 'Seçilen',
+      gecBaslik: 'Geç varış oranı, tampon ağırlığına göre',
+      bosBaslik: 'Uçuş başına boşta kalan dakika, tampon ağırlığına göre',
+      grafikAciklama: (ad, dusuk, yuksek) => `${ad}: soldan sağa ${dusuk} değerinden ${yuksek} değerine.`,
+      ozet: (ek, a, b, bos) => `Uçuş başına yaklaşık ${ek} tampon, geç varışları ${a} düzeyinden ${b} düzeyine indiriyor; bunun bedeli uçuş başına yaklaşık ${bos} boşta bekleme.`,
+      yiginBaslik: 'Uçuşların nasıl sonuçlandığı',
+      yiginAciklama: (a, b, c) => `Yığılmış çubuk: zaten zamanında ${a}, tampon sayesinde zamanında ${b}, yine geç ${c}.`,
+      zaten: 'Zaten zamanında',
+      sayesinde: 'Tampon sayesinde zamanında',
+      yineGec: 'Tamponla bile geç',
+    },
+    // 8. basit kural ve model
+    s8: {
+      baslikEsit: 'Tarifeyi belirlerken model, geçmişe dayalı basit bir kuralın yalnızca ayarında',
+      baslikFark: (k, n) => `Tarifeyi belirlerken model ile geçmişe dayalı basit kural, ${n} bütçeden ${k} tanesinde belirgin biçimde ayrışıyor`,
+      p1Esit: 'Aynı toplam tampon verildiğinde ikisi de uçuşların hemen hemen aynı payını geç bırakıyor. Modelin asıl değeri uçuş gününde ortaya çıkıyor.',
+      p1Fark: 'Aynı toplam tampon verildiğinde iki yaklaşım arasındaki fark bazı bütçelerde belirgin; ayrıntı için tabloya bakın.',
+      model: 'Modele dayalı tarife',
+      kural: 'Geçmişe dayalı basit kural',
+      eksenX: 'Toplam tampon bütçesi (dk/uçuş)',
+      eksenY: 'Geç varış oranı',
+      grafikBaslik: 'Aynı tampon bütçesinde geç varış oranı: model ve basit kural',
+      grafikAciklama: (adlar) => `Tampon bütçesine karşı geç varış oranı; çizgiler: ${adlar}.`,
+    },
+    // 9. ne yapmalı
+    s9: {
+      baslik: 'Üç öneri',
+      kartlar: 'Öneriler',
+      gun: {
+        baslik: 'Uçuş gününde risk skorunu operasyonda kullanın',
+        metin: (yuksek) => `Modelin en riskli bulduğu grupta her ${yuksek.n} uçuştan yaklaşık ${yuksek.deger} tanesi geç varıyor.`,
+      },
+      tampon: {
+        baslikEsit: 'Tampon belirlemek için geçmişe dayalı kural, model kadar iyi',
+        baslikFark: 'Tampon belirlerken modeli geçmişe dayalı kuralla karşılaştırın',
+        metin: (ek, a, b, bos) => `Yaklaşık ${ek} eklemek geç varışları ${a} düzeyinden ${b} düzeyine indiriyor; bedeli uçuş başına yaklaşık ${bos} boşta bekleme.`,
+      },
+      sonraki: {
+        baslik: 'Sonraki adım: uçak rotasyonu verisi',
+        metin: 'Her uçağın o gün yaptığı önceki uçuşların verisi burada kullanılan kamu verisinde yok; sıradaki en umut verici girdi bu.',
+      },
+      sinirlar: 'Neler işe yaramadı →',
+    },
+    // 10. kendiniz deneyin
+    s10: {
+      baslik: 'Bir uçuş türü seçin ve ne sıklıkla, ne kadar geç kaldığını görün',
+      p1: 'Havalimanı, varış yeri, saat ve mevsim seçin; modelin beklentisi gerçekleşenin yanında görünür.',
+      secim: 'Uçuş türü',
+      gerceklesen: 'Gerçekleşen',
+      modelTahmini: 'Modelin beklentisi',
+      ikonEtiket: (ad, x, toplam) => `${ad}: ${toplam} uçuştan ${x} tanesi geç vardı.`,
+      ikonAnahtar: (esik) => `Dolu daire: ${esik} dakika ya da daha geç varan uçuş.`,
+      cumle: (x, y, toplam, n) => `Bu türden ${toplam} uçuştan yaklaşık ${x} tanesi geç vardı; model ${y} bekliyordu (${n} test uçuşu).`,
+      rotarBaslik: 'Ne kadar geç varıyorlar?',
+      rotarCumle: (p50, p80, p95, erken) => erken
+        ? `Bu uçuşların yarısı tarifeden en az ${p50} erken varır; beşte dördü en fazla ${p80}, yirmide on dokuzu en fazla ${p95} geç varır.`
+        : `Bu uçuşların yarısı tarifeden en fazla ${p50} geç varır; beşte dördü en fazla ${p80}, yirmide on dokuzu en fazla ${p95} geç varır.`,
+      yarisi: 'Yarısı',
+      dortBes: 'Beşte dördü',
+      ondokuz: 'Yirmide on dokuzu',
+      grafikBaslik: 'Geç varış süresi: uçuşların yarısı, beşte dördü ve yirmide on dokuzu',
+      grafikAciklama: (p50, p80, p95) => `Yatay çubuklar: yarısı ${p50}, beşte dördü ${p80}, yirmide on dokuzu ${p95}.`,
+      hucreYok: 'Bu seçim için yayımlanmış bir hücre yok.',
+      yukleniyor: (iata) => `${iata} çıkışlı rotalar yükleniyor…`,
+    },
+  },
+
+  // ------------------------------------------------------------------ sonuçlar
+  genel: {
+    giris: 'Nihai test: kilitlenmiş modeller, tek değerlendirme, modelin hiç görmediği aylar.',
     pano: {
       baslik: 'Öne çıkan sonuçlar',
-      aciklamaBaslik: 'Nihai test, kilitlenmiş modeller. %95 aralıklar gün blok bootstrap ile hesaplandı.',
+      aciklamaBaslik: 'Nihai test, %95 aralıklarla',
       olcut: 'Ölçüt',
       sonuc: 'Sonuç',
-      aralik: '%95 GA',
+      aralik: '%95 aralık',
       referans: 'Referans',
-      rocSatiri: 'Geç varış (15+ dk) sıralaması: ROC-AUC, T2 modeli',
-      prSatiri: 'Geç varış sıralaması: PR-AUC, T2 modeli',
-      brierSatiri: 'Brier skor kazancı (B1’e göre), T2 modeli',
-      egimSatiri: 'Kalibrasyon eğimi, T2 modeli',
-      citlSatiri: 'CITL (genel sapma), T2 modeli',
-      p80Satiri: 'P80 üst sınır kapsaması, plan modeli (conformal)',
-      p95Satiri: 'P95 üst sınır kapsaması, plan modeli (conformal)',
-      havaSatiri: 'Havanın ROC-AUC kazancı (T2 eksi plan modeli)',
-      b1Referans: (deger, fark) => `B1: ${deger}; B1’e göre fark: ${fark}`,
+      rocSatiri: 'Geç varış sıralaması: ROC-AUC, T2',
+      prSatiri: 'Geç varış sıralaması: PR-AUC, T2',
+      brierSatiri: 'Brier skor kazancı, T2',
+      egimSatiri: 'Kalibrasyon eğimi, T2',
+      citlSatiri: 'CITL (genel sapma), T2',
+      p80Satiri: 'P80 üst sınır kapsaması, plan',
+      p95Satiri: 'P95 üst sınır kapsaması, plan',
+      havaSatiri: 'Havanın ROC-AUC kazancı (T2 eksi plan)',
+      b1Referans: (deger, fark) => `B1: ${deger}; kazanç: ${fark}`,
       sifirUstu: 'Sıfırın üstü, B1’den iyi demektir',
       ideal: (v) => `İdeal: ${v}`,
       hedef: (v) => `Hedef: ${v}`,
-      ayniUcuslar: 'Aynı uçuşlar; kalkıştan önce gözlenen hava',
-      not: 'Tire, veri dosyasında o değer için aralık olmadığını gösterir. ROC-AUC ve PR-AUC satırlarındaki aralık, T2 modelinin B1’e göre farkına aittir. B1, her rota ve kalkış saat bloğunun geçmiş kaydından kurulan referanstır.',
+      ayniUcuslar: 'Aynı uçuşlar, kalkıştan önceki hava',
+      not: 'ROC-AUC ve PR-AUC aralıkları, B1’e göre kazanca aittir. B1, aynı rota ve saat bloğunun geçmiş kaydıdır.',
     },
     kabul: {
       baslik: 'Kabul ölçütleri K1–K7',
-      ozet: (gecen, toplam, kalanlar) => `${toplam} kabul ölçütünden ${gecen} tanesi geçti. ${kalanlar.length ? `Geçmeyen: ${kalanlar.join(', ')}.` : 'Geçmeyen yok.'}`,
+      ozet: (gecen, toplam, kalanlar) => `${toplam} ölçütten ${gecen} tanesi geçti. ${kalanlar.length ? `Geçmeyen: ${kalanlar.join(', ')}.` : 'Geçmeyen yok.'}`,
       gecti: 'Geçti',
       kaldi: 'Geçmedi',
       degerlendirilmedi: 'Değerlendirilmedi',
+      kaldiBaslik: 'Neler işe yaramadı',
       k5: 'K5, kapsama. ',
-      k5Metin: (p80, p95) => `Conformal üst sınırların genel kapsaması P80 için ${p80}, P95 için ${p95}. Ayrıntı için Kalibrasyon ve kapsama bölümüne bakın.`,
+      k5Metin: (p80, p95) => `Üst sınırların kapsaması P80 için ${p80}, P95 için ${p95}.`,
       k6: 'K6, iptal. ',
-      k6Metin: (plan, b1) => `Yalnızca tarifeye dayanan iptal modelinin PR-AUC değeri ${plan}; B1 için ${b1}. Kabul ölçütü karşılanmadı.`,
-    },
-    tampon: {
-      baslik: 'Tampon deneyi: ne gösterdi',
-      bulgu: 'Ana bulgu: ',
-      notYok: 'Tampon optimizasyonu bulgusunu içeren not veri dosyasında bulunamadı; Hakkında bölümündeki notlara bakın.',
-      varsayim: 'Rotalar sayfasındaki önerilen tamponlar, varsayılmış bir maliyet oranında (τ = 0,80) plan modelinden gelir. Bir dakika tamponun bir dakika rötarı ortadan kaldırdığı, maliyetlerin varsayım olduğu ve uçak rotasyonu, ekip ve ağ etkilerinin yok sayıldığı varsayımlarına dayanır; operasyonel öneri değildir.',
-      ayrintiLink: 'Ayrıntılar: Tampon optimizasyonu (OR) sekmesi.',
+      k6Metin: (plan, b1) => `Yalnızca tarifeyle iptal tahmininin PR-AUC değeri ${plan}; B1 için ${b1}.`,
     },
     guven: {
-      baslik: 'Bu sayılara nasıl güvenmeli',
+      baslik: 'Bu sayılara ne kadar güvenmeli',
       noktalar: [
-        ['Zaman sıralı bölme. ', 'Modeller geçmişte eğitildi, sonraki aylarda değerlendirildi; satırlar zaman boyunca karıştırılmadı.'],
-        ['Tek değerlendirme. ', 'Kurallar ve kabul ölçütleri test dönemi okunmadan önce yazıldı ve test bir kez çalıştırıldı. Test üzerinde ayar yapılmadı.'],
-        ['Güçlü bir referans. ', 'Her model, aynı uçuşlarda B1 ile karşılaştırılır: aynı rota ve kalkış saat bloğunun geçmiş kaydı.'],
-        ['Belirsizlik gösterilir. ', 'Aralıklar, takvim günlerini bütün olarak yeniden örnekleyen gün blok bootstrap ile hesaplandı; çünkü aynı gündeki uçuşlar birbirinden bağımsız değildir.'],
-        ['Sızıntı denetimi. ', 'Yalnızca belirtilen zamanda bilinen bilgi kullanıldı; hava, kalkıştan önce kesilir. İki ayrı inceleme sızıntı bulmadı.'],
-        ['Havayolu iddiası yok. ', 'Hiçbir havayolu adlandırılmaz, karşılaştırılmaz ya da sıralanmaz; uçuş numarası yayımlanmaz.'],
+        ['Zaman sıralı bölme. ', 'Modeller geçmişten öğrendi, sonraki aylarda sınandı.'],
+        ['Tek değerlendirme. ', 'Kurallar test dönemi okunmadan yazıldı; test üzerinde ayar yapılmadı.'],
+        ['Güçlü bir referans. ', 'Her model, aynı rota ve saat bloğunun geçmiş kaydı olan B1 ile karşılaştırıldı.'],
+        ['Belirsizlik gösterilir. ', 'Aralıklar günleri bütün olarak yeniden örnekler; aynı gündeki uçuşlar birbirinden bağımsız değildir.'],
+        ['Sızıntı yok. ', 'Yalnızca belirtilen zamanda bilinen bilgi kullanıldı; iki ayrı inceleme sızıntı bulmadı.'],
       ],
       bolmeBaslik: 'Zaman sıralı bölme',
       kume: 'Küme',
@@ -222,32 +353,78 @@ const TR = {
     },
   },
 
-  // ------------------------------------------------------------------ havalimanları
+  // ------------------------------------------------------------------ keşfet
+  kesfet: {
+    giris: 'Haritada bir havalimanı seç: oradan çıkan rotalar, uçuşların ne sıklıkla 15 dakika ya da daha geç vardığına göre renklenen yaylarla çizilir. Aşağıdaki tabloda her rotada uçuşların tipik, kötü gün ve en kötü durumda kaç dakika geç vardığı yazar.',
+    rotalarBaslik: 'Rotalar',
+    rotalarGit: 'Rotalara git',
+    kart: {
+      baslik: (iata) => `${iata} bir bakışta`,
+      liste: 'Özet kartları',
+      yok: 'Bu kart için yeterli yayımlanmış uçuş yok.',
+      esik: (n) => `En az ${n} test uçuşu olan kalkış blokları ve varışlar değerlendirilir.`,
+      yalnizca: 'Yalnızca yayımlanmış rota hücrelerine dayanır; havalimanı düzeyindeki oranlar gösterilmez.',
+      blok: {
+        baslik: 'En riskli kalkış bloğu',
+        detay: (oran, n) => `Bu bloktaki uçuşların ${oran} kadarı 15 dakika ya da daha geç vardı (${n} test uçuşu).`,
+        detaySiz: 'Geç varış payının en yüksek olduğu kalkış bloğu.',
+      },
+      varis: {
+        baslik: 'En güvenilir ve en riskli varış',
+        guvenilir: 'En güvenilir:',
+        riskli: 'En riskli:',
+        satir: (ad, oran) => `${ad}, geç varış ${oran}`,
+        satirSiz: (ad) => ad,
+      },
+      mevsim: {
+        baslik: 'Yaz ve ilkbahar karşılaştırması',
+        ileri: 'Yazın daha geç',
+        geri: 'Yazın daha erken',
+        ayni: 'Yaz ve ilkbahar aynı',
+        detay: (yaz, ilk) => `Geç varış oranı: yaz ${yaz}, ilkbahar ${ilk}.`,
+      },
+      tipik: {
+        baslik: 'Tipik rötar',
+        detay: 'Uçuşların yarısı tarifeden en fazla bu kadar geç varır (eksi değer erken varış demektir).',
+      },
+    },
+  },
+
   havalimani: {
     olcutler: {
       gozlenen_arrdel15_orani: 'Gözlenen geç varış oranı (15+ dk)',
-      tahmin_arrdel15_orani: 'Tahmin edilen geç varış oranı (T2 modeli)',
+      tahmin_arrdel15_orani: 'Tahmin edilen geç varış oranı (T2)',
       iptal_orani: 'İptal oranı',
-      kapsama_p80: 'P80 üst sınır kapsaması (plan, conformal)',
-      kapsama_p95: 'P95 üst sınır kapsaması (plan, conformal)',
+      kapsama_p80: 'P80 üst sınır kapsaması',
+      kapsama_p95: 'P95 üst sınır kapsaması',
     },
     aria: (iata, ad, olcut, deger, n) => `${iata}, ${ad}. ${olcut}: ${deger}. ${n} test uçuşu. Ayrıntı için seçin.`,
-    rampaNotu: 'Nokta alanı test uçuşu sayısıyla büyür. Kesik çizgili boş daire: yayımlanmadı.',
+    lejantBaslik: (olcut) => `${olcut}: düşük → yüksek`,
+    lejantBoyut: (az, cok) => `Nokta alanı test uçuşu sayısıyla büyür (${az} ile ${cok} arası)`,
+    lejantYok: 'Kesik çizgili boş daire: yayımlanmadı',
+    lejantYay: (az, cok) => `Yay kalınlığı, rotadaki uçuş sayısını gösterir (${az} ile ${cok} arası)`,
+    lejantYayRenk: 'Yay rengi, noktalarla aynı geç varış skalasını kullanır.',
+    yayGrup: (iata) => `${iata} çıkışlı rotalar. Rotalar arasında gezinmek için ok tuşlarını kullan.`,
+    yayEtiket: (iata, ad, n, oran) => `${iata}, ${ad}. ${n} test uçuşu, geç varış oranı ${oran}.`,
+    yayEksik: (n) => `${n} varış noktasının koordinatı yok; haritada çizilmedi.`,
+    yayDisari: (n) => `${n} varış noktası haritanın gösterdiği alanın dışında; çizilmedi.`,
+    yayYok: 'Rota yayları yüklenemedi; aşağıdaki rota tablosu etkilenmedi.',
+    yayIpucuUcus: (n) => `${n} test uçuşu`,
+    yayIpucuGec: (oran) => `Geç varış: ${oran}`,
     ayrintiBaslik: 'Havalimanı ayrıntıları',
-    ayrintiBos: 'Haritada bir noktayı ya da tabloda bir havalimanı kodunu seçin.',
+    ayrintiBos: 'Haritada bir nokta ya da tabloda bir kod seç; o havalimanından çıkan rotalar yay olarak çizilir.',
     satirlar: {
       testUcus: 'Test uçuşu',
-      gozlenen: 'Gözlenen geç varış oranı',
-      tahmin: 'Tahmin edilen geç varış oranı',
+      gozlenen: 'Gözlenen geç varış',
+      tahmin: 'Tahmin edilen geç varış',
       iptal: 'İptal oranı',
       p80: 'P80 kapsaması',
       p95: 'P95 kapsaması',
     },
-    rotalariGoster: (iata) => `${iata} çıkışlı rotaları göster`,
+    rotalariGoster: (iata) => `${iata} çıkışlı rotalara git`,
     renklendir: 'Noktaları şuna göre renklendir',
-    giris: 'Her nokta bir kalkış havalimanıdır. Geç varış oranları, tarifeden 15 dakika ya da daha geç varan uçuşları kullanır. Tahmin değerleri T2 modelinden gelir ve aylık olarak yeniden kalibre edilir.',
-    haritaNotu: 'Harita: Natural Earth (kamu malı) eyalet sınırları ve enlem–boylam ızgarası; Albers eşit alanlı konik projeksiyon.',
-    haritaNotuEyaletsiz: 'Eyalet sınırları yüklenemedi; harita yalnızca enlem–boylam ızgarasıyla gösteriliyor. Noktalar ve tablo etkilenmedi.',
+    haritaNotu: 'Harita: Natural Earth (kamu malı) eyalet sınırları.',
+    haritaNotuEyaletsiz: 'Eyalet sınırları yüklenemedi; noktalar ve tablo etkilenmedi.',
     tabloBaslik: 'Havalimanı tablosu',
     tablo: {
       baslik: 'Havalimanı değerleri, nihai test dönemi',
@@ -267,52 +444,70 @@ const TR = {
       p95Ipucu: 'Hedef %95',
     },
     yayimlanmayanlar: 'Yayımlanmayanlar: ',
-    yayimlanmayanSonu: '. Bu havalimanları haritada kalır; oranları gizlenir.',
+    yayimlanmayanSonu: '. Uçuşların %90’ından fazlası tek havayoluna ait olduğu için oranları gizlenir; havalimanları haritada kalır.',
     haritaBaslik: (n) => `${n} havalimanının haritası`,
-    haritaAciklama: 'Albers projeksiyonunda, eyalet sınırları ve enlem–boylam ızgarası üzerinde havalimanı noktaları. Her nokta seçilebilir; haritanın altındaki tablo aynı değerleri listeler.',
+    haritaAciklama: 'Eyalet sınırları üzerinde havalimanı noktaları. Her nokta seçilebilir; seçilen havalimanından çıkan rotalar yay olarak çizilir. Tablo aynı değerleri listeler.',
   },
 
-  // ------------------------------------------------------------------ rotalar
   rota: {
-    giris: 'Her satır bir rota hücresidir: varış yeri, tarifeli kalkış bloğu ve mevsim, nihai test dönemi için. Kantiller varış rötarıdır ve dakika olarak verilir (eksi değer erken varış demektir). Üst sınırlar, plan modelinin aylık conformal ayardan sonraki üst kantilleridir.',
+    baslik: (kalkis) => `${kalkis} çıkışlı rotalar`,
     filtreler: 'Rota filtreleri',
     kalkis: 'Kalkış havalimanı',
     varis: 'Varış',
     tumVarislar: 'Tüm varışlar',
-    blok: 'Tarifeli kalkış bloğu (yerel saat)',
+    blok: 'Kalkış bloğu (yerel saat)',
     tumBloklar: 'Tüm bloklar',
     mevsim: 'Mevsim',
     tumMevsimler: 'Tüm mevsimler',
-    uyariBaslik: 'Önerilen tampon (†işaretli sütun): ',
-    uyari: `${BUFFER_WARNING}. Plan modelinden, ölçülmemiş ve varsayılmış τ = 0,80 maliyet oranıyla üretilir; uçak rotasyonunu, ekibi ve ağ etkilerini yok sayar.`,
-    gizlemeNotu: 'n < 50 uçuşlu hücreler ya da uçuşların %90’ından fazlasının tek havayoluna ait olduğu hücreler gösterilmez. Kantil sütunları hücredeki uçuşların medyanıdır; önerilen tampon aynı kantillerin farklı bir toplulaştırmasından üretilir, bu yüzden ikisi farklı olabilir.',
+    uyariBaslik: 'Önerilen tampon (†): ',
+    gizlemeNotu: 'n < 50 uçuşlu ya da uçuşların %90’ından fazlası tek havayoluna ait hücreler gösterilmez. Kantiller varış rötarıdır (dk; eksi değer erken varış).',
     yukleniyor: (iata) => `${iata} çıkışlı rotalar yükleniyor…`,
     havalimaniNotu: (nedeni) => `havalimanı düzeyindeki oranlar yayımlanmıyor. ${nedeni}`,
-    ozet: (gosterilen, toplam, kalkis) => `${kalkis} çıkışlı ${toplam} yayımlanmış hücreden ${gosterilen} tanesi gösteriliyor.`,
+    ozet: (gosterilen, toplam, kalkis) => `${kalkis} çıkışlı ${toplam} hücreden ${gosterilen} tanesi gösteriliyor.`,
+    risk: {
+      low: 'Düşük',
+      medium: 'Orta',
+      high: 'Yüksek',
+      aciklama: (alt, ust) => `Geç varış oranı için risk düzeyi: ${alt} altı düşük, ${alt} ile ${ust} arası orta, ${ust} ve üstü yüksek.`,
+    },
+    olcek: {
+      baslik: 'Gecikme sütunlarını okuma',
+      p50: 'uçuşların yarısı bu süre içinde varır',
+      p80: 'uçuşların 10’da 8’i bu süre içinde varır',
+      p95: 'uçuşların 20’de 19’u bu süre içinde varır',
+      erken: 'Eksi değer erken varış demektir.',
+    },
     tablo: {
       baslik: (kalkis) => `${kalkis} çıkışlı rota hücreleri, nihai test dönemi`,
       etiket: 'Rota hücreleri tablosu, kaydırılabilir',
-      gruplar: ['Rota hücresi', 'Geç varış (15+ dk)', 'Plan kantilleri, varış rötarı', 'Conformal üst sınırlar', 'Sınırların test kapsaması', 'Diğer'],
+      gruplar: ['Rota hücresi', 'Geç varış (15+ dk)', 'Varış rötarı', 'Ayarlı sınırlar', 'Sınır içinde kalan pay', 'Diğer'],
       varis: 'Varış',
       kalkis: 'Kalkış',
       kalkisIpucu: 'Tarifeli kalkış bloğu, yerel saat',
       mevsim: 'Mevsim',
       ucus: 'Uçuş (n)',
-      gozlenen: 'Gözlenen',
-      tahmin: 'Tahmin (T2)',
-      p80Sinir: 'P80 sınırı',
-      p80SinirIpucu: 'Tek yönlü conformal üst sınır, hedef kapsama %80',
-      p95Sinir: 'P95 sınırı',
-      p95SinirIpucu: 'Tek yönlü conformal üst sınır, hedef kapsama %95',
-      p80Kapsama: 'P80 kapsaması',
-      p80KapsamaIpucu: 'P80 sınırının gözlenen kapsaması (hedef %80)',
-      p95Kapsama: 'P95 kapsaması',
-      p95KapsamaIpucu: 'P95 sınırının gözlenen kapsaması (hedef %95)',
+      gozlenen: 'Geç varış oranı',
+      gozlenenIpucu: 'Tarifeden 15 dakika ya da daha geç varan uçuşların payı',
+      tahmin: 'Tahmin edilen oran',
+      p50: 'Tipik rötar',
+      p50Ipucu: 'Tipik rötar (P50): uçuşların yarısı bu süre içinde varır',
+      p80: 'Kötü gün',
+      p80Ipucu: 'Kötü gün (P80): uçuşların 10’da 8’i bu süre içinde varır',
+      p95: 'En kötü durum',
+      p95Ipucu: 'En kötü durum (P95): uçuşların 20’de 19’u bu süre içinde varır',
+      p80Sinir: 'Kötü gün sınırı (ayarlı)',
+      p80SinirIpucu: 'Tek yönlü conformal ayarlı P80 üst sınırı, hedef kapsama %80',
+      p95Sinir: 'En kötü durum sınırı (ayarlı)',
+      p95SinirIpucu: 'Tek yönlü conformal ayarlı P95 üst sınırı, hedef kapsama %95',
+      p80Kapsama: 'Kötü gün sınırı içinde',
+      p80KapsamaIpucu: 'Uçuşların ayarlı kötü gün sınırı içinde kalan gözlenen payı (hedef %80)',
+      p95Kapsama: 'En kötü durum sınırı içinde',
+      p95KapsamaIpucu: 'Uçuşların ayarlı en kötü durum sınırı içinde kalan gözlenen payı (hedef %95)',
       iptal: 'İptal',
       blok: 'Tarifeli blok süresi',
       blokIpucu: 'Tarifeli blok süresinin medyanı',
       tampon: 'Önerilen tampon †',
-      tamponIpucu: (uyari) => `Plan modeli, τ = 0,80; ${uyari}`,
+      tamponIpucu: (uyari) => `Plan modeli, τ = 0,80. ${uyari}`,
     },
   },
 
@@ -332,20 +527,19 @@ const TR = {
     ikiYonlu: 'İki yönlü %80 aralık, kayan',
     guvenBaslik: 'Güvenilirlik: tahmin edilen olasılıklar gerçekleşenle örtüşüyor mu?',
     nokta: (k, tahmin, gozlenen, n) => `dilim ${k}: tahmin ${tahmin}, gözlenen ${gozlenen}, n ${n}`,
-    aciklama: (n) => `Her nokta, tahmin olasılığının bir ondalık dilimidir (dilim başına yaklaşık ${n} uçuş). Noktalı köşegen üzerindeki noktalar, tahmin edilen olasılığın gözlenen sıklıkla örtüştüğü anlamına gelir. Olasılıklar aylık olarak yeniden kalibre edilir (aylık kayan Platt).`,
+    aciklama: (n) => `Her nokta bir ondalık dilimdir (dilim başına yaklaşık ${n} uçuş). Köşegene yakın nokta, tahminle gerçekleşenin örtüştüğü anlamına gelir.`,
     aciklamaYok: 'Bu görev için güvenilirlik verisi yok.',
     xEtiket: 'Ortalama tahmin olasılığı',
     yEtiket: 'Gözlenen sıklık',
     grafikBaslik: (gorev) => `Güvenilirlik diyagramı: ${gorev}`,
-    grafikAciklama: (adlar) => `${adlar} için ondalık dilimlerde, ortalama tahmin olasılığına karşı gözlenen sıklık. Grafiğin ardından aynı değerleri içeren bir tablo gelir.`,
+    grafikAciklama: (adlar) => `Ondalık dilimlerde ortalama tahmin olasılığına karşı gözlenen sıklık: ${adlar}.`,
     tabloGoster: 'Değerleri tablo olarak göster',
     dilim: 'Dilim',
     tahmin: (ad) => `${ad}: tahmin`,
     gozlenen: (ad) => `${ad}: gözlenen`,
     tabloBaslik: (gorev) => `Güvenilirlik dilimleri: ${gorev}`,
-    kapsamaBaslik: 'Rötar kantili üst sınırlarının kapsaması, aylara göre',
-    kapsamaGiris: 'P80 üst sınırının yaklaşık %20 uçuş tarafından aşılması, P95 sınırının ise yaklaşık %5 uçuş tarafından aşılması beklenir. Ham model kantili conformal ayarla düzeltilir; statik, kayan ve ham şemaların tanımı için Sözlük’teki Conformal ayar maddesine ve Hakkında bölümündeki notlara bakın.',
-    kapsamaNotu: 'Kapsamanın hedefin altına düştüğü aylar grafiklerde görünür; K5 kabul ölçütünün sonucu Genel bakış sayfasındadır.',
+    kapsamaBaslik: 'Rötar üst sınırlarının aylık kapsaması',
+    kapsamaGiris: 'P80 sınırının yaklaşık %20, P95 sınırının yaklaşık %5 uçuş tarafından aşılması beklenir.',
     ay: (yil) => `Ay (${yil})`,
     ayYok: 'Ay',
     kapsamaY: 'Gözlenen kapsama',
@@ -353,9 +547,9 @@ const TR = {
     nokta2: (ay, kapsama, n) => `${ay}: ${kapsama} (n ${n})`,
     ustSinir: (p) => `P${p} üst sınır: sınırın altında kalan uçuşların payı`,
     kapsamaGrafikBaslik: (p, model) => `P${p} sınırının aylık kapsaması, ${model}`,
-    kapsamaGrafikAciklama: (adlar) => `Üst sınırın altında kalan uçuşların aylık gözlenen payı: ${adlar}. Ardından aynı değerleri içeren bir tablo gelir.`,
+    kapsamaGrafikAciklama: (adlar) => `Üst sınırın altında kalan uçuşların aylık payı: ${adlar}.`,
     ay2: 'Ay',
-    cumle: (alt, altAy, ust, ustAy, hedef) => `Kayan conformal kapsaması aylara göre ${alt} (${altAy}) ile ${ust} (${ustAy}) arasında değişir; hedef ${hedef}.`,
+    cumle: (alt, altAy, ust, ustAy, hedef) => `Kayan ayarlı kapsama aylara göre ${alt} (${altAy}) ile ${ust} (${ustAy}) arasında değişir; hedef ${hedef}.`,
   },
 
   // ------------------------------------------------------------------ hava deneyi
@@ -368,7 +562,6 @@ const TR = {
       'T6-plan': 'T6 eksi plan',
       'T12-plan': 'T12 eksi plan',
     },
-    giris: 'Plan modeli yalnızca tarife yapılırken bilinenleri görür. T2 modeli ayrıca tarifeli kalkıştan kısa süre önceki hava gözlemlerini görür. İkisini aynı uçuşlarda karşılaştırmak, bu geç bilginin ne kadar katkı yaptığını gösterir.',
     degerAriaEtiket: 'Varyanta göre ölçüt değerleri',
     degerBaslik: 'Varyanta göre sonuçlar',
     degerCaption: 'Varyanta göre ölçüt değerleri, nihai test dönemi',
@@ -376,16 +569,14 @@ const TR = {
     dahaIyi: 'Daha iyi olan',
     farkBaslik: 'Havanın kattığı',
     farkAriaEtiket: 'Varyantlar arasındaki farklar',
-    farkCaption: 'Aynı uçuşlarda farklar, %95 aralıklarla (gün blok bootstrap)',
+    farkCaption: 'Aynı uçuşlarda farklar, %95 aralıklarla',
     karsilastirmaBaslik: 'Karşılaştırma',
     fark: 'Fark',
-    aralik: '%95 GA',
+    aralik: '%95 aralık',
     aralikGrafik: 'Aralık',
     sifiriDislar: 'Sıfırı dışlıyor mu?',
-    farkNotu: 'Her küçük grafiğin kendi ölçeği vardır; dikey çizgi sıfırdır. Aralığı sıfırı dışlayan bir farkın, günlük değişimden kaynaklanan gürültü olma olasılığı düşüktür; ancak bu, pratikte kazancın ne kadar büyük olduğunu söylemez.',
-    oracleVar: 'Oracle varyantı (tarifeli anda gözlenmiş hava) yalnızca üst sınır olarak gösterilir; pratikte elde edilemez.',
-    oracleYok: 'Oracle sonucu (tarifeli anda gözlenmiş havayla elde edilen üst sınır) yok.',
-    notlarYonlendirme: 'Hava ve değerlendirme notları Hakkında bölümündeki Notlar kutusundadır.',
+    oracleVar: 'Oracle varyantı (tarifeli anda gözlenmiş hava) yalnızca üst sınırdır; pratikte elde edilemez.',
+    oracleYok: 'Oracle sonucu (tarifeli anda gözlenmiş havayla üst sınır) yok.',
     miniEtiket: (deger, aralik) => `Fark ${deger}, %95 aralık ${aralik}`,
   },
 
@@ -414,59 +605,76 @@ const TR = {
     listeGenel: (olcut) => `${olcut} ölçütü için listelenen segmentler`,
     kirilim: 'Kırılım',
     cubukOlcut: 'Çubuk grafik için ölçüt',
-    giris: 'Model başarımı havalimanı, kalkış bloğu, ay ve diğer segmentlere göre, nihai test döneminde. Bunlar betimleyici ve keşifsel (post hoc) kırılımlardır; segmentler arasındaki farklar model kalitesi kadar trafik karışımını, havayı ve hacmi de yansıtır.',
+    giris: 'Betimleyici kırılımlar: farklar model kalitesi kadar trafik karışımını, havayı ve hacmi de yansıtır; hiçbir havalimanı hakkında hüküm değildir.',
     tabloBaslik: (boyut, model) => `${boyut}, ${model}, nihai test dönemi`,
     tabloEtiket: 'Segment tablosu, kaydırılabilir',
     segment: 'Segment',
     ucus: 'Uçuş (n)',
-    eksikler: (liste) => `Bu kırılımda yer almayanlar: ${liste}. Bu havalimanlarının havalimanı düzeyindeki değerleri yayımlanmıyor.`,
+    eksikler: (liste) => `Bu kırılımda yer almayanlar: ${liste} (havalimanı düzeyindeki değerleri yayımlanmıyor).`,
     cubukNotu: 'Çubuklar segmentlerin sırasını izler, değerlerini değil.',
-    cubukNotuHedef: (yuzde) => `Çubuklar segmentlerin sırasını izler, değerlerini değil. Kesik çizgi %${yuzde} hedefini gösterir.`,
+    cubukNotuHedef: (yuzde) => `Çubuklar segmentlerin sırasını izler. Kesik çizgi %${yuzde} hedefini gösterir.`,
     cubukBaslik: (olcut) => `Segmentlere göre ${olcut}`,
-    cubukAciklama: (olcut, boyut, model) => `${boyut} segmentlerinin her biri için ${olcut} değerlerini gösteren yatay çubuklar, ${model}. Segment tablosu aynı değerleri listeler.`,
+    cubukAciklama: (olcut, boyut, model) => `${boyut} segmentlerinin her biri için ${olcut} değerlerini gösteren yatay çubuklar, ${model}.`,
     iki: 'İki ölçüte göre listelenen kalkış havalimanları',
-    ikiNot: 'Veri dosyasındaki sırayla listelenir. Listeler yalnızca kalkış havalimanlarını kapsar; herhangi bir havalimanının operasyonu hakkında hüküm değildir.',
+    ikiNot: 'Yalnızca kalkış havalimanları; hiçbir havalimanının operasyonu hakkında hüküm değildir.',
+  },
+
+  // ------------------------------------------------------------------ yöntem
+  yontem: {
+    giris: 'Her başlığı aç; ayrıntılar açıldığında yüklenir.',
+    kalibrasyon: {
+      baslik: 'Kalibrasyon ve kapsama',
+      ozet: 'Olasılıklar gerçekleşenle uyumlu; rötar üst sınırları bazı aylarda hedefin altında kalıyor.',
+    },
+    hava: {
+      baslik: 'Hava deneyi',
+      ozet: 'Aynı uçuşlar, hava gözlemiyle ve gözlemsiz: hava, sıralama başarısını artırıyor.',
+    },
+    hatalar: {
+      baslik: 'Hata analizi',
+      ozet: 'Model nerede daha güçlü, nerede daha zayıf: havalimanı, saat ve aya göre betimleyici kırılımlar.',
+    },
+    sinirlar: {
+      baslik: 'Sınırlılıklar',
+      ozet: 'Bu analiz neyi söyleyemez.',
+      maddeler: (n) => [
+        `Yalnızca ${n} kalkış havalimanındaki, bildirim yapan havayollarının tarifeli iç hat uçuşları; uçak rotasyonu, ekip ve ağ etkileri yok.`,
+        'Kamuya açık rötar kayıtları yaklaşık iki ay gecikmeyle yayımlanır. Aylık yeniden kalibrasyon, sonuçların uçuştan bir gün sonra bilindiğini varsayar; bu yalnızca kendi verisine sahip bir işletmeci için geçerlidir.',
+        'Modeller bir kez, test döneminden önce biten veriyle eğitildi; rötar düzeyi kaydı ve modeller güncellenmedi.',
+        'Rötar kantilleri yalnızca gerçekleşen uçuşları anlatır; iptal edilen ve yönü değişen uçuşlar dışındadır.',
+        'Tampon sonuçları, bir dakika tamponun bir dakika rötarı ortadan kaldırdığını varsayar ve varsayılmış bir maliyet oranı kullanır; gerçek tarife değişiklikleriyle doğrulanmadı.',
+        'Havalimanı ve segment farkları trafiği, havayı ve hacmi de yansıtır; hiçbir havalimanı hakkında hüküm değildir.',
+        'Gösterilmeyenler: havayolu adı, sıralama, uçuş numarası, rötar nedeni; n < 50 uçuşlu ya da tek havayolunun %90’dan fazla payı olan hücreler.',
+      ],
+      gizlenen: (liste) => `${liste} için havalimanı düzeyindeki oranlar gizlendi.`,
+    },
+    kaynaklar: {
+      baslik: 'Veri kaynakları ve lisanslar',
+      ozet: 'Uçuş, hava ve havalimanı verileri kamuya açık kaynaklardan gelir.',
+      not: 'Lisans notları, doğrulamanın kısmi kaldığı yerleri belirtir. Ham veri burada yeniden dağıtılmaz.',
+      harita: 'Harita: Natural Earth (kamu malı)',
+      haritaAyrinti: 'Natural Earth 1:110m eyalet sınırları.',
+    },
+    notlar: {
+      baslik: 'Sonuçlarla kaydedilen notlar',
+      ozet: 'Değerlendirmeyle birlikte tutulan ayrıntılar.',
+      yok: 'Kaydedilmiş not yok.',
+    },
   },
 
   // ------------------------------------------------------------------ hakkında
-  hakkinda: {
-    nedirBaslik: 'Bu site nedir',
-    nedir: (n, bas, bit) => `${n} ABD havalimanında kamu verisi üzerine bağımsız bir analiz, ${bas} – ${bit}. Tüm rakamlar önceden hesaplandı ve statik dosyalardan okunur; sunucuda hesaplama yapılmaz, hiçbir yere veri gönderilmez.`,
-    gosterilmezBaslik: 'Neler gösterilmez',
-    gosterilmez: [
-      'Havayolu adı, logo, sıralama ya da havayoluna göre tablo yok. Uçuş numarası ve uçak tescili yok.',
-      'Rötar nedeni yok. Kaynak verideki nedenler havayollarının kendi beyanıdır ve kullanılmadı.',
-      'n < 50 uçuşlu rota hücreleri ya da uçuşların %90’ından fazlasının tek havayoluna ait olduğu hücreler yayımlanmaz.',
-    ],
-    gizlenen: (liste) => `${liste} için havalimanı düzeyindeki oranlar gizlendi; test dönemi uçuşlarının %90’ından fazlası tek havayoluna ait. Havalimanları haritada kalır.`,
-    tamponGosterilmez: 'Önerilen tamponlar yalnızca varsayılmış maliyetler altında bir optimizasyon örneği olarak gösterilir.',
-    sinirBaslik: 'Sınırlamalar',
-    sinirlar: (n) => [
-      `Yalnızca ${n} kalkış havalimanındaki, bildirim yapan havayollarının tarifeli iç hat uçuşları. Uçak rotasyonu, ekip ve ağ etkileri yok.`,
-      'Herkese açık rötar kayıtları yaklaşık iki ay gecikmeyle yayımlanır. Aylık yeniden kalibrasyon ve conformal ayar, etiketlerin uçuştan bir gün sonra bilindiğini varsayar; bu yalnızca kendi verisine sahip bir işletmeci için geçerlidir.',
-      'Modeller bir kez, test döneminden önce biten veriyle eğitildi. Rötar düzeyi önceki aylarla test dönemi arasında kaydı ve modeller güncellenmedi.',
-      'Rötar kantilleri yalnızca gerçekleşen uçuşları anlatır; iptal edilen ve yönü değişen uçuşlar bunların dışındadır.',
-      'Tampon önerileri, bir dakika tamponun bir dakika rötarı ortadan kaldırdığını varsayar ve varsayılmış bir maliyet oranı kullanır. Gerçek tarife değişiklikleriyle doğrulanmadı.',
-      'Segment ve havalimanı farkları betimleyicidir. Trafiği, havayı ve hacmi birlikte yansıtır; hiçbir havalimanı hakkında hüküm değildir.',
-    ],
-    kaynakBaslik: 'Veri kaynakları ve lisans notları',
-    kaynakNotu: 'Lisans notları, lisans metninin tam doğrulanamadığı yerleri belirtir. Ham veri burada yeniden dağıtılmaz.',
-    harita: 'Harita: Natural Earth (kamu malı)',
-    haritaAyrinti: 'Natural Earth 1:110m eyalet sınırları; haritada yerel bir dosyadan okunur.',
-    notlarBaslik: 'Notlar',
-    notlarYok: 'Kaydedilmiş not yok.',
-    notlarGiris: 'Sonuçlarla birlikte veri dosyasında kaydedilen notlar, olduğu gibi:',
-    dosyalarBaslik: 'Veri dosyaları hakkında',
-    uretim: 'Üretim zamanı',
-    modelSurumu: 'Model sürümü',
-    semaSurumu: 'Şema sürümü',
-    dosyalar: 'Dosyalar',
-    dosyaOzeti: (adet, kb) => `${adet} dosya, toplam ${kb} KB`,
+  hakkimda: {
+    baslik: 'Bu proje hakkında',
+    metin: 'Bu projeyi veri analizinden veri bilimine geçerken yaptım. Tahmini, dürüst değerlendirmeyi ve bir karar modelini birleştiren uçtan uca bir çalışma istedim; konu da ilgi duyduğum havacılık. Verilerin hepsi kamuya açık.',
+    yazar: 'Yazar: ',
+    github: 'GitHub profili',
+    depo: 'Proje deposu',
+    linkedin: 'LinkedIn',
   },
 
   // ------------------------------------------------------------------ sözlük
   sozluk: {
-    giris: 'Sitede geçen terimlerin sade açıklamaları. Bir terimin başlığı, o terime doğrudan bağlantıdır.',
+    giris: 'Sitede geçen terimlerin sade açıklamaları.',
     ara: 'Terim ara',
     araIpucu: 'Terim ya da açıklamada geçen sözcük',
     durum: (n, toplam) => `${toplam} terimden ${n} tanesi gösteriliyor.`,
@@ -476,114 +684,22 @@ const TR = {
     grupEtiket: (ad) => `${ad} terimleri`,
   },
 
-  // ------------------------------------------------------------------ hikâye (basit anlatım)
-  hikaye: {
-    giris: 'Bu sayfa, konuyu hiç bilmeyen biri için: altı kısa adım ve birkaç kaydırıcı. Ayrıntılar teknik sekmelerdedir; her adımın sonunda oraya bağlantı vardır.',
-    veriYok: 'Bu adımın verisi yüklenemedi. Sayfayı yenileyin ya da teknik sekmelere bakın.',
-    adim: (n) => `Adım ${n}`,
-    s1: {
-      baslik: 'Sorun: uçaklar neden geç kalır, bu neden önemli?',
-      p1: 'Hava, yoğunluk, önceki uçuşun gecikmesi, teknik işler: bir uçağın geç kalmasının pek çok nedeni olabilir. Bu sitede nedenlere bakılmaz; yalnızca ne kadar geç kalındığına bakılır.',
-      p2: 'Tarifeden 15 dakika ya da daha geç inen uçuş “geç varış” sayılır. Bu, ABD’nin resmi rötar tanımıdır.',
-      p3: 'Geç varış; kaçırılan aktarmalar, bekleyen ekipler ve sonraki uçuşlara yayılan gecikmeler demektir. Tarifedeki uçuş süresine fazladan dakikalar (tampon) eklemek bunu azaltabilir; ama tampon da zamana mal olur.',
-      olgu: (n, oran) => `Test döneminde ${n} tarifeli uçuş izlendi; bunların ${oran} kadarı geç vardı.`,
-    },
-    s2: {
-      baslik: 'Model ne yapıyor? Bir uçuş türü seçin',
-      p1: 'Model geçmiş uçuşlardan öğrenir ve “bu tür bir uçuş geç kalır mı?” sorusuna bir olasılık verir. Bir kalkış havalimanı, varış yeri, saat bloğu ve mevsim seçin; modelin tahmini, test döneminde gerçekleşenle yan yana görünür.',
-      secim: 'Uçuş türü seçimi',
-      gerceklesen: 'Gerçekleşen',
-      modelTahmini: 'Model tahmini (T2)',
-      ikonBaslik: (x) => `100 uçuştan geç varan: ${x}`,
-      ikonEtiket: (ad, x) => `${ad}: 100 uçuştan ${x} tanesi geç vardı.`,
-      ikonAnahtar: 'Dolu daire: 15 dakika ya da daha geç varan uçuş. Boş daire: zamanında ya da daha az geç varan uçuş.',
-      cumle: (x, y, n) => `Bu tür 100 uçuştan yaklaşık ${x} tanesi 15 dakika ya da daha geç vardı. Model ${y} bekliyordu. Test dönemindeki ${n} uçuşa dayanır.`,
-      rotarBaslik: 'Rötar kaç dakika sürer?',
-      rotarCumle: (p50, p80, p95, p50Erken) => p50Erken
-        ? `Bu tür uçuşların yarısı tarifeden en az ${p50} erken varır; %80’i en fazla ${p80}, %95’i en fazla ${p95} gecikir.`
-        : `Bu tür uçuşların yarısı en fazla ${p50}, %80’i en fazla ${p80}, %95’i en fazla ${p95} gecikir.`,
-      eksi: 'Eksi değer, erken varış demektir.',
-      yarisi: 'Yarısı',
-      seksen: '%80’i',
-      doksanbes: '%95’i',
-      grafikBaslik: 'Rötar süresi: uçuşların yarısı, %80’i ve %95’i en fazla kaç dakika geç varır',
-      grafikAciklama: (p50, p80, p95) => `Yatay çubuklar: yarısı ${p50}, %80’i ${p80}, %95’i ${p95}.`,
-      kantilNotu: 'P80 ve P95 değerleri conformal ayarlı üst sınırlardır; P50 ham model kantilidir. Aynı hücre Rotalar sekmesinde de görünür.',
-      hucreYok: 'Bu seçim için yayımlanmış bir hücre yok.',
-      yukleniyor: (iata) => `${iata} çıkışlı rotalar yükleniyor…`,
-    },
-    s3: {
-      baslik: 'Hava bilgisi işe yarıyor mu?',
-      p1: (saat) => `Plan modeli yalnızca tarife yapılırken bilinenleri görür. T2 modeli ayrıca kalkıştan ${saat} saat önceki hava raporunu görür. İkisi aynı uçuşlarda karşılaştırıldı.`,
-      puan: 'Puan, ROC-AUC: modelin geç kalacak bir uçuşa, zamanında gelecek bir uçuştan daha yüksek risk verme olasılığı. 0,5 yazı tura, 1 kusursuz demektir.',
-      plan: 'Plan modeli (hava yok)',
-      t2: 'T2 modeli (hava var)',
-      fark: (f, aralik) => `Havanın kattığı: ${f}; %95 aralık ${aralik}.`,
-      anlamli: 'Aralık sıfırı dışlıyor: hava bilgisi puanı artırıyor.',
-      anlamsiz: 'Aralık sıfırı içeriyor: fark, gürültüden ayırt edilemiyor.',
-      ters: 'Aralık sıfırı dışlıyor, ancak fark negatif: hava bilgisi puanı artırmıyor.',
-      yok: 'Hava deneyi verisi bulunamadı.',
-      olcek: (deger) => `${deger}, 0,5 ile 1 arasındaki ölçekte`,
-    },
-    s4: {
-      baslik: 'Tampon: ne kadar eklemeli?',
-      p1: 'Tarifeye eklenen fazladan dakikaya tampon denir. Tampon rötarı azaltır, ama uçak ve ekip zamanını boşa harcayabilir. Hangisinin daha pahalı olduğuna siz karar verin.',
-      baslikSonuc: (kat) => `Rötar dakikası, boş dakikadan ${kat} kat kötü sayılırsa`,
-      tamponYok: 'Tampon yok',
-      planModeli: 'Plan modeliyle',
-      oranlar: (a, b) => `Geç varış oranı: tampon yokken ${a}, plan modeliyle ${b}.`,
-      ek: 'Uçuş başına eklenen tampon',
-      bosa: 'Uçuş başına boşa giden dakika',
-      kalan: 'Uçuş başına kalan rötar',
-      rotalarNotu: (kat) => `Rotalar sekmesindeki “Önerilen tampon” sütunu ${kat} kat varsayar.`,
-      yok: 'Tampon optimizasyonu verisi bulunamadı.',
-    },
-    s5: {
-      baslik: 'Dürüstlük: neler işe yaramadı?',
-      p1: 'Başarı ölçütleri test öncesinde yazıldı. Tutmayanlar saklanmadı:',
-      kabulSatiri: (olcut, aciklama) => `${olcut}: ${aciklama}`,
-      kapanis: 'Bu site bir operasyon aracı değildir. Sayılar geçmiş kamu verisinden gelir; hiçbir havayolu hakkında bir şey söylemez.',
-    },
-    s6: {
-      baslik: 'Daha fazlası',
-      p1: 'Ayrıntılar için teknik sekmelere geçin.',
-      acik: {
-        overview: 'Tüm sonuçlar ve kabul ölçütleri',
-        airports: 'Havalimanı haritası ve tablosu',
-        routes: 'Rota hücreleri ve önerilen tamponlar',
-        optimization: 'Tampon optimizasyonunun ayrıntıları',
-        calibration: 'Olasılıklar güvenilir mi?',
-        weather: 'Hava bilgisi deneyi',
-        errors: 'Model nerede güçlü, nerede zayıf?',
-        about: 'Sınırlar, kaynaklar ve notlar',
-        sozluk: 'Terimlerin sade açıklamaları',
-      },
-    },
-  },
-
-  // ------------------------------------------------------------------ tampon optimizasyonu (OR)
+  // ------------------------------------------------------------------ tampon (OR)
   or: {
-    problemBaslik: 'Sorun ve varsayımlar',
-    problem: 'Tarife yapılırken uçuş süresine kaç dakika tampon eklenmeli? Çok tampon uçak ve ekip zamanını boşa harcar; az tampon rötar bırakır. Politikalar test döneminden önce dondurulmuştur ve burada test dönemindeki uçuşlarda değerlendirilir.',
-    rotalarLink: 'Önerilen tampon sütunu Rotalar sekmesindedir.',
+    giris: 'Tarifeye kaç dakika tampon eklenmeli? Çok tampon zaman harcar, az tampon rötar bırakır. Politikalar test döneminden önce donduruldu.',
     bulgu: 'Ana bulgu: ',
-    bulguYok: 'Tampon optimizasyonu bulgusunu içeren not Genel bakış verisinde bulunamadı.',
+    bulguYok: 'Tampon bulgusu bulunamadı.',
     notlarBaslik: 'Varsayımlar ve notlar',
-    notlarGiris: 'Veri dosyasında kaydedilen notlar, olduğu gibi:',
-    sayilar: {
-      tarifeli: 'Tarifeli uçuş',
-      tamamlanan: 'Tamamlanan uçuş',
-      iptal: 'İptal edilen',
-      sapma: 'Yönü değişen (sapma)',
-    },
     tauBaslik: 'Maliyet oranı',
+    ozetCumle: (kat, a, b, ek) => `Rötar dakikası ${kat} kat kötüyse: geç varış ${a} düzeyinden ${b} düzeyine iniyor (uçuş başına ${ek} tampon).`,
     slider: {
       soru: 'Bir dakika rötar, bir dakika boş beklemeden kaç kat daha kötü?',
       kat: (x) => `${x} kat`,
       deger: (x) => `Bir dakika rötar, bir dakika boş beklemeden ${x} kat daha kötü`,
       tau: (t) => `τ = ${t}`,
-      ipucu: 'Kaydırıcı yalnızca veri dosyasındaki hesaplanmış maliyet oranlarına oturur; ara değer yoktur. Ok tuşlarıyla değiştirebilirsiniz.',
+      ipucu: 'Ok tuşlarıyla değiştirebilirsin.',
     },
+    politikalarBaslik: 'Politikalar ve karşılaştırmalar',
     politikaBaslik: (kat) => `Politikalar, maliyet oranı ${kat}`,
     politikaCaption: (kat) => `Politikaların test dönemi değerlendirmesi, maliyet oranı ${kat}`,
     politikaEtiket: 'Politikalar tablosu, kaydırılabilir',
@@ -607,46 +723,44 @@ const TR = {
       arrdel15_orani: 'Geç varış oranı',
       kullanilmayan_dk: 'Boşa giden (dk)',
     },
-    farkNotu: 'Fark, ilk politika eksi ikinci politikadır. Her ölçüt için düşük değer daha iyidir; bu yüzden eksi bir fark, ilk politikanın daha iyi olduğu anlamına gelir. Aralık sıfırı dışlamıyorsa fark, gürültüden ayırt edilemez.',
+    farkNotu: 'Fark, ilk politika eksi ikincidir; düşük değer daha iyidir, eksi fark ilk politikanın daha iyi olduğunu gösterir.',
     diger: 'Diğer karşılaştırmalar',
     yokKarsilastirma: 'Bu maliyet oranı için karşılaştırma yok.',
     butceBaslik: 'Bütçe eğrisi: aynı toplam tampon, farklı dağıtım',
-    butceGiris: 'Her nokta, uçuş başına ortalama bir tampon bütçesidir (dakika). Bütçe sabitken, tamponun hücrelere nasıl dağıtıldığı karşılaştırılır.',
     olcutSec: 'Grafikte gösterilen ölçüt',
     olcutArr: 'Geç varış oranı (15+ dk)',
     olcutKalan: 'Kalan rötar (dk/uçuş)',
     xEtiket: 'Tampon bütçesi (dk/uçuş)',
     grafikBaslik: (olcut) => `Bütçe eğrisi: ${olcut}`,
-    grafikAciklama: (adlar) => `Tampon bütçesine karşı ölçüt değeri; seriler: ${adlar}. Grafiğin ardından aynı değerleri içeren bir tablo gelir.`,
+    grafikAciklama: (adlar) => `Tampon bütçesine karşı ölçüt değeri; seriler: ${adlar}.`,
     nokta: (butce, deger) => `bütçe ${butce}: ${deger}`,
     tabloGoster: 'Değerleri tablo olarak göster',
     butceCaption: (olcut) => `Bütçe eğrisi değerleri: ${olcut}`,
     esitBaslik: 'Aynı bütçede: plan modeli ile B1 arasındaki fark',
-    esitGiris: 'Fark, plan modelinin bütçe politikası eksi B1’in bütçe politikasıdır; her satır bir bütçe noktasıdır.',
     esit: {
-      anlamsiz: (n) => `${n} bütçe noktasının hiçbirinde aralık sıfırı dışlamıyor: aynı bütçede plan modeli ile B1 arasındaki fark anlamlı değil.`,
-      anlamli: (k, n) => `${n} bütçe noktasının ${k} tanesinde aralık sıfırı dışlıyor. Yön ve büyüklük için aşağıdaki tabloya bakın.`,
-      yok: 'Bu karşılaştırma veri dosyasında yok.',
+      anlamsiz: (n) => `${n} bütçe noktasının hiçbirinde, plan modeli B1’den belirgin biçimde iyi değil.`,
+      anlamli: (k, n) => `${n} bütçe noktasının ${k} tanesinde fark belirgin; ayrıntı için tabloya bak.`,
+      yok: 'Bu karşılaştırma için veri yok.',
     },
     esitCaption: (olcut) => `Plan modeli eksi B1, aynı bütçede: ${olcut}`,
     kesifsel: {
       rozet: 'Keşifsel',
       baslik: 'Keşifsel bölüm',
-      uyari: 'Bu bölüm keşifseldir (post hoc) ve nihai test sonucu sayılmaz; yukarıdaki ana sonuçlardan ayrı tutulur.',
+      uyari: 'Sonuç görüldükten sonra yapılan inceleme; nihai test sonucu sayılmaz.',
       beklenen: 'beklenen',
       gerceklesen: 'gerçekleşen',
       seri: (ad, tur) => `${ad}, ${tur}`,
       grafikBaslik: 'Keşifsel bütçe eğrisi: geç varış oranı, beklenen ve gerçekleşen',
       tabloCaption: 'Keşifsel bütçe eğrisi değerleri, geç varış oranı',
     },
-    veriYok: 'Tampon optimizasyonu verisi bulunamadı.',
+    veriYok: 'Tampon verisi bulunamadı.',
   },
 };
 
 // Dil ve metin nesnesi. T yerinde güncellenir; başvurular geçerli kalır.
 export const T = {};
 
-let current = 'tr';
+let current = 'en';
 
 function isPlain(v) {
   return v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -664,7 +778,7 @@ function merge(target, source) {
 }
 
 export function setLang(lang) {
-  current = lang === 'en' ? 'en' : 'tr';
+  current = lang === 'tr' ? 'tr' : 'en';
   merge(T, TR);
   if (current === 'en') merge(T, EN);
   return current;
@@ -672,4 +786,4 @@ export function setLang(lang) {
 
 export const getLang = () => current;
 
-setLang('tr');
+setLang('en');

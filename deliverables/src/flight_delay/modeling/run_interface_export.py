@@ -112,6 +112,7 @@ class Preflight:
     or_table: pd.DataFrame | None
     aggregator: str | None
     record: dict[str, Any] = field(default_factory=dict)
+    airports_csv: Path | None = None  # OurAirports file, for destination coordinates
 
 
 def airport_records(targets: Sequence[str], airports_csv: Path, tz_overrides: Path | None) -> list[dict[str, Any]]:
@@ -139,6 +140,28 @@ def airport_records(targets: Sequence[str], airports_csv: Path, tz_overrides: Pa
     if problems:
         raise ie.ExportError("airport information incomplete (give --tz-overrides for zones): " + "; ".join(problems))
     return out
+
+
+def destination_records(codes: Sequence[str], airports_csv: Path) -> tuple[list[dict[str, Any]], list[str]]:
+    """Name and coordinates (OurAirports) of route destinations; codes without both are returned as missing."""
+    table = layer.load_airports(Path(airports_csv))
+    names = pd.read_csv(airports_csv, dtype=str, keep_default_na=False, usecols=["ident", "name"])
+    name_by_ident = dict(zip(names["ident"].str.strip().str.upper(), names["name"].str.strip(), strict=True))
+    rows = table.set_index("iata", drop=False)
+    out: list[dict[str, Any]] = []
+    missing: list[str] = []
+    for code in sorted(set(codes)):
+        if code not in rows.index:
+            missing.append(code)
+            continue
+        row = rows.loc[code]
+        lat, lon = float(row["lat"]), float(row["lon"])
+        name = name_by_ident.get(str(row["icao"]), "")
+        if not (np.isfinite(lat) and np.isfinite(lon)) or not name:
+            missing.append(code)
+            continue
+        out.append({"iata": code, "ad": name, "enlem": lat, "boylam": lon})
+    return out, missing
 
 
 def preflight(
@@ -220,7 +243,7 @@ def preflight(
         },
         "targets": targets,
     }
-    return Preflight(validator, results, manifest, targets, airports, or_table, aggregator, record)
+    return Preflight(validator, results, manifest, targets, airports, or_table, aggregator, record, Path(airports_csv))
 
 
 # ----------------------------------------------------------------------------
@@ -589,6 +612,14 @@ def build_payloads(
                 code, by_origin.get(code, []), created=created, version=version
             )
         hidden["per_origin_published"] = {code: len(by_origin.get(code, [])) for code in plan.targets}
+        dest_codes = [str(c["dest"]) for cells in by_origin.values() for c in cells]
+        if plan.airports_csv is None:
+            raise ie.ExportError("destination coordinates need the OurAirports file (--airports)")
+        points, missing = destination_records(dest_codes, plan.airports_csv)
+        payloads[ie.FILE_PATHS["varis_noktalari"]] = ie.build_varis_noktalari(
+            points, missing=missing, created=created, version=version
+        )
+        hidden["destinations_without_coordinates"] = missing
     return payloads, hidden
 
 

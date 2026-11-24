@@ -4,9 +4,10 @@ Burada tarayıcı çalıştırılmaz ve sunucu başlatılmaz. Testler sitenin do
 ve yayımlamadan önce geçerli olması gereken kuralları denetler: dış kaynak yok, güvensiz DOM API'si
 yok, sıkı CSP, yalnızca göreli yollar, betiklerin okuduğu her veri dosyası manifestte listeli ve
 sunum kuralları (havayolu adı yok, "worst"/"en kötü" yok, iki dilde sorumluluk reddi, tampon uyarısı,
-sözlük sekmesi, "null" metninin ekrana sızmaması). İki dilli arayüz (TR / EN) için: her metin
-anahtarının iki dilde değeri vardır, sözlük terimlerinin İngilizce alanı vardır, hikâye ve OR sekmeleri
-sayfada ve kaydırıcıda aria-valuetext vardır.
+sözlük sekmesi, "null" metninin ekrana sızmaması). İki dilli arayüz (varsayılan EN, TR düğmeyle) için:
+her metin anahtarının iki dilde değeri vardır, sözlük terimlerinin İngilizce alanı vardır, kaydırıcıda
+aria-valuetext vardır. Sade yapı için: 6 sekme, eski adreslerin yönlendirilmesi, Story'de on slayt (başlık +
+tek görsel + sade metin), soru-cevap kalıbı yasağı, meta cümle yasağı, LinkedIn adresi boşsa bağlantı çizilmez.
 Veri klasörü (veri/) ve harita klasörü (harita/) okunur, asla yazılmaz.
 """
 
@@ -28,23 +29,44 @@ SCHEMA = DELIVERABLES.parent / "experiments" / "arayuz-sozlesmesi.json"
 
 DISCLAIMER = "Kamu verisine dayalı; havayollarıyla bağlantısız."
 DISCLAIMER_EN = "Based on public data; not affiliated with any airline."
-BUFFER_WARNING = "varsayılmış maliyet oranı; operasyonel öneri değildir"
-BUFFER_WARNING_EN = "assumed cost ratio; not an operational recommendation"
+BUFFER_WARNING = "Varsayılmış maliyet oranı; operasyonel öneri değildir."
+BUFFER_WARNING_EN = "Assumed cost ratio — not an operational recommendation."
 OR_NOTE_PREFIX = "Tampon optimizasyonu (OR):"
 SVG_NAMESPACE = "http://www.w3.org/2000/svg"
+# Dış bağlantılar yalnızca <a href> olarak, yalnızca metin.js içinde (gezinme; veri çekmez).
+ALLOWED_LINKS = {
+    "metin.js": {
+        "https://github.com/Slmnbal",
+        "https://github.com/Slmnbal/flight-delay-forecasting",
+    },
+}
+LINKEDIN_RE = re.compile(r"^https://www\.linkedin\.com/in/[A-Za-z0-9-]+/?$")
 GLOSSARY_GROUPS = ["Veri ve hedef", "Model ve tahmin", "Ölçütler", "İstatistik", "Optimizasyon (OR)"]
-VIEWS = [
-    "story",
-    "overview",
-    "airports",
-    "routes",
-    "optimization",
-    "calibration",
-    "weather",
-    "errors",
-    "about",
-    "sozluk",
+VIEWS = ["story", "results", "explore", "buffers", "method", "sozluk"]
+# Eski adres (ilk parça) -> yeni sekme; paylaşılmış bağlantılar kırılmasın.
+OLD_HASHES = {
+    "overview": "results",
+    "airports": "explore",
+    "routes": "explore",
+    "optimization": "buffers",
+    "calibration": "method",
+    "weather": "method",
+    "errors": "method",
+    "about": "method",
+}
+# Geliştiriciye / veri dosyasına atıf yapan meta cümleler (hiçbir dosyada olmamalı).
+META_PHRASES = [
+    "Kaydırıcı yalnızca veri dosyasındaki",
+    "Veri dosyasında kaydedilen notlar",
+    "Bu sayfa, konuyu hiç bilmeyen biri için",
+    "Aralık sıfırı dışlamıyorsa",
+    "The slider snaps only to the cost ratios computed in the data file",
+    "Notes recorded in the data file",
+    "This page is for someone who knows nothing",
+    "If the interval does not exclude zero",
 ]
+# Kullanıcıya görünen metin dosyalarında geçmemesi gereken geliştirici ifadeleri.
+DEV_WORDS = ["veri dosyasında", "veri dosyası", "şemada", "betik", "data file", "the schema", "the script"]
 
 SOURCE_SUFFIXES = {".html", ".css", ".js", ".svg"}
 TEXT_MODULES = {"metin.js", "metin-en.js"}  # iki dilli metin dosyaları; diğer dosyalar 60 KB altında kalır
@@ -70,6 +92,12 @@ def read(path: Path) -> str:
 def view(name: str) -> str:
     """Bir görünümün betiği ile Türkçe arayüz metinlerini (metin.js) birlikte döndürür."""
     return read(WEB / "js" / "views" / f"{name}.js") + "\n" + read(WEB / "js" / "metin.js")
+
+
+def linkedin_url() -> str:
+    match = re.search(r"export const LINKEDIN_URL = '([^']*)';", read(WEB / "js" / "metin.js"))
+    assert match, "metin.js içinde tek bir LINKEDIN_URL sabiti olmalı"
+    return match.group(1)
 
 
 class _Collector(HTMLParser):
@@ -257,10 +285,19 @@ def test_expected_files_exist():
         "js/yerel.js",
         "js/or-ortak.js",
         "js/sozluk-terimleri.js",
+        "js/yazar.js",
         "js/views/sozluk.js",
         "js/views/story.js",
+        "js/story-gorseller.js",
+        "js/views/results.js",
+        "js/views/explore.js",
+        "js/views/buffers.js",
+        "js/views/method.js",
         "js/views/optimization.js",
         "js/theme-init.js",
+        "js/simgeler.js",
+        "js/kesfet-hesap.js",
+        "js/views/rota-ozeti.js",
         "veri/manifest.json",
         "harita/abd-eyaletler.json",
     ]:
@@ -268,7 +305,7 @@ def test_expected_files_exist():
 
 
 def test_html_basics(html, tags):
-    assert re.search(r"<html[^>]*\blang=\"tr\"", html)
+    assert re.search(r"<html[^>]*\blang=\"en\"", html), "varsayılan dil İngilizce"
     names = [t for t, _ in tags]
     assert names.count("h1") == 1
     assert names.count("main") == 1
@@ -285,20 +322,40 @@ def test_sections_are_labelled_and_routed(tags):
     ids = {a["id"].removeprefix("view-") for a in sections}
     nav_order = [a["data-nav"] for t, a in tags if t == "a" and a.get("data-nav")]
     assert set(nav_order) == ids == set(VIEWS)
-    assert nav_order == VIEWS, "sekme sırası: Hikâye ilk, OR Rotalar'dan sonra, Sözlük son"
+    assert nav_order == VIEWS, "sekme sırası: Hikâye ilk, Sözlük son"
+    assert len(nav_order) == 6
     main_js = read(WEB / "js" / "main.js")
     for name in ids:
         assert (WEB / "js" / "views" / f"{name}.js").is_file(), name
         assert f"./views/{name}.js" in main_js, name
 
 
-def test_story_and_or_sections_are_in_the_page(html, tags):
-    for name in ("story", "optimization"):
+def test_story_and_buffers_sections_are_in_the_page(html, tags):
+    for name in ("story", "buffers"):
         assert f'id="view-{name}"' in html
         assert f'id="h-{name}"' in html
         assert f'href="#{name}"' in html
     # Sekme başlıkları ve sabit metinler data-t anahtarıyla iki dile çevrilir.
-    assert 'data-t="bolumler.story"' in html and 'data-t="bolumler.optimization"' in html
+    assert 'data-t="bolumler.story"' in html and 'data-t="bolumler.buffers"' in html
+
+
+def test_old_hashes_are_redirected():
+    """Eski adresler (#airports, #routes/ORD, #calibration ...) yeni sekmelere yönlendirilir."""
+    main_js = read(WEB / "js" / "main.js")
+    for old, new in OLD_HASHES.items():
+        assert re.search(rf"\b{old}: \['{new}'", main_js), (old, new)
+    assert "canonicalize(" in main_js and "history.replaceState" in main_js
+    # #routes/XXX parametresi (havalimanı kodu) Keşfet sayfasına taşınır; Yöntem adresleri bölümü açar.
+    assert "params: fixed.length ? fixed : parts.slice(1)" in main_js
+    for section in ("calibration", "weather", "errors", "limits"):
+        assert f"['method', '{section}']" in main_js, section
+    explore = read(WEB / "js" / "views" / "explore.js")
+    assert "`#explore/${iata}`" in explore
+    assert "#routes/" not in read(WEB / "js" / "views" / "routes.js")
+    method = read(WEB / "js" / "views" / "method.js")
+    for section in ("calibration", "weather", "errors", "limits", "sources", "notes"):
+        assert f"id: '{section}'" in method, section
+    assert "<details" not in read(WEB / "index.html")
 
 
 def test_no_positive_tabindex(tags):
@@ -348,7 +405,11 @@ def test_no_external_resources():
     for path in source_files():
         text = read(path)
         for url in re.findall(r"https?://[^\s\"'<>)\\]+", text):
-            assert url == SVG_NAMESPACE, f"{path.name}: external URL {url}"
+            if url == SVG_NAMESPACE:
+                continue
+            allowed = ALLOWED_LINKS.get(path.name, set())
+            linkedin_ok = path.name == "metin.js" and url.startswith("https://") and bool(LINKEDIN_RE.match(url))
+            assert url in allowed or linkedin_ok, f"{path.name}: external URL {url}"
         assert not re.search(r"""(?:src|href)\s*=\s*["']//""", text), path.name
         assert not re.search(r"""["'`]//[A-Za-z]""", text) or path.suffix == ".css", path.name
         assert "@import" not in text, path.name
@@ -534,8 +595,7 @@ def test_optimization_data_supports_story_and_or_tab():
 
 
 def test_disclaimer_present_in_page_and_data(html):
-    assert DISCLAIMER in html
-    assert DISCLAIMER_EN in html, "JavaScript kapalıyken de İngilizce sorumluluk reddi (noscript)"
+    assert DISCLAIMER_EN in html, "İngilizce sorumluluk reddi sayfada (üst bilgi ve noscript)"
     assert f"sorumluluk: '{DISCLAIMER}'" in read(WEB / "js" / "metin.js")
     assert f"sorumluluk: '{DISCLAIMER_EN}'" in read(WEB / "js" / "metin-en.js")
     ozet = json.loads(read(VERI / "ozet.json"))
@@ -543,8 +603,12 @@ def test_disclaimer_present_in_page_and_data(html):
     assert "sorumluluk_reddi" in read(WEB / "js" / "yerel.js")
     main_js = read(WEB / "js" / "main.js")
     assert "sorumlulukReddi" in main_js and "footer-disclaimer" in main_js
-    # Üst ve alt bilgi sorumluluk reddi dil anahtarına bağlıdır.
-    assert html.count('data-t="sorumluluk"') == 2
+    # Üst bilgide kısa satır (dil anahtarına bağlı), alt bilgide tam metin bir kez; sekmelerde tekrar yok.
+    assert html.count('data-t="sorumluluk"') == 1
+    assert 'id="footer-disclaimer"' in html
+    for path in (WEB / "js" / "views").glob("*.js"):
+        text = read(path)
+        assert "sorumlulukReddi" not in text and "T.sorumluluk" not in text, path.name
 
 
 # --------------------------------------------------------------------------- sunum kuralları
@@ -583,8 +647,11 @@ def test_no_worst_and_no_airline_names_or_codes():
     standalone = re.compile(r"\b(Southwest|Delta|Frontier|Spirit|Alaska|Hawaiian)\b")
     codes = re.compile(r"""['"](?:AA|DL|UA|WN|B6|AS|NK|F9|G4|HA|OO|YX|9E|MQ|OH|QX|YV|EV|MX|XE|ZW|CP|C5|G7)['"]""")
     worst = re.compile(r"worst|\ben\s+k[öo]t[üu]\b", re.IGNORECASE)
+    # Tek istisna: rota tablosundaki P95 sütununun sade adı ("Worst case" / "En kötü durum"). Bir havalimanını ya da
+    # havayolunu "en kötü" diye adlandıran ifade yine yasaktır.
+    allowed = re.compile(r"worst[- ]case|\ben\s+k[öo]t[üu]\s+durum\w*", re.IGNORECASE)
     for path in source_files():  # metin-en.js dahil: İngilizce metinlerde de aynı kurallar
-        text = read(path)
+        text = allowed.sub("", read(path))
         assert not worst.search(text), (path.name, worst.search(text).group(0) if worst.search(text) else "")
         for name in names:
             assert name.lower() not in text.lower(), (path.name, name)
@@ -638,20 +705,20 @@ def test_hidden_airports_and_route_notes_are_shown():
 def test_buffer_suggestion_carries_the_warning_in_both_languages():
     metin = read(WEB / "js" / "metin.js")
     assert f"BUFFER_WARNING = '{BUFFER_WARNING}'" in metin
-    assert "${BUFFER_WARNING}" in metin, "uyarı görünür bildirimde kullanılmalı"
     assert "tamponUyari: BUFFER_WARNING," in metin
     en = read(WEB / "js" / "metin-en.js")
     assert f"BUFFER_WARNING_EN = '{BUFFER_WARNING_EN}'" in en
-    assert "${BUFFER_WARNING_EN}" in en
     assert "tamponUyari: BUFFER_WARNING_EN," in en
     routes_js = read(WEB / "js" / "views" / "routes.js")
     assert "tampon_onerisi_dk" in routes_js
-    # Uyarı, sütun başlığının ipucunda (title) ve görünür bildirimde yer alır.
+    # Uyarı tek cümle: sütun başlığının ipucunda (title) ve tamponun gösterildiği her yerde görünür.
     assert "tamponIpucu(T.tamponUyari)" in routes_js
-    assert "t.uyari" in routes_js
-    # Hikâye ve OR sekmesindeki tampon bölümleri de aynı uyarıyı gösterir.
-    assert "T.genel.tampon.varsayim" in read(WEB / "js" / "views" / "story.js")
-    assert "T.genel.tampon.varsayim" in read(WEB / "js" / "views" / "optimization.js")
+    assert "T.tamponUyari" in routes_js
+    assert "T.tamponUyari" in read(WEB / "js" / "views" / "story.js")
+    assert "T.tamponUyari" in read(WEB / "js" / "views" / "optimization.js")
+    # Başka sayfalarda yinelenmez (Sonuçlar, Yöntem).
+    assert "tamponUyari" not in read(WEB / "js" / "views" / "overview.js")
+    assert "tamponUyari" not in read(WEB / "js" / "views" / "method.js")
 
 
 def test_failed_criteria_and_buffer_finding_are_visible():
@@ -661,12 +728,17 @@ def test_failed_criteria_and_buffer_finding_are_visible():
     assert "'kaldi'" in overview
     assert "kaldi: 'Geçmedi'" in metin
     assert "kaldi: 'Not passed'" in read(WEB / "js" / "metin-en.js")
+    assert "kaldiBaslik: 'Neler işe yaramadı'" in metin
+    assert "kaldiBaslik: 'What did not work'" in read(WEB / "js" / "metin-en.js")
     # OR bulgusu sayfaya elle yazılmaz; veri notundan, önekle bulunur (TR notun başı, EN aynı sıradaki nottan).
     assert f"OR_NOTE_PREFIX = '{OR_NOTE_PREFIX}'" in yerel
     assert "startsWith(onek)" in yerel
-    assert "notBul(ozet, OR_NOTE_PREFIX)" in overview
-    assert "notBul(ozet, OR_NOTE_PREFIX)" in read(WEB / "js" / "views" / "optimization.js")
-    assert "eşit bütçe" not in metin.lower() and "eşit bütçe" not in overview.lower()
+    assert "orBulgusu(ozet)" in read(WEB / "js" / "views" / "optimization.js")
+    assert "eşit bütçe" not in overview.lower()
+    # Story: the "model only matches a simple rule" slide is shown only when no budget comparison is significant
+    # (data-driven, from the 95% intervals through equalBudget).
+    story = read(WEB / "js" / "views" / "story.js")
+    assert "eb.significant === 0" in story and "equalBudget(opt)" in story
     ozet = json.loads(read(VERI / "ozet.json"))
     failed = {k["olcut"] for k in ozet["kabul"] if k["sonuc"] == "kaldi"}
     assert {"K5", "K6"} <= failed
@@ -681,7 +753,7 @@ def test_notes_box_and_no_hand_written_data_notes():
     about = read(WEB / "js" / "views" / "about.js")
     assert "notlar(ozet)" in about
     metin = read(WEB / "js" / "metin.js")
-    assert "notlarBaslik: 'Notlar'" in metin
+    assert "baslik: 'Sonuçlarla kaydedilen notlar'" in metin
     errors = read(WEB / "js" / "views" / "errors.js")
     # "Olay günü" tanımı elle yazılmaz; Sözlük'e bağlantı verilir.
     assert "sozlukLink('olay-gunu'" in errors
@@ -711,10 +783,12 @@ def test_or_tab_content_is_data_driven():
         "'b1_budget'",
         "'plan_arrdel15_budget'",
         "xyChart(",
-        "anlamKutusu('tampon'",
         "politikaEtiketi(",
     ]:
         assert token in opt_js or token in read(WEB / "js" / "or-ortak.js"), token
+    # Politika/karşılaştırma tabloları ve keşifsel bölüm açılır (<details>) bölümlerdedir.
+    assert opt_js.count("'details'") >= 4
+    assert "class: 'fold explore'" in opt_js
     # "Eşit bütçede fark anlamlı değil" sonucu elle yazılmaz: aralık sıfırı dışlıyor mu, veriden hesaplanır.
     assert "plan_budget-b1_budget" in shared
     assert "ga95_alt > 0 || c.ga95_ust < 0" in shared
@@ -737,26 +811,133 @@ def test_range_slider_has_visible_value_and_aria_valuetext():
     assert "grid[i]" in shared
 
 
-def test_story_view_is_stepwise_data_driven_and_linked():
+def story_text_sections() -> dict[str, str]:
+    """Hikâye sekmesinin görünür metinleri: metin.js (TR) ve metin-en.js (EN) içindeki hero + hikaye bölümleri."""
+    tr = read(WEB / "js" / "metin.js")
+    en = read(WEB / "js" / "metin-en.js")
+    tr_part = tr[
+        tr.index("  hero: {") : tr.index(
+            "  // ------------------------------------------------------------------ sonuçlar"
+        )
+    ]
+    en_part = en[
+        en.index("  hero: {") : en.index(
+            "  // ------------------------------------------------------------------ results"
+        )
+    ]
+    return {"tr": tr_part, "en": en_part}
+
+
+def story_sources() -> dict[str, str]:
+    return {
+        "story.js": read(WEB / "js" / "views" / "story.js"),
+        "story-gorseller.js": read(WEB / "js" / "story-gorseller.js"),
+    }
+
+
+def test_story_hero_is_plain_and_has_no_hand_written_numbers():
+    story = read(WEB / "js" / "views" / "story.js")
+    for token in ["story-steps", "REPO_URL", "rel: 'noopener'", "t.kapsam(", "t.soru("]:
+        assert token in story, token
+    en = read(WEB / "js" / "metin-en.js")
+    assert "How well can public data predict whether a US flight will be late" in en
+    assert "yuru: 'Walk through it'" in en and "kod: 'Code on GitHub'" in en
+    # Her sayı veriden: görünür metinlerde rakam yok (metinler işlevdir ve değerleri parametre olarak alır).
+    for lang, text in story_text_sections().items():
+        visible = re.sub(r"\$\{[^}]*\}", "", text)
+        visible = re.sub(r"//[^\n]*", "", visible)
+        visible = re.sub(r"\b[A-Za-z_]+\d+\w*", "", visible)  # identifiers such as p50, t2, b1 are not numbers
+        assert not re.search(r"\d", visible), (lang, re.search(r".{30}\d.{10}", visible))
+    for name, text in story_sources().items():
+        assert not re.search(r"toFixed\(|toLocaleString\(", text), name
+
+
+def test_story_has_no_question_answer_pattern_and_no_precision_recall():
+    """Terimler ilk geçtikleri cümlede ara açıklamayla anlatılır; "X nedir?" kalıbı ve tanım kutusu yoktur."""
+    qa = re.compile(r"nedir\?|ne demek|\bPeki\b|What is\b|What(?:'|’)s an?\b|\bWhat are\b", re.IGNORECASE)
+    for lang, text in story_text_sections().items():
+        assert not qa.search(text), (lang, qa.search(text).group(0) if qa.search(text) else "")
+    for name, text in story_sources().items():
+        assert not qa.search(text), name
+    # Kesinlik/duyarlılık ve modeller arası "kaçını yakaladı" karşılaştırması hikâyede yok (eşikler farklı).
+    banned = re.compile(r"precision|recall|kesinlik|duyarl[ıi]l[ıi]k|f1", re.IGNORECASE)
+    for lang, text in story_text_sections().items():
+        assert not banned.search(text), (lang, banned.search(text).group(0) if banned.search(text) else "")
+    story = read(WEB / "js" / "views" / "story.js")
+    assert not re.search(r"'(?:precision|recall|f1)'", story)
+
+
+def test_story_slides_are_ten_and_each_has_a_figure_with_title_and_description():
+    story = read(WEB / "js" / "views" / "story.js")
+    for n in range(1, 11):
+        assert re.search(rf"step\(\s*{n},", story) or f"unavailable({n})" in story, n
+    assert story.count("function slide") == 9 and "async function buildTry" in story
+    # Her grafik çağrısının yakınında başlık ve açıklama (title/desc) verilir.
+    for name, text in story_sources().items():
+        for call in ("barChart(", "columnChart(", "xyChart(", "stackedBar(", "pictograph(", "bufferDiagram("):
+            for match in re.finditer(re.escape(call), text):
+                if text[max(0, match.start() - 16) : match.start()].endswith("function "):
+                    continue
+                window = text[match.start() : match.start() + 1600]
+                assert "title" in window and "desc" in window, (name, call)
+    gorseller = read(WEB / "js" / "story-gorseller.js")
+    assert gorseller.count("o.title, o.desc") == 2 and "o.text.title, o.text.desc" in gorseller
+    assert story.count("figure(") >= 9
+    # Dar ekranda daha az eksen etiketi.
+    assert "tickCount: width < 480" in story and "tickCount: narrow" in story
+    # Tampon şeması örnek diye işaretlidir.
+    assert "ornek:" in read(WEB / "js" / "metin.js") and "Illustration" in read(WEB / "js" / "metin-en.js")
+
+
+def test_story_view_is_data_driven_and_linked():
     story = read(WEB / "js" / "views" / "story.js")
     for token in [
+        # 1. sorun
+        "'yayginlik'",
+        "ozet.kapsam.test_ucus_sayisi",
+        # 2. saat bloğu ve olay günü
+        "b.boyut === 'saat_blogu' && b.model === 'lgbm_T2'",
+        "'olay_gunu'",
+        # 3-4. risk grupları
+        "e.gorev === 'arrdel15' && e.model === 'lgbm_T2'",
+        "gozlenen_oran",
+        "ortalama_tahmin",
+        "maxGap",
+        # 5. hava
+        "metricOf(ozet, 'arrdel15', model, 'roc_auc')",
+        "'T2-plan'",
+        "base: COIN_FLIP",
+        # 7. ödünleşim
+        "'arrdel15_orani'",
+        "'kullanilmayan_dk'",
+        "nearestIndex(grid, 0.8)",
+        "tauSlider(",
+        "T.tamponUyari",
+        "stackedBar(",
+        # 8. eşit bütçe
+        "equalBudget(opt)",
+        "'plan_budget'",
+        "'b1_budget'",
+        # 10. uçuş seç
         "pictograph(",
         "loadRoutes(",
-        "loadHava(",
-        "loadOptimizasyon(",
         "kantil_conf_dk",
         "kantil_dk",
         "gozlenen_arrdel15_orani",
         "tahmin_arrdel15_orani",
-        "equalBudgetSentence",
-        "'kaldi'",
-        "`#routes/${sel.origin}`",
-        "MORE = ['overview', 'airports', 'routes', 'optimization', 'calibration', 'weather', 'errors', 'about', 'sozluk']",
+        "`#explore/${sel.origin}`",
+        "loadHata(",
+        "loadKalibrasyon(",
+        "loadHava(",
+        "loadOptimizasyon(",
     ]:
         assert token in story, token
-    # Altı adım.
-    for n in range(1, 7):
-        assert re.search(rf"step\(\s*{n},", story), n
+    # Her slaytın sonunda ilgili teknik sekmeye "Ayrıntılar" bağlantısı; dürüst sınırlar bağlantısı Sonuçlar'a.
+    assert len(re.findall(r"details\('#", story)) >= 8
+    for target in ("#results", "#method/errors", "#method/calibration", "#method/weather", "#buffers"):
+        assert f"details('{target}')" in story, target
+    assert "href: '#results'" in story
+    # Hikâyede elle yazılmış havayolu/sıralama yok; metin dosyalarındaki Story bölümleri iki dilli.
     charts = read(WEB / "js" / "charts.js")
     assert "export function pictograph" in charts
     assert "i < 100" in charts, "100 ikonlu birim grafiği"
@@ -765,34 +946,66 @@ def test_story_view_is_stepwise_data_driven_and_linked():
     assert ".picto .dot.late" in css and ".picto .dot.ok" in css
 
 
-def test_technical_tabs_start_with_a_meaning_box():
-    boxes = {
-        "overview": "genel",
-        "airports": "havalimanlari",
-        "routes": "rotalar",
-        "optimization": "tampon",
-        "calibration": "kalibrasyon",
-        "weather": "hava",
-        "errors": "hata",
-    }
+def test_no_what_does_this_mean_boxes_and_method_uses_folds():
+    """ "Ne anlama geliyor?" kutuları kalktı; Yöntem'deki bölümler açılır (<details>) ve başlıkta özet taşır."""
     tr = text_paths("metin.js", "TR")
-    for name, key in boxes.items():
-        text = read(WEB / "js" / "views" / f"{name}.js")
-        assert f"anlamKutusu('{key}'" in text, name
-        assert f"anlam.{key}" in tr, key
-        # Kutu, bölüm gövdesinin ilk öğesidir.
-        assert re.search(r"fill\(\s*root,\s*anlamKutusu\(", text), name
-    assert tr["anlam.baslik"][1].startswith("'Ne anlama geliyor?'")
-    assert "'What does this mean?'" in read(WEB / "js" / "metin-en.js")
+    assert not [p for p in tr if p == "anlam" or p.startswith("anlam.")]
+    for path in js_files():
+        assert "anlamKutusu" not in read(path), path.name
+    method = read(WEB / "js" / "views" / "method.js")
+    assert "el('details'" in method and "toggle" in method, "bölümler ilk açıldığında yüklenir"
+    for section in ("kalibrasyon", "hava", "hatalar", "sinirlar", "kaynaklar", "notlar"):
+        assert f"yontem.{section}.baslik" in tr and f"yontem.{section}.ozet" in tr, section
+    # Hakkında kutusu Yöntem sayfasının sonunda; yazar yalnızca "Slmnbal".
+    assert "aboutBox()" in method and "AUTHOR" in method
+    assert "export const AUTHOR = 'Slmnbal';" in read(WEB / "js" / "metin.js")
+    metin = read(WEB / "js" / "metin.js")
+    assert "Bu projeyi veri analizinden veri bilimine geçerken yaptım." in metin
+    assert "I built this project while moving from data analysis into data science." in read(WEB / "js" / "metin-en.js")
+
+
+def test_linkedin_link_is_only_drawn_when_the_url_is_set():
+    yazar = read(WEB / "js" / "yazar.js")
+    assert "[LINKEDIN_URL, t.linkedin]" in yazar
+    assert "url ? safeHttpsUrl(url) : null" in yazar and ".filter((l) => l.href)" in yazar, "boş adres çizilmez"
+    assert "rel: 'noopener'" in yazar
+    url = linkedin_url()
+    assert url == "" or LINKEDIN_RE.match(url), url
+    assert "linkedin: 'LinkedIn'" in read(WEB / "js" / "metin.js"), "bağlantı metni yalnızca LinkedIn"
+    assert "export const GITHUB_URL = 'https://github.com/Slmnbal';" in read(WEB / "js" / "metin.js")
+    assert "export const REPO_URL = 'https://github.com/Slmnbal/flight-delay-forecasting';" in read(
+        WEB / "js" / "metin.js"
+    )
+    # E-posta yok.
+    for path in source_files():
+        assert "mailto:" not in read(path), path.name
+
+
+def test_no_developer_facing_meta_sentences():
+    for path in source_files():
+        text = read(path)
+        for phrase in META_PHRASES:
+            assert phrase not in text, (path.name, phrase)
+    # Kullanıcıya görünen metin dosyalarında geliştirici/veri dosyası atıfları yok.
+    for name in ("metin.js", "metin-en.js", "sozluk-terimleri.js"):
+        text = read(WEB / "js" / name).lower()
+        for word in DEV_WORDS:
+            assert word not in text, (name, word)
+    assert "data file" not in read(WEB / "index.html").lower()
 
 
 # --------------------------------------------------------------------------- dil ve metin
 
 
-def test_site_language_is_turkish_by_default(html):
-    assert re.search(r"[çğışöüÇĞİŞÖÜ]", html), "statik HTML Türkçe karakterler içermeli"
-    for english in ["Skip to content", "Overview", "Airports", "Loading", "Weather experiment", "Error analysis"]:
-        assert english not in html, english
+def test_site_language_is_english_by_default(html):
+    """Varsayılan dil İngilizce: <html lang>, statik metinler ve metin.js başlangıcı; TR düğmeyle seçilir."""
+    assert not re.search(r"[çğışöüÇĞİŞÖÜ]", re.sub(r"<!--.*?-->", "", html, flags=re.S).replace("Türkçe", "")), (
+        "statik HTML'de Türkçe metin yok (düğme etiketi hariç)"
+    )
+    for english in ["Skip to content", "Story", "Results", "Explore", "Buffers (OR)", "Method", "Glossary"]:
+        assert english in html, english
+    metin = read(WEB / "js" / "metin.js")
+    assert "let current = 'en';" in metin and "setLang('en');" in metin
     for path in js_files():
         if path.name in ("metin-en.js", "sozluk-terimleri.js"):  # bilingual by design
             continue  # İngilizce metinler yalnızca bu dosyadadır
@@ -863,15 +1076,18 @@ def test_site_titles_exist_for_every_view(tr_paths, en_paths):
 def test_language_switch_is_wired(html, tags):
     buttons = [a for t, a in tags if t == "button" and a.get("data-lang")]
     assert {b["data-lang"] for b in buttons} == {"tr", "en"}
-    assert [b.get("aria-pressed") for b in buttons] == ["true", "false"], "varsayılan dil Türkçe"
-    assert [b.get("aria-label") for b in buttons] == ["Türkçe", "English"]
+    by_lang = {b["data-lang"]: b for b in buttons}
+    assert by_lang["en"].get("aria-pressed") == "true" and by_lang["tr"].get("aria-pressed") == "false", (
+        "varsayılan dil İngilizce"
+    )
+    assert by_lang["tr"].get("aria-label") == "Türkçe" and by_lang["en"].get("aria-label") == "English"
     assert "TR" in html and "EN" in html
     main_js = read(WEB / "js" / "main.js")
-    # Seçim sırası: ?lang=, localStorage('lang'), Türkçe; localStorage her yerde try/catch içinde.
+    # Seçim sırası: ?lang=, localStorage('lang'), İngilizce; localStorage her yerde try/catch içinde.
     assert "URLSearchParams(window.location.search).get('lang')" in main_js
     assert "window.localStorage.getItem('lang')" in main_js
     assert "window.localStorage.setItem('lang', lang)" in main_js
-    assert "setLang(fromUrl || readStoredLang() || 'tr')" in main_js
+    assert "setLang(fromUrl || readStoredLang() || 'en')" in main_js
     assert "setAttribute('lang', lang)" in main_js, "<html lang> güncellenir"
     for func in ("readLangParam", "readStoredLang", "storeLang"):
         body = main_js[main_js.index(f"function {func}") :]
@@ -882,6 +1098,8 @@ def test_language_switch_is_wired(html, tags):
     # Seçimler dil değişince korunur.
     assert "const memory = " in read(WEB / "js" / "views" / "story.js")
     assert "const memory = " in read(WEB / "js" / "views" / "optimization.js")
+    # TR düğmesi ?lang=tr ile de seçilir.
+    assert "value === 'en' || value === 'tr' ? value : null" in main_js
 
 
 def test_numbers_are_formatted_per_language():
@@ -904,15 +1122,17 @@ def test_all_ui_text_lives_in_metin_module(tr_paths):
     assert "const TR = {" in metin and "export const T = {};" in metin
     for key in [
         "bolumler",
+        "hero",
         "genel",
+        "kesfet",
         "havalimani",
         "rota",
         "kal",
         "hava",
         "hataAnalizi",
-        "hakkinda",
+        "yontem",
+        "hakkimda",
         "sozluk",
-        "anlam",
         "hikaye",
         "or",
         "dil",
@@ -1072,6 +1292,272 @@ def test_map_uses_state_layer_and_label_placement():
     assert "loadEyaletler" in airports
     data_js = read(WEB / "js" / "data.js")
     assert "() => null" in data_js, "eyalet dosyası yüklenemezse harita ızgarayla çalışmalı"
+
+
+# --------------------------------------------------------------------------- simgeler, palet, Keşfet yenilikleri
+
+REQUIRED_ICONS = [
+    "plane",  # kalkış
+    "clock",  # saat bloğu, tipik rötar
+    "cloud",  # hava
+    "buffer",  # tampon (kum saati)
+    "pin",  # havalimanı
+    "route",  # rota yayı
+    "chart",
+    "shield",  # geçti, güvenilir
+    "alert",  # geçmedi, riskli
+    "info",
+    "calendar",  # mevsim
+    "target",
+]
+THEME_TOKENS = [
+    "--text", "--muted", "--link", "--surface", "--surface-2", "--bg", "--accent",
+    "--good", "--warn", "--bad", "--neutral",
+    "--risk-1", "--risk-2", "--risk-3", "--risk-4", "--risk-5",
+    "--c-a", "--c-b", "--c-c", "--c-d", "--c-e", "--c-f",
+    "--sea", "--land", "--land-line",
+    "--pass-bg", "--pass-fg", "--fail-bg", "--fail-fg", "--na-bg", "--na-fg",
+]  # fmt: skip
+
+
+def css_blocks() -> dict[str, dict[str, str]]:
+    """Açık tema (:root), koyu tema (medya sorgusu) ve koyu tema (data-theme) değişken tanımları."""
+    css = read(WEB / "css" / "style.css")
+    heads = {
+        "light": ":root {",
+        "dark-media": ':root:not([data-theme="light"]) {',
+        "dark-attr": ':root[data-theme="dark"] {',
+    }
+    out: dict[str, dict[str, str]] = {}
+    for name, head in heads.items():
+        start = css.index(head) + len(head)
+        body = css[start : css.index("}", start)]
+        out[name] = dict(re.findall(r"(--[\w-]+):\s*([^;]+);", body))
+    return out
+
+
+def resolve(tokens: dict[str, str], name: str, base: dict[str, str]) -> str:
+    value = tokens.get(name) or base[name]
+    while value.startswith("var("):
+        ref = value[4:-1].strip()
+        value = tokens.get(ref) or base[ref]
+    return value
+
+
+def luminance(hex_color: str) -> float:
+    rgb = [int(hex_color[i : i + 2], 16) / 255 for i in (1, 3, 5)]
+    lin = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in rgb]
+    return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+
+
+def contrast(a: str, b: str) -> float:
+    hi, lo = sorted((luminance(a), luminance(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+def hue(hex_color: str) -> float:
+    import colorsys
+
+    r, g, b = (int(hex_color[i : i + 2], 16) / 255 for i in (1, 3, 5))
+    return colorsys.rgb_to_hsv(r, g, b)[0] * 360
+
+
+def test_icon_set_is_complete_and_decorative():
+    src = read(WEB / "js" / "simgeler.js")
+    for name in REQUIRED_ICONS:
+        assert re.search(rf"^  {name}: \[", src, re.MULTILINE), name
+    assert "viewBox: '0 0 24 24'" in src
+    assert "'stroke-width': 1.75" in src
+    assert "stroke: 'currentColor'" in src
+    assert "'aria-hidden': 'true'" in src, "simgeler süstür; metinli etiketin yanında durur"
+    assert not re.search(r"#[0-9A-Fa-f]{3,6}\b", src), "simgelerde renk kodu yok; currentColor kullanılır"
+    # Simgeler gerçekten kullanılıyor: sekmeler, hikâye başlıkları, kabul ölçütü rozetleri, Keşfet kartları.
+    assert "data-ico" in read(WEB / "index.html") and "[data-ico]" in read(WEB / "js" / "main.js")
+    assert "STEP_ICON" in read(WEB / "js" / "views" / "story.js")
+    overview = read(WEB / "js" / "views" / "overview.js")
+    assert "icon(verdict.symbol" in overview and "'✓'" not in overview and "'✕'" not in overview
+    assert "icon(" in read(WEB / "js" / "views" / "rota-ozeti.js")
+
+
+def test_palette_tokens_exist_in_light_and_dark_themes():
+    blocks = css_blocks()
+    for name, tokens in blocks.items():
+        if name == "light":
+            for token in THEME_TOKENS:
+                assert token in tokens, (name, token)
+        else:
+            # Koyu tema, açık temadan farklı olması gereken her değeri yeniden tanımlar.
+            for token in THEME_TOKENS:
+                assert token in tokens, (name, token)
+    assert blocks["dark-media"] == blocks["dark-attr"] or {k: v.strip() for k, v in blocks["dark-media"].items()} == {
+        k: v.strip() for k, v in blocks["dark-attr"].items()
+    }, "iki koyu tema tanımı aynı değerleri taşımalı"
+
+
+def test_risk_scale_is_sequential_and_has_no_green_red_pair():
+    blocks = css_blocks()
+    for name, tokens in blocks.items():
+        stops = [resolve(tokens, f"--risk-{i}", blocks["light"]).strip().upper() for i in range(1, 6)]
+        assert all(re.fullmatch(r"#[0-9A-F]{6}", s) for s in stops), (name, stops)
+        assert len(set(stops)) == 5
+        # Yeşil aralığı (tonu 70-170 derece) yok: yeşil-kırmızı ikilisi renk körlüğünde ayırt edilemez.
+        for s in stops:
+            assert not 70 <= hue(s) <= 170, (name, s, hue(s))
+        # Açıklıkları adım adım azalır (en düşük risk en açık): renk körü için de sıralı okunur.
+        lums = [luminance(s) for s in stops]
+        assert lums == sorted(lums, reverse=True) and len(set(lums)) == 5, (name, lums)
+    # Kategorik seriler: en az 4 ayrı renk.
+    for name, tokens in blocks.items():
+        cats = {resolve(tokens, f"--c-{k}", blocks["light"]).strip().upper() for k in "abcdef"}
+        assert len(cats) >= 4, name
+
+
+def test_text_colours_meet_wcag_aa_in_both_themes():
+    blocks = css_blocks()
+    base = blocks["light"]
+    for name, tokens in blocks.items():
+        surfaces = [resolve(tokens, s, base) for s in ("--bg", "--surface", "--surface-2")]
+        for token in ("--text", "--muted", "--link", "--good", "--warn", "--bad", "--neutral"):
+            fg = resolve(tokens, token, base)
+            for bg in surfaces:
+                assert contrast(fg, bg) >= 4.5, (name, token, fg, bg, round(contrast(fg, bg), 2))
+        for kind in ("pass", "fail", "na"):
+            fg = resolve(tokens, f"--{kind}-fg", base)
+            bg = resolve(tokens, f"--{kind}-bg", base)
+            assert contrast(fg, bg) >= 4.5, (name, kind, round(contrast(fg, bg), 2))
+
+
+def test_explore_reads_destination_points_and_they_are_in_the_manifest():
+    data_js = read(WEB / "js" / "data.js")
+    assert "varisNoktalari: 'varis-noktalari.json'" in data_js
+    assert "loadVarisNoktalari" in read(WEB / "js" / "views" / "explore.js")
+    manifest = json.loads(read(VERI / "manifest.json"))
+    entries = {e["yol"]: e for e in manifest["dosyalar"]}
+    assert "veri/varis-noktalari.json" in entries
+    assert entries["veri/varis-noktalari.json"]["dosya_turu"] == "varis_noktalari"
+    doc = json.loads(read(VERI / "varis-noktalari.json"))
+    assert doc["dosya_turu"] == "varis_noktalari" and doc.get("ornek") is False
+    for point in doc["noktalar"]:
+        assert set(point) == {"iata", "ad", "enlem", "boylam"}
+    # Koordinatı olanlarla olmayanlar çakışmaz.
+    assert not {p["iata"] for p in doc["noktalar"]} & set(doc["eksik"])
+
+
+def test_explore_calculation_helpers_are_pure_functions():
+    src = read(WEB / "js" / "kesfet-hesap.js")
+    for name in [
+        "riskClass",
+        "riskLevel",
+        "equalEdges",
+        "weightedMean",
+        "weightedMedian",
+        "baseCells",
+        "destTotals",
+        "blockRates",
+        "seasonRate",
+        "typicalDelay",
+        "summarize",
+        "arcItems",
+        "arcWidth",
+        "arcGeometry",
+    ]:
+        assert f"export function {name}(" in src, name
+    assert "import " not in src, "saf işlevler: hiçbir şey içe aktarmaz (DOM ve ağ yok)"
+    assert "document" not in src and "fetch" not in src
+    # Risk sınıfı sınırları ve rozet eşikleri tutarlı: düşük < ikinci sınır, yüksek >= son sınır.
+    edges = [float(x) for x in re.search(r"RISK_EDGES = Object\.freeze\(\[([^\]]+)\]\)", src).group(1).split(",")]
+    assert edges == sorted(edges) and len(edges) == 4
+    low = float(re.search(r"RISK_LOW = ([0-9.]+);", src).group(1))
+    high = float(re.search(r"RISK_HIGH = ([0-9.]+);", src).group(1))
+    assert low == edges[1] and high == edges[3] and low < high
+    assert re.search(r"MIN_FLIGHTS = 200;", src), "en az uçuş eşiği 200 (metinde belirtilir)"
+    # Yay kalınlığı uçuş sayısıyla, yay rengi geç varış oranıyla belirlenir; harita ikisini de bu işlevlerle kurar.
+    map_js = read(WEB / "js" / "map.js")
+    assert "arcWidth(item.n" in map_js and "riskClass(item.rate" in map_js and "arcGeometry(" in map_js
+    # Özet kartları ve yaylar aynı rota hücrelerinden gelir.
+    explore = read(WEB / "js" / "views" / "explore.js")
+    assert "arcItems(" in explore and "buildCards(" in explore and "loadRoutes(" in explore
+
+
+def test_route_table_uses_plain_delay_names_with_small_tags():
+    routes = read(WEB / "js" / "views" / "routes.js")
+    for key in ("tb.p50", "tb.p80", "tb.p95", "tb.p80Sinir", "tb.p95Sinir"):
+        assert key in routes, key
+    for tag in ("'P50'", "'P80'", "'P95'"):
+        assert tag in routes, tag
+    for src, expected in {
+        "metin-en.js": [
+            "p50: 'Typical delay'",
+            "p80: 'Bad day'",
+            "p95: 'Worst case'",
+            "Bad-day limit (adjusted)",
+            "8 in 10 flights arrive within this time",
+            "19 in 20 flights arrive within this time",
+            "half of flights arrive within this time",
+        ],
+        "metin.js": [
+            "p50: 'Tipik rötar'",
+            "p80: 'Kötü gün'",
+            "p95: 'En kötü durum'",
+            "Kötü gün sınırı (ayarlı)",
+            "uçuşların yarısı bu süre içinde varır",
+            "uçuşların 10’da 8’i bu süre içinde varır",
+            "uçuşların 20’de 19’u bu süre içinde varır",
+        ],
+    }.items():
+        text = read(WEB / "js" / src)
+        for phrase in expected:
+            assert phrase in text, (src, phrase)
+    # Geç varış oranı: renk + metin + simge (rozet) ve küçük çubuk; kantiller küçük çubuk; mobilde ilk sütun yapışkan.
+    assert (
+        "risk-badge" in routes
+        and "icon(LEVEL_ICON[level]" in routes
+        and "cbar-fill" in routes
+        and "qbar-fill" in routes
+    )
+    assert "sticky: true" in routes
+    css = read(WEB / "css" / "style.css")
+    assert "table.sticky-first th:first-child" in css and "overflow-x: auto" in css
+    # Önerilen tampon sütunu simgeli; uyarı tek cümle olarak tablonun üstünde.
+    assert "icon('buffer'" in routes and "T.tamponUyari" in routes
+
+
+def test_explore_texts_have_no_what_is_pattern_and_arcs_note_is_data_driven():
+    qa = re.compile(r"nedir\?|ne demek|\bPeki\b|What is\b|What(?:'|’)s an?\b|\bWhat are\b", re.IGNORECASE)
+    for path in ("kesfet", "havalimani", "rota"):
+        for lang_file, const in (("metin.js", "TR"), ("metin-en.js", "EN")):
+            for key, (_kind, text) in text_paths(lang_file, const).items():
+                if key == path or key.startswith(f"{path}."):
+                    assert not qa.search(text), (lang_file, key)
+    en = read(WEB / "js" / "metin-en.js")
+    assert (
+        "destinations without coordinates are not drawn" in en and "destination without coordinates is not drawn" in en
+    )
+    airports = read(WEB / "js" / "views" / "airports.js")
+    assert "t.yayEksik(fmtInt(arcState.missing)" in airports, "N, veriden (varis-noktalari eksik listesi) gelir"
+    # Yayımlanmayan havalimanlarında (DAL, MDW) kartlar havalimanı düzeyi oran göstermez.
+    cards = read(WEB / "js" / "views" / "rota-ozeti.js")
+    assert "hidden ? k.blok.detaySiz" in cards and "k.varis.satirSiz" in cards and "k.yalnizca" in cards
+
+
+def test_map_is_a_single_svg_with_arcs_tooltip_and_keyboard_support():
+    map_js = read(WEB / "js" / "map.js")
+    for token in [
+        "arc-line",
+        "arc-case",
+        "arc-hit",
+        "showTip(",
+        "ArrowRight",
+        "ArrowLeft",
+        "role: 'group'",
+        "tabindex",
+    ]:
+        assert token in map_js, token
+    css = read(WEB / "css" / "style.css")
+    for token in [".arc-line", ".arc:focus", ".risk-strip", "--sea", "--land", ".stat-card", ".risk-badge"]:
+        assert token in css, token
+    # Izgara çok soluk ve kara ızgaranın üstünde: önce ızgara, sonra eyaletler çizilir.
+    assert map_js.index("root.append(graticule)") < map_js.index("root.append(states)")
 
 
 def test_site_files_stay_small():

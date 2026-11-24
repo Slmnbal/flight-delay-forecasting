@@ -1,47 +1,24 @@
-// Genel bakış: sorun, öne çıkan sonuçlar, kabul ölçütleri K1-K7, bu sayılara nasıl güvenmeli.
+// Sonuçlar (Results sekmesi; results.js bu modülü kullanır): başlık tablosu, kabul ölçütleri K1-K7,
+// "neler işe yaramadı" kutusu ve açılır "bu sayılara ne kadar güvenmeli" bölümü.
 
-import { el, fill, sozlukLink, anlamKutusu } from '../dom.js';
+import { el, fill, sozlukLink } from '../dom.js';
 import { loadOzet, loadHava, metricOf } from '../data.js';
-import { fmtMetricValue, fmtInterval, fmtInt, fmtPct, fmtPeriod, fmtPlain, NA } from '../fmt.js';
+import { fmtMetricValue, fmtInterval, fmtPct, NA } from '../fmt.js';
 import { T } from '../metin.js';
-import { OR_NOTE_PREFIX, notBul, projeBaslik, projeAciklama, modelAciklamasi, kabulAciklamasi } from '../yerel.js';
-
-// Optimizasyon bulgusu, veri dosyasındaki notlar arasından OR_NOTE_PREFIX önekiyle bulunur (yerel.js;
-// sayfaya elle yazılmaz). İngilizce metin, aynı sıradaki İngilizce nottan gelir.
+import { modelAciklamasi, kabulAciklamasi } from '../yerel.js';
+import { icon } from '../simgeler.js';
 
 // Etiketler dile göre okunur (dil değişince görünüm yeniden kurulur).
 const verdictOf = (sonuc) => {
   const k = T.genel.kabul;
-  if (sonuc === 'gecti') return { label: k.gecti, cls: 'pass', symbol: '✓' };
-  if (sonuc === 'kaldi') return { label: k.kaldi, cls: 'fail', symbol: '✕' };
-  return { label: k.degerlendirilmedi, cls: 'na', symbol: '–' };
+  if (sonuc === 'gecti') return { label: k.gecti, cls: 'pass', symbol: 'shield' };
+  if (sonuc === 'kaldi') return { label: k.kaldi, cls: 'fail', symbol: 'alert' };
+  return { label: k.degerlendirilmedi, cls: 'na', symbol: 'dash' };
 };
 
 export async function mount(root) {
   const [ozet, hava] = await Promise.all([loadOzet(), loadHava()]);
-  fill(root, anlamKutusu('genel', ['b1', 'kabul-olcutleri']), hero(ozet), headline(ozet, hava), acceptance(ozet), bufferFinding(ozet), trust(ozet));
-}
-
-function hero(ozet) {
-  const k = ozet.kapsam;
-  const o = T.genel.olgular;
-  const saat = fmtPlain(ozet.bilgi_zamani_saat);
-  const facts = [
-    [o.havalimani, fmtInt(k.havalimani_sayisi)],
-    [o.veriDonemi, fmtPeriod(k.veri_donemi)],
-    [o.testDonemi, fmtPeriod(ozet.bolme.test)],
-    [o.testUcus, fmtInt(k.test_ucus_sayisi)],
-    [o.testGun, fmtInt(k.test_gun_sayisi)],
-    [o.havaZamani, o.havaDegeri(saat)],
-  ];
-  return el(
-    'section',
-    { class: 'hero', 'aria-labelledby': 'ov-hero' },
-    el('h3', { id: 'ov-hero' }, projeBaslik(ozet)),
-    el('p', { class: 'lede' }, T.genel.kahramanSoru(saat)),
-    el('p', { class: 'method' }, projeAciklama(ozet)),
-    el('dl', { class: 'facts' }, facts.map(([term, value]) => el('div', null, el('dt', null, term), el('dd', null, value)))),
-  );
+  fill(root, el('p', { class: 'lede' }, T.genel.giris), headline(ozet, hava), acceptance(ozet), trust(ozet));
 }
 
 function boardRow(label, value, interval, reference) {
@@ -94,21 +71,7 @@ function headline(ozet, hava) {
         el('tbody', null, rows),
       ),
     ),
-    el(
-      'p',
-      { class: 'note' },
-      p.not,
-      ' ',
-      T.ortak.sozluk,
-      sozlukLink('guven-araligi'),
-      ', ',
-      sozlukLink('roc-auc'),
-      ', ',
-      sozlukLink('b1'),
-      ', ',
-      sozlukLink('citl'),
-      '.',
-    ),
+    el('p', { class: 'note' }, p.not, ' ', T.ortak.sozluk, sozlukLink('roc-auc'), ', ', sozlukLink('b1'), ', ', sozlukLink('citl'), '.'),
   );
 }
 
@@ -128,12 +91,10 @@ function acceptance(ozet) {
         { class: item.sonuc === 'kaldi' ? 'is-fail' : null },
         el('span', { class: 'cid' }, item.olcut),
         el('span', { class: 'ctitle' }, kabulAciklamasi(ozet, item)),
-        el('span', { class: `badge ${verdict.cls}` }, el('span', { 'aria-hidden': 'true' }, `${verdict.symbol} `), verdict.label),
+        el('span', { class: `badge ${verdict.cls}` }, icon(verdict.symbol, { size: 16 }), verdict.label),
       ),
     );
   }
-
-  const blocks = [el('h3', { id: 'ov-accept' }, k.baslik), el('p', null, summary), list];
 
   const notes = [];
   if (failed.some((x) => x.olcut === 'K5')) {
@@ -146,24 +107,13 @@ function acceptance(ozet) {
     const b1 = metricOf(ozet, 'iptal', 'B1', 'pr_auc');
     notes.push(el('p', null, el('strong', null, k.k6), k.k6Metin(fmtMetricValue(plan), fmtMetricValue(b1))));
   }
-  if (notes.length) blocks.push(el('div', { class: 'notice warn stack', role: 'note' }, notes));
-  return el('section', { 'aria-labelledby': 'ov-accept' }, blocks);
-}
-
-function bufferFinding(ozet) {
-  const t = T.genel.tampon;
-  const orNote = notBul(ozet, OR_NOTE_PREFIX);
   return el(
     'section',
-    { 'aria-labelledby': 'ov-buffer' },
-    el('h3', { id: 'ov-buffer' }, t.baslik),
-    el(
-      'div',
-      { class: 'notice stack' },
-      orNote ? el('p', null, orNote) : el('p', { class: 'muted' }, t.notYok),
-      el('p', null, t.varsayim),
-      el('p', null, el('a', { href: '#optimization' }, t.ayrintiLink)),
-    ),
+    { 'aria-labelledby': 'ov-accept', class: 'stack' },
+    el('h3', { id: 'ov-accept' }, k.baslik),
+    el('p', null, summary),
+    notes.length ? el('div', { class: 'notice warn stack', role: 'note' }, el('h4', { class: 'with-ico' }, icon('alert'), el('span', null, k.kaldiBaslik)), notes) : null,
+    list,
   );
 }
 
@@ -189,12 +139,12 @@ function trust(ozet) {
   );
   const modelList = el('dl', { class: 'stack' }, ozet.modeller.flatMap((md) => [el('dt', null, el('strong', null, md.kimlik)), el('dd', null, modelAciklamasi(ozet, md))]));
   return el(
-    'section',
-    { 'aria-labelledby': 'ov-trust' },
-    el('h3', { id: 'ov-trust' }, g.baslik),
+    'details',
+    { class: 'fold' },
+    el('summary', null, g.baslik),
     el(
       'div',
-      { class: 'two-col' },
+      { class: 'two-col fold-body' },
       el('div', { class: 'stack' }, el('ul', { class: 'points' }, g.noktalar.map(([head, text]) => el('li', null, el('strong', null, head), text)))),
       el('div', { class: 'stack' }, split, el('h4', null, g.modeller), modelList),
     ),

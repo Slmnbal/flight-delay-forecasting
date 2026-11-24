@@ -1,12 +1,11 @@
-// Tampon optimizasyonu (OR): politikalar test döneminde değerlendirilir. Maliyet oranı seçici (τ ızgarası),
-// politika ve karşılaştırma tabloları, bütçe eğrisi, "aynı bütçede plan modeli ile B1" farkı ve ana
-// sonuçlardan ayrı tutulan keşifsel bölüm. Anlamlılık kararları veri dosyasındaki %95 aralıktan okunur.
+// Tampon (OR): maliyet oranı kaydırıcısı ve kısa bulgu, bütçe eğrisi; politika ve karşılaştırma tabloları,
+// keşifsel bölüm ve varsayımlar açılır bölümlerdedir. Anlamlılık kararları %95 aralıktan okunur.
 
-import { el, fill, selectField, sozlukLink, anlamKutusu } from '../dom.js';
+import { el, fill, selectField, sozlukLink } from '../dom.js';
 import { loadOptimizasyon, loadOzet } from '../data.js';
-import { fmtNum, fmtPct, fmtMin, fmtInt, fmtPlain, fmtRatio, NA, txt } from '../fmt.js';
+import { fmtNum, fmtPct, fmtMin, fmtPlain, fmtRatio, NA, txt } from '../fmt.js';
 import { T } from '../metin.js';
-import { OR_NOTE_PREFIX, notBul, optimizasyonNotlari, politikaEtiketi, kesifselEtiketi } from '../yerel.js';
+import { orBulgusu, optimizasyonNotlari, politikaEtiketi, kesifselEtiketi } from '../yerel.js';
 import { xyChart, legend, niceDomain, mountChart } from '../charts.js';
 import { rowOf, excludesZero, hasInterval, sortedGrid, nearestIndex, equalBudget, equalBudgetSentence, tauSlider } from '../or-ortak.js';
 
@@ -30,7 +29,7 @@ const EXPLORE_STYLES = [
 /** Ölçütün türüne göre değer biçimi (oran: yüzde, dakika, maliyet: sayı). */
 function fmtBy(ad, v, plus = false) {
   if (ad === 'arrdel15_orani' || ad === 'emilen_orani') {
-    // A difference of two rates is in percentage points, not percent.
+    // İki oranın farkı yüzde değil, yüzde puandır.
     if (plus) return v === null || v === undefined ? NA : `${fmtNum(v * 100, 1, true)} ${T.ortak.puan}`;
     return fmtPct(v, 1);
   }
@@ -59,34 +58,20 @@ export async function mount(root) {
   const [opt, ozet] = await Promise.all([loadOptimizasyon(), loadOzet()]);
   if (!Array.isArray(opt.tau_izgarasi) || !opt.tau_izgarasi.length) throw new Error(t.veriYok);
 
-  fill(
-    root,
-    anlamKutusu('tampon', ['blok-sure-tamponu', 'maliyet-orani', 'tampon-butcesi']),
-    problemSection(opt, ozet),
-    tauSection(opt),
-    budgetSection(opt),
-    exploratorySection(opt),
-  );
+  const tau = tauSection(opt);
+  fill(root, intro(opt, ozet), tau.top, budgetSection(opt), tau.folded, exploratorySection(opt), notesSection(opt));
 }
 
-// ---------------------------------------------------------------------- sorun ve varsayımlar
-function problemSection(opt, ozet) {
+// ---------------------------------------------------------------------- giriş ve bulgu
+function intro(opt, ozet) {
   const t = T.or;
-  const finding = notBul(ozet, OR_NOTE_PREFIX);
-  const notes = optimizasyonNotlari(opt);
-  const counts = opt.sayilar ? Object.keys(t.sayilar).map((key) => [t.sayilar[key], fmtInt(opt.sayilar[key])]) : [];
+  const finding = orBulgusu(ozet);
   return el(
     'section',
-    { class: 'stack', 'aria-labelledby': 'or-problem' },
-    el('h3', { id: 'or-problem' }, t.problemBaslik),
-    el('p', null, t.problem),
-    counts.length ? el('dl', { class: 'facts' }, counts.map(([term, v]) => el('div', null, el('dt', null, term), el('dd', null, v)))) : null,
+    { class: 'stack' },
+    el('p', { class: 'lede' }, t.giris),
     finding ? el('p', { class: 'notice' }, el('strong', null, t.bulgu), finding) : el('p', { class: 'muted' }, t.bulguYok),
-    notes.length
-      ? el('div', { class: 'notice stack' }, el('p', null, el('strong', null, t.notlarBaslik), ' ', t.notlarGiris), el('ul', { class: 'points' }, notes.map((n) => el('li', null, n))))
-      : null,
-    el('div', { class: 'notice warn', role: 'note' }, el('strong', null, T.rota.uyariBaslik), T.genel.tampon.varsayim),
-    el('p', null, el('a', { href: '#routes' }, t.rotalarLink), ' ', T.ortak.sozluk, sozlukLink('newsvendor'), ', ', sozlukLink('lp-milp'), '.'),
+    el('p', { class: 'note', role: 'note' }, T.tamponUyari, ' ', T.ortak.sozluk, sozlukLink('newsvendor'), ', ', sozlukLink('maliyet-orani'), '.'),
   );
 }
 
@@ -95,7 +80,8 @@ function tauSection(opt) {
   const t = T.or;
   const grid = sortedGrid(opt);
   const index = memory.tau !== null && memory.tau < grid.length ? memory.tau : nearestIndex(grid, 0.8);
-  const out = el('div', { class: 'stack' });
+  const out = el('div', { class: 'stack fold-body' });
+  const summary = el('p', { class: 'fact', role: 'status', 'aria-live': 'polite' });
 
   function cmpLabel(id) {
     const [a, b] = id.split('-');
@@ -136,6 +122,9 @@ function tauSection(opt) {
     const g = grid[i];
     const kat = fmtRatio(g.maliyet_orani);
     const k = t.slider.kat(kat);
+    const none = rowOf(g.politikalar, 'none');
+    const plan = rowOf(g.politikalar, 'plan');
+    summary.textContent = txt(none && plan ? t.ozetCumle(kat, fmtPct(none.arrdel15_orani), fmtPct(plan.arrdel15_orani), fmtMin(plan.ek_tampon_dk)) : '');
     const policies = g.politikalar.map((r) => [
       politikaEtiketi(opt, r.kimlik),
       fmtMin(r.ek_tampon_dk),
@@ -163,13 +152,10 @@ function tauSection(opt) {
 
   const slider = tauSlider({ id: 'or-tau', grid, index, showTau: true, onChange: render });
   render(index);
-  return el(
-    'section',
-    { class: 'stack', 'aria-labelledby': 'or-tau-h' },
-    el('h3', { id: 'or-tau-h' }, t.tauBaslik),
-    slider.element,
-    out,
-  );
+  return {
+    top: el('section', { class: 'stack', 'aria-labelledby': 'or-tau-h' }, el('h3', { id: 'or-tau-h' }, t.tauBaslik), slider.element, summary),
+    folded: el('details', { class: 'fold' }, el('summary', null, t.politikalarBaslik), out),
+  };
 }
 
 // ---------------------------------------------------------------------- bütçe eğrisi
@@ -243,9 +229,10 @@ function budgetSection(opt) {
     fill(
       verdictBox,
       el('h4', null, t.esitBaslik),
-      el('p', null, t.esitGiris),
       el('p', { class: 'notice', role: 'status' }, equalBudgetSentence(eb)),
-      eb.total ? dataTable({ caption: t.esitCaption(metricName()), label: t.esitCaption(metricName()), head: [t.kolon.butce, T.hava.fark, T.hava.aralik, T.hava.sifiriDislar], rows: diffRows }) : null,
+      eb.total
+        ? el('details', { class: 'data-table' }, el('summary', null, t.tabloGoster), dataTable({ caption: t.esitCaption(metricName()), label: t.esitCaption(metricName()), head: [t.kolon.butce, T.hava.fark, T.hava.aralik, T.hava.sifiriDislar], rows: diffRows }))
+        : null,
     );
   }
 
@@ -271,7 +258,6 @@ function budgetSection(opt) {
     'section',
     { class: 'stack', 'aria-labelledby': 'or-budget' },
     el('h3', { id: 'or-budget' }, t.butceBaslik),
-    el('p', null, t.butceGiris),
     el('div', { class: 'controls' }, metricField.wrap),
     box,
     legendBox,
@@ -337,13 +323,23 @@ function exploratorySection(opt) {
   })]);
 
   return el(
-    'section',
-    { class: 'explore stack', 'aria-labelledby': 'or-explore' },
-    el('h3', { id: 'or-explore' }, el('span', { class: 'badge explore-badge' }, t.rozet), ' ', t.baslik),
-    el('p', { class: 'notice warn' }, el('strong', null, kesifselEtiketi(k))),
-    el('p', null, t.uyari),
-    box,
-    legend(list),
-    el('details', { class: 'data-table' }, el('summary', null, T.or.tabloGoster), dataTable({ caption: t.tabloCaption, label: t.tabloCaption, head, rows })),
+    'details',
+    { class: 'fold explore' },
+    el('summary', null, el('span', { class: 'badge explore-badge' }, t.rozet), ' ', t.baslik),
+    el(
+      'div',
+      { class: 'stack fold-body' },
+      el('p', { class: 'notice warn' }, el('strong', null, kesifselEtiketi(k)), ' ', t.uyari),
+      box,
+      legend(list),
+      el('details', { class: 'data-table' }, el('summary', null, T.or.tabloGoster), dataTable({ caption: t.tabloCaption, label: t.tabloCaption, head, rows })),
+    ),
   );
+}
+
+// ---------------------------------------------------------------------- varsayımlar
+function notesSection(opt) {
+  const notes = optimizasyonNotlari(opt);
+  if (!notes.length) return null;
+  return el('details', { class: 'fold' }, el('summary', null, T.or.notlarBaslik), el('ul', { class: 'points fold-body' }, notes.map((n) => el('li', null, n))));
 }

@@ -1,32 +1,44 @@
-// Giriş noktası: hash yönlendirici (#story, #overview, #routes/ORD, #sozluk/b1 ...), dil düğmesi (TR | EN),
-// tema düğmesi, alt bilgi. Tek sayfa, birkaç bölüm; her bölüm verisini ilk açıldığında yükler.
+// Giriş noktası: hash yönlendirici (#story, #results, #explore/ORD, #method/weather, #sozluk/b1 ...), dil
+// düğmesi (EN | TR), tema düğmesi, alt bilgi. Tek sayfa, altı bölüm; her bölüm verisini ilk açıldığında yükler.
+// Eski adresler (#overview, #airports, #routes/ORD, #optimization, #calibration, #weather, #errors, #about)
+// yeni bölümlere yönlendirilir; paylaşılmış bağlantılar kırılmaz.
 //
-// Dil: varsayılan Türkçe. Seçim sırası: adres satırındaki ?lang=en (ya da ?lang=tr), sonra localStorage
-// ("lang"; kullanılamıyorsa try/catch ile atlanır), sonra Türkçe. Düğmeye basınca <html lang>, sabit
+// Dil: varsayılan İngilizce. Seçim sırası: adres satırındaki ?lang=tr (ya da ?lang=en), sonra localStorage
+// ("lang"; kullanılamıyorsa try/catch ile atlanır), sonra İngilizce. Düğmeye basınca <html lang>, sabit
 // metinler ve açık bölüm yeniden çizilir (sayfa yenilenmez); seçim localStorage'a yazılır. Adreste
 // ?lang= varsa o da güncellenir, böylece paylaşılan adres seçili dille açılır. #hash yalnızca bölümü
 // belirler ve dilden bağımsızdır.
 
 import { el, fill, loadingNode } from './dom.js';
 import { loadOzet, loadManifest } from './data.js';
-import { T, setLang, getLang } from './metin.js';
+import { T, setLang, getLang, AUTHOR } from './metin.js';
 import { txt } from './fmt.js';
 import { sorumlulukReddi } from './yerel.js';
+import { authorLinkNodes } from './yazar.js';
+import { icon } from './simgeler.js';
 
-const VIEWS = ['story', 'overview', 'airports', 'routes', 'optimization', 'calibration', 'weather', 'errors', 'about', 'sozluk'];
+const VIEWS = ['story', 'results', 'explore', 'buffers', 'method', 'sozluk'];
 const DEFAULT_VIEW = 'story';
 const TITLES = T.bolumler;
 
+// Eski adres -> [yeni bölüm, sabit parametreler...]; sabit parametre yoksa eski adresin kalanı taşınır.
+const ALIASES = {
+  overview: ['results'],
+  airports: ['explore'],
+  routes: ['explore'],
+  optimization: ['buffers'],
+  calibration: ['method', 'calibration'],
+  weather: ['method', 'weather'],
+  errors: ['method', 'errors'],
+  about: ['method', 'limits'],
+};
+
 const loaders = {
   story: () => import('./views/story.js'),
-  overview: () => import('./views/overview.js'),
-  airports: () => import('./views/airports.js'),
-  routes: () => import('./views/routes.js'),
-  optimization: () => import('./views/optimization.js'),
-  calibration: () => import('./views/calibration.js'),
-  weather: () => import('./views/weather.js'),
-  errors: () => import('./views/errors.js'),
-  about: () => import('./views/about.js'),
+  results: () => import('./views/results.js'),
+  explore: () => import('./views/explore.js'),
+  buffers: () => import('./views/buffers.js'),
+  method: () => import('./views/method.js'),
   sozluk: () => import('./views/sozluk.js'),
 };
 
@@ -45,8 +57,22 @@ function parseHash() {
         return p;
       }
     });
-  if (VIEWS.includes(parts[0])) return { name: parts[0], params: parts.slice(1) };
-  return { name: DEFAULT_VIEW, params: [] };
+  if (VIEWS.includes(parts[0])) return { name: parts[0], params: parts.slice(1), alias: false };
+  if (Object.prototype.hasOwnProperty.call(ALIASES, parts[0])) {
+    const [name, ...fixed] = ALIASES[parts[0]];
+    return { name, params: fixed.length ? fixed : parts.slice(1), alias: true };
+  }
+  return { name: DEFAULT_VIEW, params: [], alias: false };
+}
+
+/** Eski adresi yeni bölümün adresiyle değiştirir (geçmişe yeni kayıt eklemez). */
+function canonicalize(name, params) {
+  try {
+    const tail = params.length ? `/${params.map((p) => encodeURIComponent(p)).join('/')}` : '';
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${name}${tail}`);
+  } catch (err) {
+    // Adres güncellenemezse sayfa yine doğru bölümü gösterir.
+  }
 }
 
 function errorNode(err, retry) {
@@ -88,7 +114,8 @@ function mountView(name, params) {
 }
 
 function show(userNavigation) {
-  const { name, params } = parseHash();
+  const { name, params, alias } = parseHash();
+  if (alias) canonicalize(name, params);
   for (const view of VIEWS) {
     document.getElementById(`view-${view}`).hidden = view !== name;
   }
@@ -98,8 +125,8 @@ function show(userNavigation) {
   }
   document.title = `${TITLES[name]} – ${T.siteBasligi}`;
   mountView(name, params);
-  // Sözlükte belirli bir terime gidilirken sayfa başına dönülmez; bölüm terime kendisi gider.
-  const toTerm = name === 'sozluk' && params.length > 0;
+  // Sözlükte belirli bir terime, Yöntem'de belirli bir bölüme gidilirken sayfa başına dönülmez; bölüm kendisi gider.
+  const toTerm = (name === 'sozluk' || name === 'method') && params.length > 0;
   if (userNavigation && !toTerm) {
     window.scrollTo(0, 0);
     const heading = document.getElementById(`h-${name}`);
@@ -180,7 +207,7 @@ function changeLang(lang) {
 function initLang() {
   const fromUrl = readLangParam();
   if (fromUrl) storeLang(fromUrl);
-  setLang(fromUrl || readStoredLang() || 'tr');
+  setLang(fromUrl || readStoredLang() || 'en');
   for (const button of document.querySelectorAll('[data-lang]')) {
     button.addEventListener('click', () => changeLang(button.dataset.lang));
   }
@@ -226,11 +253,12 @@ function initTheme() {
 
 async function initFooter() {
   const gen = generation;
+  fill(document.getElementById('footer-author'), el('strong', null, T.altBilgi.yazar), AUTHOR, authorLinkNodes().length ? ' | ' : null, authorLinkNodes());
   try {
     const [ozet, manifest] = await Promise.all([loadOzet(), loadManifest()]);
     if (gen !== generation) return;
     document.getElementById('footer-disclaimer').textContent = txt(sorumlulukReddi(ozet));
-    document.getElementById('footer-build').textContent = T.altBilgi.uretim(txt(manifest.olusturma_zamani), txt(manifest.model_surumu));
+    document.getElementById('footer-build').textContent = T.altBilgi.uretim(txt(manifest.olusturma_zamani).slice(0, 10));
     if (ozet.ornek === true || manifest.ornek === true) document.getElementById('sample-banner').hidden = false;
   } catch (err) {
     // Bölümler kendi hata iletilerini gösterir; statik alt bilgi notu kalır.
@@ -244,6 +272,12 @@ function initSkipLink() {
   });
 }
 
+/** Sekme başlıklarındaki simge yerleri (data-ico) satır içi SVG simgeyle doldurulur; metin yanındadır. */
+function initIcons() {
+  for (const slot of document.querySelectorAll('[data-ico]')) slot.append(icon(slot.dataset.ico, { size: 18 }));
+}
+
+initIcons();
 initLang();
 initTheme();
 initSkipLink();

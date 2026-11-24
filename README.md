@@ -5,9 +5,11 @@
 ![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-**Live demo:** <https://slmnbal.github.io/flight-delay-forecasting/> (Turkish by default; English: [`?lang=en`](https://slmnbal.github.io/flight-delay-forecasting/?lang=en)). Start with the *Story* tab for a plain-language walkthrough.
+**Live demo:** <https://slmnbal.github.io/flight-delay-forecasting/> (English; Turkish: [`?lang=tr`](https://slmnbal.github.io/flight-delay-forecasting/?lang=tr)). Start with the *Story* tab for a plain-language walkthrough.
 
 > Based on public data; not affiliated with any airline.
+
+[![Story page of the web interface: three headline findings and a ROC-AUC chart](deliverables/docs/img/site-story.png)](https://slmnbal.github.io/flight-delay-forecasting/)
 
 **Problem.** Given only the schedule, past statistics and weather observed 2 hours before departure, how well can we
 predict whether a US domestic flight arrives 15+ minutes late (ArrDel15), how large the arrival delay will be

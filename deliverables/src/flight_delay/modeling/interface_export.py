@@ -109,6 +109,7 @@ FILE_PATHS: dict[str, str] = {
     "hava_deneyi": "veri/hava-deneyi.json",
     "hata_analizi": "veri/hata-analizi.json",
     "optimizasyon": "veri/optimizasyon.json",
+    "varis_noktalari": "veri/varis-noktalari.json",
 }
 _ROUTE_PATH = re.compile(r"^veri/rotalar/([A-Z0-9]{3})\.json$")
 FORBIDDEN_KEY_PARTS: tuple[str, ...] = (
@@ -1715,6 +1716,30 @@ def build_rotalar(
     payload["origin"] = str(origin)
     payload["kume"] = KUME
     payload["hucreler"] = [copy.deepcopy(dict(c)) for c in cells]
+    return payload
+
+
+def build_varis_noktalari(
+    points: Sequence[Mapping[str, Any]],
+    *,
+    missing: Sequence[str] = (),
+    created: dt.datetime,
+    version: str,
+    sample: bool = False,
+) -> dict[str, Any]:
+    """``varis-noktalari.json``: name and coordinates of every destination in the published route cells (OurAirports),
+    so the map can draw route arcs. Destinations without coordinates are listed in ``eksik`` (nothing invented)."""
+    payload = header("varis_noktalari", created, version, sample)
+    payload["noktalar"] = [
+        {
+            "iata": str(p["iata"]),
+            "ad": _truncate(str(p["ad"]), 120),
+            "enlem": round(float(p["enlem"]), COORDINATE_DIGITS),
+            "boylam": round(float(p["boylam"]), COORDINATE_DIGITS),
+        }
+        for p in sorted(points, key=lambda q: str(q["iata"]))
+    ]
+    payload["eksik"] = sorted(str(m) for m in missing)
     return payload
 
 

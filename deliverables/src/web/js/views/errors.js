@@ -1,7 +1,7 @@
 // Hata analizi: model başarımının segment kırılımları ve veri dosyasından alınan iki kısa liste,
 // tarafsız başlıklar altında. Segmentler betimleyicidir; kalite sıralaması değildir.
 
-import { el, fill, selectField, fillSelect, sozlukLink, anlamKutusu } from '../dom.js';
+import { el, fill, selectField, fillSelect, sozlukLink } from '../dom.js';
 import { loadHata, loadHavalimanlari } from '../data.js';
 import { fmtValue, fmtMetricValue, fmtInt, metricLabel, blockLabel, monthLabel, modelLabel, NA, txt } from '../fmt.js';
 import { T } from '../metin.js';
@@ -172,7 +172,6 @@ export async function mount(root) {
 
   fill(
     root,
-    anlamKutusu('hata', ['segment', 'kesifsel']),
     el('p', null, t.giris, ' ', T.ortak.sozluk, sozlukLink('segment'), ', ', sozlukLink('kesifsel'), '.'),
     el('div', { class: 'controls' }, dimField.wrap, metricSelect.wrap),
     chartBox,
@@ -180,7 +179,7 @@ export async function mount(root) {
     dimNote,
     tableHolder,
     lists.length
-      ? el('section', { class: 'stack', 'aria-labelledby': 'err-lists' }, el('h3', { id: 'err-lists' }, t.iki), el('p', null, t.ikiNot), el('div', { class: 'two-col' }, lists))
+      ? el('section', { class: 'stack', 'aria-labelledby': 'err-lists' }, el('h4', { id: 'err-lists' }, t.iki), el('p', { class: 'note' }, t.ikiNot), el('div', { class: 'two-col' }, lists))
       : null,
   );
   render();

@@ -1,6 +1,6 @@
 // Kalibrasyon ve kapsama: güvenilirlik diyagramları ve kantil üst sınırlarının aylık kapsaması.
 
-import { el, fill, selectField, sozlukLink, anlamKutusu } from '../dom.js';
+import { el, fill, selectField, sozlukLink } from '../dom.js';
 import { loadKalibrasyon } from '../data.js';
 import { fmtPct, fmtInt, monthLabel, modelLabel, NA } from '../fmt.js';
 import { T } from '../metin.js';
@@ -225,11 +225,10 @@ export async function mount(root) {
 
   fill(
     root,
-    anlamKutusu('kalibrasyon', ['olasilik-kalibrasyon', 'kapsama', 'conformal']),
     el(
       'section',
-      { 'aria-labelledby': 'cal-rel' },
-      el('h3', { id: 'cal-rel' }, t.guvenBaslik),
+      { class: 'stack', 'aria-labelledby': 'cal-rel' },
+      el('h4', { id: 'cal-rel' }, t.guvenBaslik),
       el('div', { class: 'controls' }, taskField.wrap),
       relChartBox,
       relLegend,
@@ -239,12 +238,11 @@ export async function mount(root) {
     ),
     el(
       'section',
-      { 'aria-labelledby': 'cal-cov' },
-      el('h3', { id: 'cal-cov' }, t.kapsamaBaslik),
-      el('p', null, t.kapsamaGiris),
+      { class: 'stack', 'aria-labelledby': 'cal-cov' },
+      el('h4', { id: 'cal-cov' }, t.kapsamaBaslik),
+      el('p', null, t.kapsamaGiris, ' ', sozlukLink('conformal'), ', ', sozlukLink('kapsama'), '.'),
       el('div', { class: 'controls' }, modelField.wrap),
       covBox,
-      el('p', { class: 'note' }, t.kapsamaNotu),
     ),
   );
 }

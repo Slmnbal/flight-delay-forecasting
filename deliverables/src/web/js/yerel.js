@@ -65,6 +65,13 @@ export function notBul(ozet, onek) {
   return index < 0 ? null : notlar(ozet)[index];
 }
 
+/** Tampon bulgusu: OR notu; sondaki "Ayrıntı: dosya yolu" gönderimi kullanıcıya gösterilmez. */
+export function orBulgusu(ozet) {
+  const metin = notBul(ozet, OR_NOTE_PREFIX);
+  if (typeof metin !== 'string') return null;
+  return metin.replace(/\s*(?:Ayrıntı|Details):\s*\S+\s*$/, '').trim();
+}
+
 export function gizlemeNedeni(havalimani) {
   return havalimani.gizleme_nedeni ? loc(havalimani.gizleme_nedeni, havalimani.gizleme_nedeni_en) : null;
 }

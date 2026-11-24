@@ -11,12 +11,14 @@
     "veri/kalibrasyon.json": "kalibrasyon",
     "veri/hava-deneyi.json": "hava_deneyi",
     "veri/hata-analizi.json": "hata_analizi",
-    "veri/optimizasyon.json": "optimizasyon"
+    "veri/optimizasyon.json": "optimizasyon",
+    "veri/varis-noktalari.json": "varis_noktalari"
   },
   "oneOf": [
     {"$ref": "#/$defs/manifest"},
     {"$ref": "#/$defs/ozet"},
     {"$ref": "#/$defs/optimizasyon"},
+    {"$ref": "#/$defs/varis_noktalari"},
     {"$ref": "#/$defs/havalimanlari"},
     {"$ref": "#/$defs/rotalar"},
     {"$ref": "#/$defs/kalibrasyon"},
@@ -106,7 +108,7 @@
             "required": ["yol", "dosya_turu", "bayt", "sha256"],
             "properties": {
               "yol": {"type": "string", "pattern": "^veri/[a-z0-9_/.-]+\\.json$|^veri/rotalar/[A-Z0-9]{3}\\.json$"},
-              "dosya_turu": {"type": "string", "enum": ["ozet", "havalimanlari", "rotalar", "kalibrasyon", "hava_deneyi", "hata_analizi", "optimizasyon"]},
+              "dosya_turu": {"type": "string", "enum": ["ozet", "havalimanlari", "rotalar", "kalibrasyon", "hava_deneyi", "hata_analizi", "optimizasyon", "varis_noktalari"]},
               "bayt": {"type": "integer", "minimum": 0, "maximum": 307200},
               "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
             }
@@ -501,6 +503,19 @@
         "kesifsel": {"type": "object", "additionalProperties": false, "required": ["etiket", "etiket_en", "butce_egrisi"], "properties": {"etiket": {"type": "string", "maxLength": 300}, "etiket_en": {"type": "string", "maxLength": 300}, "butce_egrisi": {"type": "array", "maxItems": 30, "items": {"type": "object", "additionalProperties": false, "required": ["butce_dk", "politikalar"], "properties": {"butce_dk": {"type": "number", "minimum": 0}, "politikalar": {"type": "array", "maxItems": 12, "items": {"$ref": "#/$defs/or_satir"}}}}}}},
         "notlar": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 500}},
         "notlar_en": {"type": "array", "maxItems": 20, "items": {"type": "string", "maxLength": 500}}
+      },
+      "unevaluatedProperties": false
+    },
+    "varis_noktalari": {
+      "type": "object",
+      "x-azami-boyut-kb": 60,
+      "description": "Yayımlanan rota hücrelerindeki varış havalimanlarının adı ve koordinatı (OurAirports); harita rota yayları için. Koordinatı olmayanlar 'eksik'te. 2026-11-24.",
+      "allOf": [{"$ref": "#/$defs/baslik"}],
+      "required": ["dosya_turu", "noktalar", "eksik"],
+      "properties": {
+        "dosya_turu": {"const": "varis_noktalari"},
+        "noktalar": {"type": "array", "maxItems": 600, "items": {"type": "object", "additionalProperties": false, "required": ["iata", "ad", "enlem", "boylam"], "properties": {"iata": {"$ref": "#/$defs/iata"}, "ad": {"type": "string", "maxLength": 120}, "enlem": {"type": "number", "minimum": -90, "maximum": 90}, "boylam": {"type": "number", "minimum": -180, "maximum": 180}}}},
+        "eksik": {"type": "array", "maxItems": 600, "items": {"$ref": "#/$defs/iata"}}
       },
       "unevaluatedProperties": false
     },
