@@ -45,6 +45,28 @@ export function onMap(lat, lon) {
 
 export const isCompact = (width) => width < 560;
 
+/** Yay kalınlık aralığı (az uçuşlu rota, çok uçuşlu rota); telefonda daha ince ama yine çizilir. */
+export const arcRange = (compact) => (compact ? [1.6, 6] : [2.6, 12]);
+
+const PAD = 24;
+let heightRatio = null;
+
+/** Haritanın yükseklik/genişlik oranı (projeksiyon kutusundan); sabit yükseklikli bantta genişliği bulmak için. */
+function projectionRatio() {
+  if (heightRatio === null) {
+    const pts = [];
+    for (const lat of LAT_LINES) for (let lon = LON_RANGE[0]; lon <= LON_RANGE[1]; lon += 1) pts.push(albers(lon, lat));
+    for (const lon of LON_LINES) for (let lat = LAT_RANGE[0]; lat <= LAT_RANGE[1]; lat += 1) pts.push(albers(lon, lat));
+    const xs = pts.map((p) => p[0]);
+    const ys = pts.map((p) => p[1]);
+    heightRatio = (Math.max(...ys) - Math.min(...ys)) / (Math.max(...xs) - Math.min(...xs));
+  }
+  return heightRatio;
+}
+
+/** Verilen yükseklikte (piksel) haritanın sığacağı genişlik; harita bu yüksekliği aşmaz. */
+export const widthForHeight = (height) => Math.round((height - 2 * PAD) / projectionRatio() + 2 * PAD);
+
 /** Nokta yarıçapı (alan ~ uçuş sayısı); açıklama (lejant) da aynı işlevi kullanır. */
 export function dotRadius(n, maxN, compact) {
   const rMin = compact ? 4 : 5;
@@ -144,7 +166,7 @@ export function buildMap(o) {
   const maxX = Math.max(...all.map((p) => p[0]));
   const minY = Math.min(...all.map((p) => p[1]));
   const maxY = Math.max(...all.map((p) => p[1]));
-  const pad = 24;
+  const pad = PAD;
   const scale = (o.width - 2 * pad) / (maxX - minX);
   const height = Math.round((maxY - minY) * scale + 2 * pad);
   const tx = (p) => [pad + (p[0] - minX) * scale, pad + (p[1] - minY) * scale];
@@ -153,9 +175,10 @@ export function buildMap(o) {
   const tid = uniqueId('mt');
   const did = uniqueId('md');
   const hasStates = Array.isArray(o.states) && o.states.length > 0;
+  const hasArcs = Boolean(o.arcs && o.arcs.items.length && o.airports.some((a) => a.iata === o.arcs.origin));
   const root = svg(
     'svg',
-    { viewBox: `0 0 ${o.width} ${height}`, class: hasStates ? 'map has-states' : 'map', role: 'group', 'aria-labelledby': `${tid} ${did}`, focusable: 'false' },
+    { viewBox: `0 0 ${o.width} ${height}`, class: `map${hasStates ? ' has-states' : ''}${hasArcs ? ' has-arcs' : ''}`, role: 'group', 'aria-labelledby': `${tid} ${did}`, focusable: 'false' },
     svg('title', { id: tid }, T.havalimani.haritaBaslik(o.airports.length)),
     svg('desc', { id: did }, T.havalimani.haritaAciklama),
     svg('rect', { class: 'map-bg', x: 0, y: 0, width: o.width, height }),
@@ -222,7 +245,11 @@ export function buildMap(o) {
     lines.forEach((text, i) => tip.append(svg('text', { class: i === 0 ? 'tip-head' : 'tip-line', x: (x + 8).toFixed(1), y: (y + 17 + i * 15).toFixed(1) }, String(text))));
     tip.setAttribute('class', 'tip');
   }
-  const hideTip = () => tip.setAttribute('class', 'tip off');
+  let clearArcs = () => {};
+  const hideTip = () => {
+    tip.setAttribute('class', 'tip off');
+    clearArcs();
+  };
   root.addEventListener('click', (e) => {
     if (!(e.target.closest && e.target.closest('.arc, .pt'))) hideTip();
   });
@@ -236,20 +263,41 @@ export function buildMap(o) {
     const arcMax = Math.max(...items.map((i) => i.n), 1);
     const group = svg('g', { class: 'arcs', role: 'group', 'aria-label': o.arcs.groupLabel });
     const els = [];
+    // Parlama süzgeci (yalnızca koyu temada görünür): SVG içinde, satır içi; dış kaynak yok.
+    const fid = uniqueId('mg');
+    root.append(
+      svg(
+        'defs',
+        null,
+        svg('filter', { id: fid, filterUnits: 'userSpaceOnUse', x: 0, y: 0, width: o.width, height }, svg('feGaussianBlur', { stdDeviation: compact ? 2 : 3.5 })),
+      ),
+    );
+    const [wMin, wMax] = arcRange(compact);
+    // Üzerine gelinen ya da odaktaki yay öne çıkar (active), diğerleri solar (has-active).
+    clearArcs = () => {
+      group.setAttribute('class', 'arcs');
+      for (const other of els) other.setAttribute('class', 'arc');
+    };
     for (const item of items) {
       const [x, y] = tx(albers(item.boylam, item.enlem));
       if (x < 0 || x > o.width || y < 0 || y > height) continue;
       const geo = arcGeometry(ox, oy, x, y);
-      const w = arcWidth(item.n, arcMax);
+      const w = arcWidth(item.n, arcMax, wMin, wMax);
       const cls = riskClass(item.rate, edges) || 0;
       const g = svg('g', { class: 'arc', tabindex: els.length === 0 ? '0' : '-1', role: 'img', 'aria-label': o.arcLabel(item) });
       g.append(
-        svg('path', { class: 'arc-hit', d: geo.d, 'stroke-width': Math.max(w + 10, 14).toFixed(1) }),
-        svg('path', { class: 'arc-case', d: geo.d, 'stroke-width': (w + 1.8).toFixed(1) }),
+        svg('path', { class: 'arc-hit', d: geo.d, 'stroke-width': Math.max(w + 12, 18).toFixed(1) }),
+        svg('path', { class: `arc-glow rs${cls}`, d: geo.d, 'stroke-width': (w + 6).toFixed(1), filter: `url(#${fid})` }),
+        svg('path', { class: 'arc-case', d: geo.d, 'stroke-width': (w + (compact ? 2.4 : 3.4)).toFixed(1) }),
         svg('path', { class: `arc-line rs${cls}`, d: geo.d, 'stroke-width': w.toFixed(1) }),
-        svg('circle', { class: `arc-end r${cls}`, cx: x.toFixed(1), cy: y.toFixed(1), r: 2.8 }),
+        svg('circle', { class: `arc-end r${cls}`, cx: x.toFixed(1), cy: y.toFixed(1), r: compact ? 3.2 : 4.2 }),
       );
-      const show = () => showTip(x, y, o.arcTip(item));
+      const show = () => {
+        showTip(x, y, o.arcTip(item));
+        clearArcs();
+        group.setAttribute('class', 'arcs has-active');
+        g.setAttribute('class', 'arc active');
+      };
       g.addEventListener('pointerenter', show);
       g.addEventListener('pointerleave', () => {
         if (document.activeElement !== g) hideTip();

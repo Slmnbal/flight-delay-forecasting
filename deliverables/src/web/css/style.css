@@ -423,10 +423,11 @@ button.sort:hover { text-decoration: underline; }
 .arc { cursor: pointer; }
 .arc:focus { outline: none; }
 .arc-hit { fill: none; stroke: transparent; stroke-linecap: round; }
-.arc-case { fill: none; stroke: var(--text); stroke-opacity: 0.4; stroke-linecap: round; }
-.arc-line { fill: none; stroke-linecap: round; stroke-opacity: 0.92; }
-.arc-end { stroke: var(--text); stroke-width: 0.8; stroke-opacity: 0.7; }
-.arc:hover .arc-case { stroke-opacity: 0.85; }
+.arc-case { fill: none; stroke: var(--text); stroke-opacity: 0.8; stroke-linecap: round; }
+.arc-line { fill: none; stroke-linecap: round; stroke-opacity: 1; }
+.arc-glow { display: none; fill: none; stroke-linecap: round; pointer-events: none; }
+.arc-end { stroke: var(--text); stroke-width: 1.2; stroke-opacity: 0.9; }
+.arc:hover .arc-case { stroke-opacity: 1; }
 .arc:focus .arc-case { stroke: var(--focus); stroke-opacity: 1; }
 .map .tip { pointer-events: none; }
 .map .tip.off { display: none; }
@@ -446,8 +447,6 @@ button.sort:hover { text-decoration: underline; }
 .sw { display: block; height: 0.9rem; border-radius: 2px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--text) 45%, transparent); }
 .sw-label { font-size: 0.78rem; color: var(--muted); text-align: center; white-space: nowrap; }
 
-.map-layout { display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 62rem) { .map-layout { grid-template-columns: minmax(0, 1fr) 19rem; align-items: start; } }
 .detail { background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--amber); padding: 0.8rem 1rem; }
 .detail h3 { margin-bottom: 0.4rem; }
 .detail dl { margin: 0.6rem 0 0; display: grid; grid-template-columns: 1fr auto; gap: 0.25rem 1rem; }
@@ -638,5 +637,10 @@ details.data-table .table-wrap { margin-top: 0.5rem; }
 .action h4 .ico { color: var(--accent); }
 .action p { margin: 0; }
 .story-step { scroll-margin-top: 1rem; }
+/* Link to the presentation site (header and Story) */
+a.btn-present { display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; background: var(--amber); color: var(--ink); border-color: var(--amber); font-weight: 700; }
+a.btn-present:hover { border-color: #FFFFFF; }
+.masthead a.btn-present:focus-visible { outline-color: #FFFFFF; }
+.hero a.btn-present { background: var(--amber); color: var(--ink); border-color: var(--amber); }
 /* A hidden (unpublished) airport is drawn as a dashed outline only, so a published neighbour under it keeps its colour. */
 .map .pt.hidden-pt .dot { fill: none; }

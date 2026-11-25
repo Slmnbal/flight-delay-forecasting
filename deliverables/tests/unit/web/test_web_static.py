@@ -29,7 +29,7 @@ SCHEMA = DELIVERABLES.parent / "experiments" / "arayuz-sozlesmesi.json"
 
 DISCLAIMER = "Kamu verisine dayalı; havayollarıyla bağlantısız."
 DISCLAIMER_EN = "Based on public data; not affiliated with any airline."
-BUFFER_WARNING = "Varsayılmış maliyet oranı; operasyonel öneri değildir."
+BUFFER_WARNING = "Maliyet oranı bir varsayımdır; operasyon için öneri değildir."
 BUFFER_WARNING_EN = "Assumed cost ratio — not an operational recommendation."
 OR_NOTE_PREFIX = "Tampon optimizasyonu (OR):"
 SVG_NAMESPACE = "http://www.w3.org/2000/svg"
@@ -298,6 +298,20 @@ def test_expected_files_exist():
         "js/simgeler.js",
         "js/kesfet-hesap.js",
         "js/views/rota-ozeti.js",
+        "js/kabuk.js",
+        "js/kendin-dene.js",
+        "js/hikaye-ortak.js",
+        "js/harita-lejant.js",
+        "css/harita.css",
+        "sunum/index.html",
+        "sunum/sunum.css",
+        "sunum/sunum.js",
+        "sunum/slayt.js",
+        "sunum/slaytlar.js",
+        "sunum/slaytlar-tampon.js",
+        "sunum/slaytlar-liste.js",
+        "sunum/harita-slayti.js",
+        "sunum/deneme-slayti.js",
         "veri/manifest.json",
         "harita/abd-eyaletler.json",
     ]:
@@ -454,9 +468,11 @@ def test_only_relative_paths():
     html = read(WEB / "index.html")
     for value in re.findall(r"""(?:src|href)\s*=\s*["']([^"']*)["']""", html):
         assert value.startswith(("./", "#")), value
+    # Veri yolları sayfaya değil modüle göre çözülür: hem / hem /sunum/ altında doğru dosyaya gider.
     data_js = read(WEB / "js" / "data.js")
-    assert "const BASE = './veri/';" in data_js
-    assert "const HARITA = './harita/';" in data_js
+    assert "const BASE = new URL('../veri/', import.meta.url).href;" in data_js
+    assert "const HARITA = new URL('../harita/', import.meta.url).href;" in data_js
+    assert "./veri/" not in data_js.replace("../veri/", "")
     for path in js_files():
         text = read(path)
         assert not re.search(r"""['"`]/(?:veri|harita|css|js)/""", text), path.name
@@ -513,7 +529,7 @@ def test_optimization_file_is_read_and_listed_in_the_manifest():
     data_js = read(WEB / "js" / "data.js")
     assert "optimizasyon: 'optimizasyon.json'" in data_js
     assert "loadOptimizasyon" in read(WEB / "js" / "views" / "optimization.js")
-    assert "loadOptimizasyon" in read(WEB / "js" / "views" / "story.js")
+    assert "loadOptimizasyon" in read(WEB / "sunum" / "slaytlar-liste.js")
     manifest = json.loads(read(VERI / "manifest.json"))
     entries = {e["yol"]: e for e in manifest["dosyalar"]}
     assert "veri/optimizasyon.json" in entries
@@ -646,12 +662,10 @@ def test_no_worst_and_no_airline_names_or_codes():
     ]
     standalone = re.compile(r"\b(Southwest|Delta|Frontier|Spirit|Alaska|Hawaiian)\b")
     codes = re.compile(r"""['"](?:AA|DL|UA|WN|B6|AS|NK|F9|G4|HA|OO|YX|9E|MQ|OH|QX|YV|EV|MX|XE|ZW|CP|C5|G7)['"]""")
+    # İstisna yok: P95 sütununun adı artık "Very bad day" / "Çok kötü gün" (sütun adında da "worst" geçmez).
     worst = re.compile(r"worst|\ben\s+k[öo]t[üu]\b", re.IGNORECASE)
-    # Tek istisna: rota tablosundaki P95 sütununun sade adı ("Worst case" / "En kötü durum"). Bir havalimanını ya da
-    # havayolunu "en kötü" diye adlandıran ifade yine yasaktır.
-    allowed = re.compile(r"worst[- ]case|\ben\s+k[öo]t[üu]\s+durum\w*", re.IGNORECASE)
     for path in source_files():  # metin-en.js dahil: İngilizce metinlerde de aynı kurallar
-        text = allowed.sub("", read(path))
+        text = read(path)
         assert not worst.search(text), (path.name, worst.search(text).group(0) if worst.search(text) else "")
         for name in names:
             assert name.lower() not in text.lower(), (path.name, name)
@@ -714,7 +728,9 @@ def test_buffer_suggestion_carries_the_warning_in_both_languages():
     # Uyarı tek cümle: sütun başlığının ipucunda (title) ve tamponun gösterildiği her yerde görünür.
     assert "tamponIpucu(T.tamponUyari)" in routes_js
     assert "T.tamponUyari" in routes_js
-    assert "T.tamponUyari" in read(WEB / "js" / "views" / "story.js")
+    # Sunumda tamponun gösterildiği slaytlarda (tampon bedeli, eşit bütçe, öneriler) uyarı vardır.
+    tampon_slides = read(WEB / "sunum" / "slaytlar-tampon.js")
+    assert tampon_slides.count("warning()") >= 3 and "T.tamponUyari" in tampon_slides
     assert "T.tamponUyari" in read(WEB / "js" / "views" / "optimization.js")
     # Başka sayfalarda yinelenmez (Sonuçlar, Yöntem).
     assert "tamponUyari" not in read(WEB / "js" / "views" / "overview.js")
@@ -735,9 +751,9 @@ def test_failed_criteria_and_buffer_finding_are_visible():
     assert "startsWith(onek)" in yerel
     assert "orBulgusu(ozet)" in read(WEB / "js" / "views" / "optimization.js")
     assert "eşit bütçe" not in overview.lower()
-    # Story: the "model only matches a simple rule" slide is shown only when no budget comparison is significant
+    # Sunum: the "model only matches a simple rule" message is shown only when no budget comparison is significant
     # (data-driven, from the 95% intervals through equalBudget).
-    story = read(WEB / "js" / "views" / "story.js")
+    story = read(WEB / "sunum" / "slaytlar-tampon.js")
     assert "eb.significant === 0" in story and "equalBudget(opt)" in story
     ozet = json.loads(read(VERI / "ozet.json"))
     failed = {k["olcut"] for k in ozet["kabul"] if k["sonuc"] == "kaldi"}
@@ -805,8 +821,8 @@ def test_range_slider_has_visible_value_and_aria_valuetext():
     assert "'output'" in shared and "slider-out" in shared, "görünür değer"
     assert "step: 1" in shared, "yalnızca ızgara noktalarına oturur"
     assert "for: o.id" in shared, "etiketli kaydırıcı"
-    for name in ("story", "optimization"):
-        assert "tauSlider(" in read(WEB / "js" / "views" / f"{name}.js"), name
+    assert "tauSlider(" in read(WEB / "js" / "views" / "optimization.js")
+    assert "tauSlider(" in read(WEB / "sunum" / "slaytlar-tampon.js")
     # Ara değer uydurulmaz: kaydırıcı dizin üzerinden ızgara satırını okur.
     assert "grid[i]" in shared
 
@@ -828,20 +844,47 @@ def story_text_sections() -> dict[str, str]:
     return {"tr": tr_part, "en": en_part}
 
 
+SUNUM_SLIDE_FILES = [
+    "slaytlar.js",
+    "slaytlar-tampon.js",
+    "harita-slayti.js",
+    "deneme-slayti.js",
+]
+
+
 def story_sources() -> dict[str, str]:
-    return {
+    """Hikâye ve sunum görselleri/slaytları: sayı biçimleme, soru-cevap kalıbı ve grafik başlıkları bunlarda denetlenir."""
+    out = {
         "story.js": read(WEB / "js" / "views" / "story.js"),
         "story-gorseller.js": read(WEB / "js" / "story-gorseller.js"),
+        "hikaye-ortak.js": read(WEB / "js" / "hikaye-ortak.js"),
+        "kendin-dene.js": read(WEB / "js" / "kendin-dene.js"),
+    }
+    for name in SUNUM_SLIDE_FILES:
+        out[name] = read(WEB / "sunum" / name)
+    return out
+
+
+def sunum_text_sections() -> dict[str, str]:
+    """Sunum metinleri (metin.js ve metin-en.js içindeki `sunum` grubu)."""
+    tr = read(WEB / "js" / "metin.js")
+    en = read(WEB / "js" / "metin-en.js")
+    return {
+        "tr": tr[tr.index("  sunum: {") : tr.index("// Dil ve metin nesnesi")],
+        "en": en[en.index("  sunum: {") :],
     }
 
 
 def test_story_hero_is_plain_and_has_no_hand_written_numbers():
     story = read(WEB / "js" / "views" / "story.js")
-    for token in ["story-steps", "REPO_URL", "rel: 'noopener'", "t.kapsam(", "t.soru("]:
+    for token in ["REPO_URL", "rel: 'noopener'", "t.kapsam(", "t.soru(", "href: './sunum/'", "buildTry("]:
         assert token in story, token
+    # Story sekmesi kısa girişe indi: slayt anlatımı sunumda, burada "Sunumu aç" çağrısı ve "Kendin dene" var.
+    assert "slideProblem" not in story and "story-steps" not in story
     en = read(WEB / "js" / "metin-en.js")
     assert "How well can public data predict whether a US flight will be late" in en
-    assert "yuru: 'Walk through it'" in en and "kod: 'Code on GitHub'" in en
+    assert "kod: 'Code on GitHub'" in en and not re.search(r"\byuru:", en)
+    assert "ac: '▶ Open presentation'" in en and "ac: '▶ Sunumu aç'" in read(WEB / "js" / "metin.js")
     # Her sayı veriden: görünür metinlerde rakam yok (metinler işlevdir ve değerleri parametre olarak alır).
     for lang, text in story_text_sections().items():
         visible = re.sub(r"\$\{[^}]*\}", "", text)
@@ -867,11 +910,59 @@ def test_story_has_no_question_answer_pattern_and_no_precision_recall():
     assert not re.search(r"'(?:precision|recall|f1)'", story)
 
 
-def test_story_slides_are_ten_and_each_has_a_figure_with_title_and_description():
-    story = read(WEB / "js" / "views" / "story.js")
-    for n in range(1, 11):
-        assert re.search(rf"step\(\s*{n},", story) or f"unavailable({n})" in story, n
-    assert story.count("function slide") == 9 and "async function buildTry" in story
+def test_presentation_has_cover_and_eleven_slides_each_with_title_figure_and_details_link():
+    """Kapak (0) + 11 içerik slaydı; her içerik slaydı slide({...}) ile kurulur: başlık, ana görsel, yan panel, ayrıntı."""
+    sources = {name: read(WEB / "sunum" / name) for name in SUNUM_SLIDE_FILES}
+    joined = "\n".join(sources.values())
+    for n in range(1, 12):
+        assert re.search(rf"\bn: {n},", joined), f"slayt {n} yok"
+    assert "'slayt-0'" in joined, "kapak slaydı"
+    lst = read(WEB / "sunum" / "slaytlar-liste.js")
+    for fn in (
+        "cover(",
+        "slideProblem(",
+        "slideTime(",
+        "slideRisk(",
+        "slideTrust(",
+        "slideWeather(",
+        "slideBufferIdea(",
+        "slideTradeoff(",
+        "slideRule(",
+        "slideActions(",
+        "slideMap(",
+        "slideTry(",
+    ):
+        assert fn in lst, fn
+    shell = read(WEB / "sunum" / "slayt.js")
+    # Her slayt: section + aria-labelledby + h2 başlık, ana görsel, yan panel (rakamlar, nasıl okunur, anlam), ayrıntı bağlantısı.
+    for token in [
+        "'section'",
+        "'aria-labelledby'",
+        "'h2'",
+        "slide-main",
+        "slide-panel",
+        "rakamlar",
+        "t.nasil",
+        "t.anlam",
+        "t.ayrinti",
+        "details-link",
+    ]:
+        assert token in shell, token
+    # Her slaytın ayrıntı bağlantısı detay sitesine (../) gider.
+    hrefs = [
+        h for h in re.findall(r"href: [`']([^`']*)[`']", joined) if h != "../"
+    ]  # "../": kapaktaki "Detaylı siteye geç"
+    assert len(hrefs) >= 11 and all(h.startswith("../#") for h in hrefs), hrefs
+    assert "href: '../'" in sources["slaytlar.js"], "kapakta detay sitesine geçiş"
+    for target in (
+        "../#results",
+        "../#method/errors",
+        "../#method/calibration",
+        "../#method/weather",
+        "../#buffers",
+        "../#explore",
+    ):
+        assert target in hrefs or any(h.startswith(target) for h in hrefs), target
     # Her grafik çağrısının yakınında başlık ve açıklama (title/desc) verilir.
     for name, text in story_sources().items():
         for call in ("barChart(", "columnChart(", "xyChart(", "stackedBar(", "pictograph(", "bufferDiagram("):
@@ -882,15 +973,25 @@ def test_story_slides_are_ten_and_each_has_a_figure_with_title_and_description()
                 assert "title" in window and "desc" in window, (name, call)
     gorseller = read(WEB / "js" / "story-gorseller.js")
     assert gorseller.count("o.title, o.desc") == 2 and "o.text.title, o.text.desc" in gorseller
-    assert story.count("figure(") >= 9
     # Dar ekranda daha az eksen etiketi.
-    assert "tickCount: width < 480" in story and "tickCount: narrow" in story
+    assert "tickCount: width < 480" in joined and "tickCount: narrow" in joined
     # Tampon şeması örnek diye işaretlidir.
     assert "ornek:" in read(WEB / "js" / "metin.js") and "Illustration" in read(WEB / "js" / "metin-en.js")
+    # Harita slaydında havalimanı sıralaması yoktur: yalnızca en düşük-en yüksek aralığı ve seçili havalimanı.
+    harita = sources["harita-slayti.js"]
+    assert "Math.min(...rates)" in harita and "Math.max(...rates)" in harita and ".sort(" not in harita
+    assert "gizleme_nedeni" in harita and "yayimlanmayanlar" in harita, "DAL/MDW yayımlanmadı notu"
 
 
-def test_story_view_is_data_driven_and_linked():
-    story = read(WEB / "js" / "views" / "story.js")
+def test_presentation_slides_are_data_driven_and_linked():
+    story = "\n".join(
+        [
+            read(WEB / "sunum" / "slaytlar-liste.js"),
+            read(WEB / "js" / "kendin-dene.js"),
+            read(WEB / "js" / "hikaye-ortak.js"),
+            *(read(WEB / "sunum" / name) for name in SUNUM_SLIDE_FILES),
+        ]
+    )
     for token in [
         # 1. sorun
         "'yayginlik'",
@@ -925,18 +1026,18 @@ def test_story_view_is_data_driven_and_linked():
         "kantil_dk",
         "gozlenen_arrdel15_orani",
         "tahmin_arrdel15_orani",
-        "`#explore/${sel.origin}`",
+        "`${base}#explore/${sel.origin}`",
         "loadHata(",
         "loadKalibrasyon(",
         "loadHava(",
         "loadOptimizasyon(",
     ]:
         assert token in story, token
-    # Her slaytın sonunda ilgili teknik sekmeye "Ayrıntılar" bağlantısı; dürüst sınırlar bağlantısı Sonuçlar'a.
-    assert len(re.findall(r"details\('#", story)) >= 8
-    for target in ("#results", "#method/errors", "#method/calibration", "#method/weather", "#buffers"):
-        assert f"details('{target}')" in story, target
-    assert "href: '#results'" in story
+    # Sunumdan kendin-dene bağlantıları detay sitesine gider ('../' öneki); Story sekmesinde önek boştur.
+    assert "base: '../'" in read(WEB / "sunum" / "deneme-slayti.js")
+    assert "base: ''" in read(WEB / "js" / "views" / "story.js")
+    # Neler işe yaramadı (K5, K6) sunumun son öneri slaydındadır ve sayıları veriden gelir.
+    assert "failed.has('K5')" in story and "failed.has('K6')" in story
     # Hikâyede elle yazılmış havayolu/sıralama yok; metin dosyalarındaki Story bölümleri iki dilli.
     charts = read(WEB / "js" / "charts.js")
     assert "export function pictograph" in charts
@@ -1083,23 +1184,35 @@ def test_language_switch_is_wired(html, tags):
     assert by_lang["tr"].get("aria-label") == "Türkçe" and by_lang["en"].get("aria-label") == "English"
     assert "TR" in html and "EN" in html
     main_js = read(WEB / "js" / "main.js")
+    kabuk = read(WEB / "js" / "kabuk.js")  # dil ve tema okuma/yazma: detay ve sunum siteleri ortak kullanır
     # Seçim sırası: ?lang=, localStorage('lang'), İngilizce; localStorage her yerde try/catch içinde.
-    assert "URLSearchParams(window.location.search).get('lang')" in main_js
-    assert "window.localStorage.getItem('lang')" in main_js
-    assert "window.localStorage.setItem('lang', lang)" in main_js
+    assert "URLSearchParams(window.location.search).get('lang')" in kabuk
+    assert "window.localStorage.getItem('lang')" in kabuk
+    assert "window.localStorage.setItem('lang', lang)" in kabuk
     assert "setLang(fromUrl || readStoredLang() || 'en')" in main_js
     assert "setAttribute('lang', lang)" in main_js, "<html lang> güncellenir"
     for func in ("readLangParam", "readStoredLang", "storeLang"):
-        body = main_js[main_js.index(f"function {func}") :]
+        body = kabuk[kabuk.index(f"function {func}") :]
         assert "try {" in body.split("\n\n")[0], func
+    # İki site de aynı mekanizmayı kullanır (kabuk.js), aynı localStorage anahtarını paylaşır.
+    sunum_js = read(WEB / "sunum" / "sunum.js")
+    for token in [
+        "from '../js/kabuk.js'",
+        "setLang(fromUrl || readStoredLang() || 'en')",
+        "setAttribute('lang', lang)",
+        "storeLang(lang)",
+    ]:
+        assert token in sunum_js, token
+    assert "from './kabuk.js'" in main_js
     # Sayfa yenilenmeden: görünümler yeniden çizilir.
     assert "records.clear()" in main_js and "generation += 1" in main_js
     assert "location.reload" not in main_js
     # Seçimler dil değişince korunur.
-    assert "const memory = " in read(WEB / "js" / "views" / "story.js")
+    assert "const memory = " in read(WEB / "js" / "kendin-dene.js")
+    assert "const memory = " in read(WEB / "sunum" / "slaytlar-tampon.js")
     assert "const memory = " in read(WEB / "js" / "views" / "optimization.js")
     # TR düğmesi ?lang=tr ile de seçilir.
-    assert "value === 'en' || value === 'tr' ? value : null" in main_js
+    assert "value === 'en' || value === 'tr' ? value : null" in main_js + read(WEB / "js" / "kabuk.js")
 
 
 def test_numbers_are_formatted_per_language():
@@ -1373,7 +1486,7 @@ def test_icon_set_is_complete_and_decorative():
     assert not re.search(r"#[0-9A-Fa-f]{3,6}\b", src), "simgelerde renk kodu yok; currentColor kullanılır"
     # Simgeler gerçekten kullanılıyor: sekmeler, hikâye başlıkları, kabul ölçütü rozetleri, Keşfet kartları.
     assert "data-ico" in read(WEB / "index.html") and "[data-ico]" in read(WEB / "js" / "main.js")
-    assert "STEP_ICON" in read(WEB / "js" / "views" / "story.js")
+    assert "icon(o.ico" in read(WEB / "sunum" / "slayt.js")
     overview = read(WEB / "js" / "views" / "overview.js")
     assert "icon(verdict.symbol" in overview and "'✓'" not in overview and "'✕'" not in overview
     assert "icon(" in read(WEB / "js" / "views" / "rota-ozeti.js")
@@ -1487,19 +1600,20 @@ def test_route_table_uses_plain_delay_names_with_small_tags():
         assert tag in routes, tag
     for src, expected in {
         "metin-en.js": [
-            "p50: 'Typical delay'",
+            "p50: 'Typical day'",
             "p80: 'Bad day'",
-            "p95: 'Worst case'",
+            "p95: 'Very bad day'",
             "Bad-day limit (adjusted)",
+            "Very-bad-day limit (adjusted)",
             "8 in 10 flights arrive within this time",
             "19 in 20 flights arrive within this time",
             "half of flights arrive within this time",
         ],
         "metin.js": [
-            "p50: 'Tipik rötar'",
+            "p50: 'Tipik gün'",
             "p80: 'Kötü gün'",
-            "p95: 'En kötü durum'",
-            "Kötü gün sınırı (ayarlı)",
+            "p95: 'Çok kötü gün'",
+            "Kötü gün sınırı (düzeltilmiş)",
             "uçuşların yarısı bu süre içinde varır",
             "uçuşların 10’da 8’i bu süre içinde varır",
             "uçuşların 20’de 19’u bu süre içinde varır",
@@ -1558,6 +1672,191 @@ def test_map_is_a_single_svg_with_arcs_tooltip_and_keyboard_support():
         assert token in css, token
     # Izgara çok soluk ve kara ızgaranın üstünde: önce ızgara, sonra eyaletler çizilir.
     assert map_js.index("root.append(graticule)") < map_js.index("root.append(states)")
+
+
+# --------------------------------------------------------------------------- sunum sitesi ve tam genişlik harita
+
+
+@pytest.fixture(scope="module")
+def sunum_html() -> str:
+    return read(WEB / "sunum" / "index.html")
+
+
+@pytest.fixture(scope="module")
+def sunum_tags(sunum_html):
+    collector = _Collector()
+    collector.feed(sunum_html)
+    return collector.tags
+
+
+def test_presentation_page_has_same_csp_and_no_external_resources(html, sunum_html, sunum_tags):
+    def csp(tags):
+        metas = [a for t, a in tags if t == "meta" and (a.get("http-equiv") or "").lower() == "content-security-policy"]
+        assert len(metas) == 1
+        return metas[0]["content"]
+
+    detail_tags = _Collector()
+    detail_tags.feed(html)
+    assert csp(sunum_tags) == csp(detail_tags.tags), "iki sitede aynı CSP"
+    assert "unsafe-inline" not in csp(sunum_tags)
+    names = [t for t, _ in sunum_tags]
+    assert names.count("h1") == 1 and names.count("main") == 1 and "nav" in names and "footer" in names
+    assert re.search(r"<html[^>]*\blang=\"en\"", sunum_html), "sunum varsayılan dili İngilizce"
+    for tag, attrs in sunum_tags:
+        assert tag != "style" and "style" not in attrs, (tag, attrs)
+        assert not any(name.startswith("on") for name in attrs), (tag, attrs)
+        if tag == "script":
+            assert attrs.get("src"), "inline <script> yok"
+        value = attrs.get("tabindex")
+        if value is not None:
+            assert int(value) <= 0
+    assert "javascript:" not in sunum_html.lower()
+    for value in re.findall(r"""(?:src|href)\s*=\s*["']([^"']*)["']""", sunum_html):
+        assert value.startswith(("./", "../", "#")), value
+        assert not re.match(r"https?:|//", value)
+    # Ortak stiller ve kendi küçük dosyası göreli yolla yüklenir; ortak betikler ../js altında.
+    assert (
+        'href="../css/style.css"' in sunum_html
+        and 'href="./sunum.css"' in sunum_html
+        and 'src="./sunum.js"' in sunum_html
+    )
+    assert not re.search(r"[çğışöüÇĞİŞÖÜ]", re.sub(r"<!--.*?-->", "", sunum_html, flags=re.S).replace("Türkçe", ""))
+    # Sorumluluk reddi sunum sayfasında (alt bilgi) ve noscript metninde; dil düğmeleri aynı biçimde.
+    assert DISCLAIMER_EN in sunum_html and sunum_html.count('data-t="sorumluluk"') == 1
+    buttons = {a["data-lang"]: a for t, a in sunum_tags if t == "button" and a.get("data-lang")}
+    assert set(buttons) == {"tr", "en"} and buttons["en"]["aria-pressed"] == "true"
+    for key in set(re.findall(r'data-t(?:-aria)?="([^"]+)"', sunum_html)):
+        assert key in text_paths("metin.js", "TR"), key
+
+
+def test_presentation_navigation_features_exist():
+    js = read(WEB / "sunum" / "sunum.js")
+    css = read(WEB / "sunum" / "sunum.css")
+    page = read(WEB / "sunum" / "index.html")
+    # ◀ ▶ düğmeleri, klavye, dokunmatik kaydırma, sayaç, noktalar, tam ekran, adres (#sayı), duyuru ve odak.
+    for token in [
+        'id="prev"',
+        'id="next"',
+        'id="counter"',
+        'id="dots"',
+        'id="full-btn"',
+        'role="status"',
+        'aria-live="polite"',
+    ]:
+        assert token in page, token
+    for key in ["ArrowRight", "ArrowLeft", "PageUp", "PageDown", "Home", "End"]:
+        assert key in js, key
+    for token in [
+        "touchstart",
+        "touchend",
+        "requestFullscreen",
+        "exitFullscreen",
+        "fullscreenchange",
+        "hashchange",
+        "/^#(\\d{1,2})$/",
+        "'inert'",
+        ".focus({ preventScroll: true })",
+    ]:
+        assert token in js, token
+    assert "e.defaultPrevented" in js and "'INPUT'" in js, "kaydırıcı ve harita okları gezinmeyi çalmaz"
+    assert "catch(() => {})" in js.replace(" ", "") or ".catch(() => {})" in js, "tam ekran reddi sessizce yok sayılır"
+    # Her slayt tam ekran: 100dvh, sayfa kaymaz, içerik sığmazsa slaytın içi kayar; kısa geçiş, azaltılmış harekete saygı.
+    for token in [
+        "100dvh",
+        "overflow-y: auto",
+        "opacity 0.25s",
+        "prefers-reduced-motion",
+        ":focus-visible",
+        "@media (max-width: 40rem)",
+    ]:
+        assert token in css or token in read(WEB / "css" / "style.css"), token
+    assert "body.deck-page { margin: 0; overflow: hidden; }" in css
+    # Sunum yalnızca düz #sayı adreslerini tanır; başka adresler kapak sayılır.
+    assert "return match ? Number(match[1]) : 0;" in js
+    assert "animation" not in css
+
+
+def test_presentation_and_detail_sites_link_to_each_other():
+    index = read(WEB / "index.html")
+    assert 'href="./sunum/"' in index and 'data-t="sunum.ac"' in index, "detay sitesi üst bilgisinde Sunumu aç düğmesi"
+    story = read(WEB / "js" / "views" / "story.js")
+    assert "href: './sunum/'" in story and "T.sunum.ac" in story, "Story sekmesinin başında aynı çağrı"
+    page = read(WEB / "sunum" / "index.html")
+    assert 'href="../"' in page and 'data-t="sunum.detaySite"' in page, "sunumun sabit köşesinde detaylı siteye geç"
+    slides = read(WEB / "sunum" / "slaytlar.js")
+    assert "href: '../'" in slides and "p.detaySite" in slides, "kapakta da"
+    en, tr = read(WEB / "js" / "metin-en.js"), read(WEB / "js" / "metin.js")
+    assert "detaySite: 'Open the detailed site'" in en and "detaySite: 'Detaylı siteye geç'" in tr
+    assert "ayrinti: 'Details on this topic →'" in en and "ayrinti: 'Bu konunun ayrıntısı →'" in tr
+    # Detay sitesinde bu adresler hâlâ yönlendirilir: #results, #explore/ORD, #buffers, #method/calibration.
+    main_js = read(WEB / "js" / "main.js")
+    for view in ("results", "explore", "buffers", "method"):
+        assert f"'{view}'" in main_js
+
+
+def test_data_paths_resolve_from_the_module_not_the_page():
+    data_js = read(WEB / "js" / "data.js")
+    assert "import.meta.url" in data_js
+    # Sunum betikleri veriyi yalnızca data.js üzerinden okur (kendi fetch'i yok); aynı modül iki sayfadan da yüklenir.
+    for path in (WEB / "sunum").glob("*.js"):
+        assert "fetch(" not in read(path), path.name
+    assert "from '../js/data.js'" in read(WEB / "sunum" / "slaytlar-liste.js")
+
+
+def test_presentation_text_rules():
+    qa = re.compile(r"nedir\?|ne demek|\bPeki\b|What is\b|What(?:'|’)s an?\b|\bWhat are\b", re.IGNORECASE)
+    for lang, text in sunum_text_sections().items():
+        assert not qa.search(text), (lang, qa.search(text).group(0) if qa.search(text) else "")
+        visible = re.sub(r"\$\{[^}]*\}", "", text)
+        visible = re.sub(r"//[^\n]*", "", visible)
+        visible = re.sub(r"\b[A-Za-z_]+\d+\w*", "", visible)
+        assert not re.search(r"\d", visible), (lang, re.search(r".{30}\d.{10}", visible))
+        assert not re.search(r"precision|recall|kesinlik|duyarl[ıi]l[ıi]k|f1|P50|P80|P95", visible, re.IGNORECASE), lang
+    # Havalimanı sıralaması yok: "en iyi/en kötü havalimanı", "ranking" gibi ifadeler geçmez.
+    for lang, text in sunum_text_sections().items():
+        assert not re.search(r"\bbest airport|\bbest-performing|\branking|\bsıralama", text, re.IGNORECASE), lang
+
+
+def test_presentation_keys_have_both_languages(tr_paths, en_paths):
+    keys = [k for k in tr_paths if k == "sunum" or k.startswith("sunum.")]
+    assert len(keys) > 60
+    assert all(k in en_paths for k in keys)
+    for n in ("s1", "s2", "harita", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11"):
+        assert f"sunum.{n}.nasil" in tr_paths or f"sunum.{n}.anlam" in tr_paths, n
+    for key in ("ortak.rakamlar", "ortak.nasil", "ortak.anlam", "ortak.ayrinti"):
+        assert f"sunum.{key}" in tr_paths and f"sunum.{key}" in en_paths
+
+
+def test_map_is_a_full_width_band_with_prominent_arcs():
+    airports = read(WEB / "js" / "views" / "airports.js")
+    css = read(WEB / "css" / "harita.css")
+    # Tam genişlik bant (ana içerik genişliğinin dışına taşar), ~70vh; paneller köşelerde (dar ekranda altta).
+    assert "'map-band'" in airports and "map-overlays" in airports and "ov-left" in airports and "ov-right" in airports
+    assert "width: 100vw" in css and "margin-left: calc(50% - 50vw)" in css and "70vh" in css
+    assert "position: absolute" in css and "@media (min-width: 75rem)" in css
+    assert "color-mix(in srgb, var(--surface)" in css, "yarı saydam panel"
+    assert "widthForHeight(" in airports and "export const widthForHeight" in read(WEB / "js" / "map.js")
+    # Yaylar: daha kalın, opak, açık temada koyu kontur, koyu temada parlama; telefonda da çizilir (daha ince).
+    map_js = read(WEB / "js" / "map.js")
+    assert "export const arcRange = (compact) => (compact ? [1.6, 6] : [2.6, 12]);" in map_js
+    assert "arcWidth(item.n, arcMax, wMin, wMax)" in map_js and "arc-glow" in map_js and "feGaussianBlur" in map_js
+    assert "compact" in map_js[map_js.index("const [wMin, wMax]") :], "dar ekranda yaylar çizilir"
+    assert "if (compact) return" not in map_js
+    style = read(WEB / "css" / "style.css")
+    assert ".arc-glow { display: none;" in style, "parlama yalnızca koyu temada"
+    assert "stroke-opacity: 1; }" in style and "export function arcWidth(n, maxN, min = 2.6, max = 12)" in read(
+        WEB / "js" / "kesfet-hesap.js"
+    )
+    assert '[data-theme="dark"] .arc-glow' in css and "prefers-color-scheme: dark" in css
+    # Bir yay öne çıkar, diğerleri solar; seçili olmayan noktalar soluk.
+    assert "has-active" in map_js and "'arc active'" in map_js
+    assert ".arcs.has-active .arc:not(.active)" in css and ".map.has-arcs .pt:not(.sel)" in css
+    # Renk skalası aynen kalır: beş basamaklı risk renkleri ve sınırları değişmedi.
+    assert "RISK_EDGES = Object.freeze([0.15, 0.2, 0.25, 0.3])" in read(WEB / "js" / "kesfet-hesap.js")
+    assert "--risk-1: #FCE08B;" in style and "--risk-5: #8E1B3A;" in style
+    # Haritanın bandı ve legendi iki sitede aynı modüllerden gelir.
+    assert "harita-lejant.js" in airports and "harita-lejant.js" in read(WEB / "sunum" / "harita-slayti.js")
+    assert 'href="./css/harita.css"' in read(WEB / "index.html")
 
 
 def test_site_files_stay_small():

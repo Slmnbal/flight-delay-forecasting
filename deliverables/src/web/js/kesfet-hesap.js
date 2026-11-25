@@ -174,7 +174,7 @@ export function arcItems(cells, coords, origin) {
 }
 
 /** Yay kalınlığı: uçuş sayısının karekökü ile orantılı (alan ~ uçuş), minimum ile maksimum arasında. */
-export function arcWidth(n, maxN, min = 1.5, max = 8) {
+export function arcWidth(n, maxN, min = 2.6, max = 12) {
   if (!(maxN > 0) || !isNum(n) || n < 0) return min;
   return min + (max - min) * Math.sqrt(Math.min(1, n / maxN));
 }

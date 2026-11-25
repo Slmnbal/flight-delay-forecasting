@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="How well can public data predict US flight delays, and does that help set better schedules? Not affiliated with any airline.">
+  <title>Flight delay risk and schedule buffers – Presentation</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/harita.css">
+  <link rel="stylesheet" href="./sunum.css">
+  <script src="../js/theme-init.js"></script>
+  <script type="module" src="./sunum.js"></script>
+</head>
+<body class="deck-page">
+  <!-- Sabit metinler İngilizce yazılıdır (varsayılan dil ve JavaScript'siz görünüm). data-t / data-t-aria
+       öznitelikleri ../js/metin.js içindeki anahtarlardır; dil düğmesiyle Türkçeye çevrilir. -->
+  <a class="skip" href="#slides" id="skip-link" data-t="atla">Skip to content</a>
+  <h1 class="visually-hidden" data-t="sunum.sunum">Presentation</h1>
+
+  <div class="deck">
+    <header class="deck-bar">
+      <p class="deck-brand" data-t="siteBasligi">Flight delay risk and schedule buffers</p>
+      <div class="deck-tools">
+        <div class="lang-switch" role="group" aria-label="Language" data-t-aria="dil.grup">
+          <button type="button" class="btn lang-btn" id="lang-en" data-lang="en" lang="en" aria-label="English" aria-pressed="true">EN</button>
+          <button type="button" class="btn lang-btn" id="lang-tr" data-lang="tr" lang="tr" aria-label="Türkçe" aria-pressed="false">TR</button>
+        </div>
+        <button type="button" class="btn theme-btn" id="theme-toggle">Theme: auto</button>
+        <button type="button" class="btn theme-btn" id="full-btn" aria-pressed="false">Full screen</button>
+        <a class="btn btn-present" id="detail-link" href="../" data-t="sunum.detaySite">Open the detailed site</a>
+      </div>
+    </header>
+
+    <main id="slides" class="slides" tabindex="-1">
+      <noscript>
+        <p class="error">This presentation reads precomputed JSON files with JavaScript. Enable JavaScript to see it, or open the <a href="../">detailed site</a>. Based on public data; not affiliated with any airline.</p>
+      </noscript>
+    </main>
+
+    <footer class="deck-nav">
+      <button type="button" class="btn nav-btn" id="prev" aria-disabled="true"><span aria-hidden="true">◀</span> <span class="nav-text" data-t="sunum.onceki">Previous</span></button>
+      <div class="deck-progress">
+        <p class="counter" id="counter" aria-hidden="true"></p>
+        <nav aria-label="Slides" data-t-aria="sunum.noktalar"><ol class="dots" id="dots"></ol></nav>
+      </div>
+      <button type="button" class="btn nav-btn" id="next" aria-disabled="false"><span class="nav-text" data-t="sunum.sonraki">Next</span> <span aria-hidden="true">▶</span></button>
+      <p class="deck-disclaimer" data-t="sorumluluk">Based on public data; not affiliated with any airline.</p>
+    </footer>
+    <p class="visually-hidden" id="live" role="status" aria-live="polite"></p>
+  </div>
+</body>
+</html>

@@ -139,15 +139,15 @@ CARRIER_DOMINATED_NOTE_EN = (
 )
 
 CARRIER_DOMINATED_NOTE = (
-    "Yayımlanmadı: bu havalimanında test dönemindeki uçuşların %90'ından fazlası tek bir havayoluna ait; "
-    "havalimanı düzeyindeki sayılar o havayolunun performansını göstermiş olurdu (sunum kuralı)."
+    "Yayımlanmadı: Bu havalimanından kalkan uçuşların %90'ından fazlası tek bir havayoluna ait. Havalimanının "
+    "sayıları fiilen o havayolunun performansını göstereceği için paylaşılmıyor."
 )
 
 DISCLAIMER = (
-    "Kamu verisine dayalı; havayollarıyla bağlantısız. ABD DOT/BTS uçuş verisi ve Iowa Environmental Mesonet "
-    "(IEM) ASOS/METAR gözlemleriyle yapılmış bağımsız bir analizdir. Havayolu bazında sonuç ya da sıralama "
-    "yayımlanmaz; BTS'deki rötar nedeni alanları havayolunun kendi beyanıdır ve burada kullanılmaz. Operasyonel "
-    "karar aracı değildir; tampon önerileri varsayımsal maliyet oranlarına dayanır."
+    "Kamu verisine dayalı; havayollarıyla bağlantısız. ABD Ulaştırma Bakanlığı'nın (DOT/BTS) uçuş verisi ve Iowa "
+    "Environmental Mesonet'in (IEM) hava gözlemleriyle yapılmış bağımsız bir çalışmadır. Havayolu bazında sonuç ya "
+    "da sıralama paylaşılmaz. BTS'deki rötar nedeni alanları havayollarının kendi beyanıdır ve burada kullanılmadı. "
+    "Bu bir operasyon aracı değildir; tampon önerileri varsayılan maliyet oranlarına dayanır."
 )
 
 # --- role -> (gorev, model kimliği) of the interface enums ---
@@ -699,37 +699,37 @@ _SOURCES: tuple[dict[str, str], ...] = (
     {
         "ad": "ABD DOT/BTS Reporting Carrier On-Time Performance",
         "url": "https://www.transtats.bts.gov/",
-        "lisans_notu": "ABD federal hükümet eseri; data.gov kayıtlarında kamu malı etiketi var, BTS sayfasında lisans "
-        "metni okunamadı (kısmen doğrulandı).",
+        "lisans_notu": "ABD federal hükümetinin yayımladığı veri; data.gov'da kamu malı olarak geçiyor. BTS sayfasındaki "
+        "lisans metnine ulaşılamadı (kısmen doğrulandı).",
     },
     {
         "ad": "Iowa Environmental Mesonet (IEM) ASOS/METAR arşivi",
         "url": "https://mesonet.agron.iastate.edu/request/download.phtml",
-        "lisans_notu": "IEM'in kendi beyanına göre kamu malı; atıf rica edilir (doğrulandı).",
+        "lisans_notu": "IEM'e göre kamu malı; kaynak gösterilmesi rica ediliyor (doğrulandı).",
     },
     {
-        "ad": "OurAirports airports.csv (havalimanı adı ve koordinatı)",
+        "ad": "OurAirports airports.csv (havalimanı adları ve koordinatları)",
         "url": "https://ourairports.com/data/",
-        "lisans_notu": "Sitenin beyanına göre kamu malı; sayfa doğrudan okunamadı (kısmen doğrulandı).",
+        "lisans_notu": "Sitenin açıklamasına göre kamu malı; sayfaya doğrudan ulaşılamadı (kısmen doğrulandı).",
     },
 )
 
 _MODELS: tuple[dict[str, str], ...] = (
     {
         "kimlik": "B1",
-        "aciklama": "Referans (B1): rota × saat bloğunun eğitim dönemindeki geçmiş rötar oranı / ampirik kantili "
-        "(veri azsa daha kaba gruba geri çekilir).",
+        "aciklama": "Basit kural (B1): Bir rotanın belirli saatteki uçuşlarının geçmişte ne sıklıkla ve ne kadar geciktiğine "
+        "bakar. Veri azsa daha geniş bir gruba (ör. yalnızca kalkış havalimanı) bakar.",
         "sozlesme": "yok",
     },
     {
         "kimlik": "lgbm_plan",
-        "aciklama": "LightGBM, plan sözleşmesi: yalnızca tarife yapılırken bilinen bilgi (hava yok). Kantiller ve tampon "
-        "önerileri bu modelden gelir.",
+        "aciklama": "Plan modeli (LightGBM): Yalnızca tarife yapılırken bilinen bilgileri kullanır, hava durumunu bilmez. "
+        "Rötar süresi aralıkları ve tampon önerileri bu modelden gelir.",
         "sozlesme": "plan",
     },
     {
         "kimlik": "lgbm_T2",
-        "aciklama": "LightGBM, T2 sözleşmesi: tarife bilgisi + tarifeli kalkıştan 2 saat önceki METAR hava gözlemleri.",
+        "aciklama": "T2 modeli (LightGBM): Plan modelinin bildiklerine ek olarak kalkıştan 2 saat önceki hava raporunu (METAR) kullanır.",
         "sozlesme": "T2",
     },
 )
@@ -890,40 +890,42 @@ ACCEPTANCE_TEXT_EN = {
     "K7": "No leakage: leakage tests passed and no unresolved suspicion in the locked models.",
 }
 NOTES_EN = (
-    "The final test was run once; the numbers in this file are test-period results of the locked models, nothing "
-    "was tuned on the test.",
-    "Probability metrics (Brier, log-loss, ECE, calibration) use monthly rolling Platt; ranking metrics (ROC-AUC, "
-    "PR-AUC) and the F1 threshold use raw scores.",
-    "95% confidence intervals come from a calendar-day block bootstrap (B = 1000, seed 42) and are given only for "
-    "metrics that have them in the source; brier_skill and *_farki_b1 metrics are relative to B1.",
-    "The oracle (observed weather) model was not locked, so the weather experiment has no oracle result.",
-    "The calendar-feature cancellation sensitivity model (cancelled/T2_calendar) is not published because the "
-    "schema has no model id for it.",
-    "Route cells and segments with fewer than 50 flights, and cells where one carrier has more than 90% of the "
-    "flights, are not published.",
-    "Event day: a test day whose delay rate exceeds the 95th percentile of daily delay rates in the training period; "
-    "other days are 'other'.",
-    "Conformal schemes: 'rolling' recomputes the offset each month from the window 2-57 days before that month "
-    "(primary); 'static' is one offset computed in the calibration period (2026-01..02); 'raw' is the unadjusted "
-    "model quantile.",
-    "Buffer optimisation (OR): adding buffer clearly lowers the late-arrival rate, but at the same minute budget the "
-    "plan model's suggestions are not significantly better than the simple historical rule B1. The model's main value "
-    "is in the T-2h (T2) prediction. Details: docs/optimization.md.",
+    "The final test was run only once. These are the locked models' results for the test period; nothing was tuned "
+    "after the test data were seen.",
+    "Probability measures (Brier, log-loss, ECE, calibration) use the adjusted probabilities; separation measures "
+    "(ROC-AUC, PR-AUC) and the F1 threshold use the model's raw scores.",
+    "95% confidence intervals come from resampling whole test days 1,000 times (day-block bootstrap). Differences and "
+    "the Brier gain are always relative to the simple rule (B1).",
+    "The 'oracle' model, which knows the weather that actually happened, was not part of the final test, so the "
+    "weather experiment has no result for it.",
+    "An extra cancellation model that also uses calendar features was only for comparison and is not shown here.",
+    "Route groups with fewer than 50 flights, and groups where one airline operates more than 90% of the flights, "
+    "are not shown.",
+    "Unusual day: a test day whose late-arrival rate is higher than on 95% of the days in the training period (for "
+    "example, stormy days). All other days are 'other days'.",
+    "How delay limits are adjusted: 'rolling' recomputes the limit each month from flights 2–57 days earlier (main "
+    "method); 'static' computes it once in the calibration period (Jan–Feb 2026); 'raw' is the unadjusted model "
+    "estimate.",
+    "Buffer optimisation (OR): adding buffer to the schedule clearly lowers the share of late flights. With the same "
+    "total buffer, however, the model's allocation is not significantly better than the simple historical rule (B1). "
+    "The model's main value is on the day of the flight, in the prediction made 2 hours before departure.",
 )
 
 # Plain-language criterion texts for the site (pre-registered rules: experiments/son-test-on-kayit.md, plan 5.3).
 ACCEPTANCE_TEXT = {
-    "K1": "T2 modeli geç varışları B1'den daha iyi sıralıyor: ROC-AUC ve PR-AUC farkı pozitif, güven aralığının alt "
-    "sınırı sıfırın üstünde ve Holm düzeltmesinden sonra anlamlı.",
-    "K2": "Kalibre edilmiş olasılıkların Brier skor kazancı (B1'e göre) pozitif ve güven aralığının alt sınırı "
-    "sıfırın üstünde.",
-    "K3": "Olasılıklar kalibre: genel sapma (CITL) en fazla ±0,01 ve kalibrasyon eğimi 0,9 ile 1,1 arasında.",
-    "K4": "Plan modelinin P50, P80 ve P95 kantilleri B1'den daha düşük pinball kaybına sahip; üçü de anlamlı.",
-    "K5": "Conformal üst sınırlar hedefi tutuyor: P80 kapsaması 0,78-0,82, P95 kapsaması 0,94-0,96 ve havalimanı × "
-    "ay segmentlerinin en az %80'i hedefin ±0,05 içinde.",
-    "K6": "Yalnızca tarifeyle (plan) iptal tahmini B1'den iyi: PR-AUC farkı pozitif ve güven aralığının alt sınırı "
-    "sıfırın üstünde.",
-    "K7": "Sızıntı yok: sızıntı testleri geçti ve kilitli modellerde çözülmemiş şüphe yok.",
+    "K1": "T2 modeli, geç kalacak uçuşları basit kuraldan (B1) daha iyi ayırt ediyor: ROC-AUC ve PR-AUC farkları "
+    "pozitif, güven aralıkları sıfırın üstünde ve çoklu karşılaştırma düzeltmesinden (Holm) sonra da anlamlı.",
+    "K2": "Modelin olasılık tahminleri basit kuralınkilerden daha isabetli: Brier skorundaki kazanç pozitif ve güven "
+    "aralığı sıfırın üstünde.",
+    "K3": "Olasılıklar gerçeğe uyuyor: ortalama tahmin ile gerçekleşen oran arasındaki fark (CITL) en fazla ±0,01, "
+    "kalibrasyon eğimi 0,9 ile 1,1 arasında.",
+    "K4": "Plan modelinin rötar süresi tahminleri (P50, P80, P95) basit kuralınkilerden daha isabetli; üç farkın "
+    "üçü de anlamlı.",
+    "K5": "Rötar süresi üst sınırları hedefi tutuyor: P80 sınırı uçuşların %78–82'sini, P95 sınırı %94–96'sını "
+    "kapsıyor ve havalimanı × ay gruplarının en az %80'inde hedeften sapma 5 puanı geçmiyor.",
+    "K6": "Yalnızca tarife bilgisiyle yapılan iptal tahmini basit kuraldan daha iyi: PR-AUC farkı pozitif ve güven "
+    "aralığı sıfırın üstünde.",
+    "K7": "Sızıntı yok: Model tahmin anında bilemeyeceği bir bilgiyi kullanmıyor; testler geçti, açık bir şüphe kalmadı.",
 }
 
 
@@ -964,15 +966,15 @@ def build_ozet(
     _check_period("static_calibration", static, VAL_B)
     payload = header("ozet", created, version, sample)
     payload["proje"] = {
-        "baslik": "ABD iç hat uçuş rötarı: tarife anında ve kalkıştan önce tahmin (30 havalimanı)",
+        "baslik": "ABD iç hat uçuşlarında rötar: tarife yapılırken ve kalkıştan önce tahmin (30 havalimanı)",
         "aciklama": (
-            "Bir uçuşun 15 dakikadan fazla gecikme olasılığı (ArrDel15), iptal olasılığı ve varış rötarı "
-            "kantilleri (P50/P80/P95) iki anda tahmin edilir: tarife yapılırken (plan) ve kalkıştan 2 saat önce "
-            "(T2, METAR hava gözlemleriyle). Modeller zaman sırasına göre bölünmüş veriyle eğitildi; son test "
-            "dönemi (2026-03..08) kilitli modellerle bir kez değerlendirildi ve sonuçlar ayar yapılmadan "
-            "yayımlandı. Olasılıklar aylık kayan Platt ile kalibre edildi; kantil üst sınırları aylık kayan tek "
-            "yönlü conformal ayarla verilir. Tampon önerileri plan modelinin hücre kantillerinden, varsayımsal bir "
-            "maliyet oranıyla (τ = 0,80) türetildi."
+            "Bir uçuşun 15 dakika ya da daha geç varma olasılığı (ArrDel15), iptal olasılığı ve ne kadar gecikeceği "
+            "(P50/P80/P95) iki ayrı anda tahmin ediliyor: tarife yapılırken (plan modeli) ve kalkıştan 2 saat önce, "
+            "hava raporuyla birlikte (T2 modeli). Modeller zaman sırasına göre ayrılmış veriyle eğitildi. Son test "
+            "dönemi (Mart–Ağustos 2026) kilitli modellerle yalnızca bir kez değerlendirildi; sonuçlar sonradan "
+            "ayar yapılmadan paylaşılıyor. Olasılıklar her ay yeniden ayarlanıyor (kayan Platt); rötar süresi üst "
+            "sınırları da her ay geçmiş hatalara göre düzeltiliyor (conformal). Tampon önerileri plan modelinden, "
+            "varsayılan bir maliyet oranıyla (τ = 0,80) hesaplandı."
         ),
         "sorumluluk_reddi": DISCLAIMER,
         "kaynaklar": [dict(s) for s in _SOURCES],
@@ -994,25 +996,24 @@ def build_ozet(
     payload["sonuclar"] = _summary_results(block)
     payload["kabul"] = _acceptance(block)
     notes = [
-        "Son test bir kez çalıştırıldı; bu dosyadaki sayılar kilitli modellerin test dönemi sonuçlarıdır, "
-        "testte hiçbir ayar yapılmadı.",
-        "Olasılık metrikleri (Brier, log-loss, ECE, kalibrasyon) aylık kayan Platt ile; sıralama metrikleri "
-        "(ROC-AUC, PR-AUC) ve F1 eşiği ham skorla hesaplandı.",
-        "%95 güven aralıkları takvim günü blok bootstrap'iyle (B = 1000, tohum 42) hesaplandı ve yalnızca "
-        "kaynakta bulunan metrikler için verildi; brier_skill ve *_farki_b1 metrikleri B1'e göredir.",
-        "Oracle (gerçekleşen hava) modeli kilitlenmediği için hava deneyinde oracle sonucu yoktur.",
-        "Takvim özellikli iptal duyarlılık modeli (cancelled/T2_calendar) şemada ayrı model kimliği "
-        "olmadığından yayımlanmadı.",
-        "Uçuş sayısı 50'nin altındaki rota hücreleri ve segmentler ile uçuşlarının %90'ından fazlası tek "
-        "havayoluna ait hücreler yayımlanmaz.",
-        "Olay günü: rötar oranı, eğitim dönemindeki günlük rötar oranlarının %95'lik dilimini aşan test günü; "
-        "diğer günler 'diğer'.",
-        "Conformal şemaları: 'kayan' her ay için o aydan 2-57 gün önceki pencereden yeniden hesaplanan ofset "
-        "(birincil); 'statik' kalibrasyon döneminde (2026-01..02) bir kez hesaplanan sabit ofset; 'ham' ayarsız "
-        "model kantili.",
-        "Tampon optimizasyonu (OR): tampon eklemek rötarlı uçuş oranını belirgin düşürür; ancak aynı dakika "
-        "bütçesinde plan modelinin önerileri basit geçmiş kuralı B1'den anlamlı derecede iyi değildir. Modelin "
-        "asıl katkısı kalkıştan 2 saat önceki (T2) tahmindedir. Ayrıntı: docs/optimization.md.",
+        "Son test yalnızca bir kez çalıştırıldı. Buradaki sayılar kilitli modellerin test dönemi sonuçları; "
+        "test verisi görüldükten sonra hiçbir ayar yapılmadı.",
+        "Olasılıkla ilgili ölçütler (Brier, log-loss, ECE, kalibrasyon) ayarlanmış olasılıklarla; ayırt etme "
+        "ölçütleri (ROC-AUC, PR-AUC) ve F1 eşiği ise modelin ham skorlarıyla hesaplandı.",
+        "%95 güven aralıkları, test günleri bütün olarak 1000 kez yeniden örneklenerek (gün blok bootstrap) "
+        "hesaplandı. Farklar ve Brier kazancı hep basit kurala (B1) göre verilir.",
+        "Gerçekleşen havayı bilen 'oracle' modeli son teste dahil edilmediği için hava deneyinde onun sonucu yok.",
+        "Takvim bilgisi de kullanan ek iptal modeli yalnızca karşılaştırma amaçlıydı; burada gösterilmiyor.",
+        "50'den az uçuşu olan rota gruplarının ve uçuşlarının %90'ından fazlası tek bir havayoluna ait olan "
+        "grupların sayıları paylaşılmıyor.",
+        "Olağandışı gün: Geç varış oranının, eğitim dönemindeki günlerin %95'inden daha yüksek olduğu test günü "
+        "(ör. fırtınalı günler). Geri kalanlar 'diğer günler'.",
+        "Rötar süresi sınırlarının düzeltilme biçimleri: 'kayan' sınır her ay, o aydan 2–57 gün önceki uçuşlara "
+        "bakılarak yeniden hesaplanır (ana yöntem); 'sabit' sınır kalibrasyon döneminde (Ocak–Şubat 2026) bir kez "
+        "hesaplanır; 'ham' sınır ise düzeltilmemiş model tahminidir.",
+        "Tampon optimizasyonu (OR): Tarifeye tampon eklemek geç varan uçuşların oranını belirgin şekilde azaltıyor. "
+        "Ancak aynı toplam tampon süresiyle, modelin önerdiği dağıtım basit geçmiş kuralından (B1) anlamlı ölçüde "
+        "daha iyi değil. Modelin asıl katkısı uçuş günü, kalkıştan 2 saat önce yapılan tahminde.",
     ]
     payload["notlar"] = [_truncate(n, 500) for n in [*notes, *extra_notes]][:20]
     payload["ceviri_en"] = {
@@ -1285,14 +1286,14 @@ def build_hava_deneyi(
         {
             "varyant": "plan",
             "oracle": False,
-            "etiket": "Plan: yalnızca tarife yapılırken bilinen bilgi (hava yok)",
+            "etiket": "Plan modeli: yalnızca tarife yapılırken bilinenler (hava yok)",
             "etiket_en": "Plan: only information known when the schedule is set (no weather)",
             "metrikler": variant(fe.ROLE_ARR_DEL15_PLAN, fe.ROLE_QUANTILES_PLAN),
         },
         {
             "varyant": "T2",
             "oracle": False,
-            "etiket": "T2: tarifeli kalkıştan 2 saat önceki METAR hava gözlemleri eklenmiş",
+            "etiket": "T2 modeli: ek olarak kalkıştan 2 saat önceki hava raporu",
             "etiket_en": "T2: adds METAR weather observations 2 hours before scheduled departure",
             "metrikler": variant(fe.ROLE_ARR_DEL15_T2, fe.ROLE_QUANTILES_T2),
         },
@@ -1892,19 +1893,19 @@ OR_SOLVER_RESULTS = "experiments/or/cozucu-20261122T181720Z/cozucu-sonuclari.jso
 
 OR_POLICY_LABELS: dict[str, tuple[str, str]] = {
     "none": ("Ek tampon yok (bugünkü tarife)", "No extra buffer (current schedule)"),
-    "b1": ("Basit kural B1 (geçmiş istatistik)", "Simple rule B1 (historical statistics)"),
+    "b1": ("Basit kural (B1, geçmişe bakar)", "Simple rule B1 (historical statistics)"),
     "plan": ("Plan modeli", "Plan model"),
     "plan_conformal": ("Plan modeli + conformal", "Plan model + conformal"),
     "b1_conformal": ("B1 + conformal", "B1 + conformal"),
-    "plan_flight": ("Plan modeli, uçuş düzeyi (ikincil)", "Plan model, flight level (secondary)"),
+    "plan_flight": ("Plan modeli, uçuş bazında (ikincil)", "Plan model, flight level (secondary)"),
     "plan_budget": ("Plan modeli, dakika hedefli", "Plan model, minutes objective"),
     "b1_budget": ("B1, dakika hedefli", "B1, minutes objective"),
     "plan_arrdel15_budget": (
-        "Sırt çantası (15 dk hedefi), ortalama dağılım",
+        "Geç uçuş sayısını azaltma hedefli, ortalama dağılımla",
         "Knapsack (15-min objective), averaged cells",
     ),
     "plan_arrdel15_mixture": (
-        "Sırt çantası (15 dk hedefi), karışım dağılımı",
+        "Geç uçuş sayısını azaltma hedefli, karışım dağılımıyla",
         "Knapsack (15-min objective), mixture cells",
     ),
 }
@@ -1916,21 +1917,24 @@ _OR_COMPARISON_METRICS = {
 }
 OR_NOTES: tuple[tuple[str, str], ...] = (
     (
-        "Maliyetler varsayımdır: yalnızca τ = c_u/(c_u + c_o) oranı seçilir; maliyet c_u = τ, c_o = 1 − τ ile "
-        "normalize edilmiş 'ağırlıklı dakika'dır, para değildir.",
+        "Maliyetler varsayımdır: Yalnızca bir dakika rötarın bir dakika boş beklemeye göre ne kadar pahalı "
+        "sayıldığı (τ) seçilir. Gösterilen maliyet para değil, ağırlıklandırılmış dakikadır.",
         "Costs are assumptions: only the ratio tau = c_u/(c_u + c_o) is chosen; cost is in normalised 'weighted "
         "minutes' (c_u = tau, c_o = 1 - tau), not money.",
     ),
     (
-        "Varsayım: 1 dakika tampon = 1 dakika daha az varış rötarı; uçak rotasyonu, ekip ve ağ etkileri yoktur.",
+        "Varsayım: 1 dakika tampon, varış rötarını 1 dakika azaltır. Uçağın gün içindeki diğer seferleri, ekip "
+        "planlaması ve ağ etkileri hesaba katılmadı.",
         "Assumption: 1 minute of buffer = 1 minute less arrival delay; no aircraft rotation, crew or network effects.",
     ),
     (
-        "Politikalar test döneminden önce donduruldu; test dönemi (2026-03..08) yalnızca değerlendirme için okundu.",
+        "Tampon kuralları test döneminden önce sabitlendi; test dönemi (Mart–Ağustos 2026) yalnızca sonucu ölçmek "
+        "için kullanıldı.",
         "Policies were frozen before the test period; the test period (2026-03..08) was only used for evaluation.",
     ),
     (
-        "Maliyet ve tampon dakikaları tamamlanan uçuşlar üzerinden; iptal ve sapan uçuşlar rötar maliyetine girmez.",
+        "Maliyet ve tampon dakikaları yalnızca gerçekleşen uçuşlar için hesaplandı; iptal edilen ve başka "
+        "havalimanına inen uçuşlar dahil değil.",
         "Costs and buffer minutes are over completed flights; cancelled and diverted flights carry no delay cost.",
     ),
 )
@@ -2032,7 +2036,7 @@ def build_optimizasyon(
                 rows.append(row)
             solver_curve.append({"butce_dk": float(step["budget_per_flight_min"]), "politikalar": rows})
         payload["kesifsel"] = {
-            "etiket": "Keşifsel (post hoc): bu test dönemi bu politikalar için daha önce görüldü; son test sonucu değildir.",
+            "etiket": "Keşifsel (post hoc): Bu yöntemler test dönemi daha önce görüldükten sonra denendi; bu yüzden son test sonucu sayılmaz.",
             "etiket_en": "Exploratory (post hoc): this test period had already been seen for these policies; "
             "not a final-test result.",
             "butce_egrisi": solver_curve,

@@ -1,29 +1,31 @@
-// Havalimanları (Keşfet sekmesinin üst yarısı): harita, renk ve boyut açıklaması, seçili havalimanının rota
-// yayları ve açılır, sıralanabilir tablo (gözlenen ve tahmin edilen geç varış oranı, iptal, kapsama).
+// Havalimanları (Keşfet sekmesinin üst yarısı): sayfa genişliğinin tamamını kaplayan harita bandı ve açılır,
+// sıralanabilir tablo (gözlenen ve tahmin edilen geç varış oranı, iptal, kapsama). Renk açıklaması, seçili
+// havalimanının bilgi kartı ve notlar geniş ekranda haritanın köşelerinde yarı saydam panel olarak durur;
+// dar ekranda haritanın altına iner (CSS: .map-band). Seçili havalimanından çıkan rota yayları haritada
+// çizilir; üzerine gelinen yay öne çıkar, diğerleri solar (map.js).
 // opts.onSelect(iata, goToRoutes) seçimi rota tablosuna iletir. mount() bir denetleyici döndürür:
 // setArcs(veri) seçili havalimanının rota yaylarını çizdirir (veriyi Keşfet sayfası hazırlar).
 
-import { el, svg, fill, selectField } from '../dom.js';
+import { el, fill, selectField } from '../dom.js';
 import { loadHavalimanlari, loadEyaletler } from '../data.js';
 import { fmtPct, fmtInt, fmtNum, NA } from '../fmt.js';
 import { T } from '../metin.js';
 import { gizlemeNedeni } from '../yerel.js';
-import { buildMap, dotRadius, isCompact, onMap } from '../map.js';
+import { buildMap, isCompact, onMap, widthForHeight } from '../map.js';
 import { mountChart } from '../charts.js';
 import { createTable } from '../table.js';
 import { icon } from '../simgeler.js';
-import { RISK_EDGES, riskClass, equalEdges, arcWidth } from '../kesfet-hesap.js';
+import { RISK_EDGES, riskClass, equalEdges } from '../kesfet-hesap.js';
+import { strip, edgeLabels, sizeKey, hiddenKey, arcKey } from '../harita-lejant.js';
 
 const METRIC_KEYS = ['gozlenen_arrdel15_orani', 'tahmin_arrdel15_orani', 'iptal_orani', 'kapsama_p80', 'kapsama_p95'];
 // Geç varış oranları sabit risk sınırlarıyla boyanır; diğer ölçütler kendi aralığını 5 eşit sınıfa böler.
 const RATE_KEYS = new Set(['gozlenen_arrdel15_orani', 'tahmin_arrdel15_orani']);
 
-const clip = (text, max = 34) => (String(text).length > max ? `${String(text).slice(0, max - 1)}…` : String(text));
+// Geniş ekranda harita sabit yükseklikli bantta durur (CSS ile aynı eşik).
+const wideBand = () => typeof window.matchMedia === 'function' && window.matchMedia('(min-width: 75rem)').matches;
 
-function edgeLabels(e) {
-  const p = (v) => fmtPct(v, 0);
-  return [`< ${p(e[0])}`, `${p(e[0])}–${p(e[1])}`, `${p(e[1])}–${p(e[2])}`, `${p(e[2])}–${p(e[3])}`, `≥ ${p(e[3])}`];
-}
+const clip = (text, max = 34) => (String(text).length > max ? `${String(text).slice(0, max - 1)}…` : String(text));
 
 export async function mount(root, params, opts = {}) {
   // Eyalet sınırları isteğe bağlıdır: yüklenemezse (null) harita ızgarayla çalışır.
@@ -71,8 +73,10 @@ export async function mount(root, params, opts = {}) {
 
   const chart = mountChart(mapHolder, (width) => {
     const scale = scaleOf();
+    // Sabit yükseklikli bantta harita yüksekliğe sığacak genişlikte çizilir (yanlarda deniz kalır).
+    const fixed = wideBand() && mapHolder.clientHeight > 0;
     return buildMap({
-      width,
+      width: fixed ? Math.max(300, Math.min(width, widthForHeight(mapHolder.clientHeight))) : width,
       airports,
       states,
       valueOf: (a) => a[metric.key],
@@ -88,76 +92,15 @@ export async function mount(root, params, opts = {}) {
   });
 
   // ---------------------------------------------------------------- açıklama (lejant)
-  function strip(labels) {
-    return el(
-      'ol',
-      { class: 'risk-strip' },
-      labels.map((text, i) => el('li', null, el('span', { class: `sw r${i + 1}`, 'aria-hidden': 'true' }), el('span', { class: 'sw-label' }, text))),
-    );
-  }
-
-  function sizeKey() {
-    const counts = airports.map((a) => a.n_test_ucus);
-    const maxN = Math.max(...counts, 1);
-    const minN = Math.min(...counts);
-    const compact = isCompact(mapHolder.clientWidth || 600);
-    const rBig = dotRadius(maxN, maxN, compact);
-    const rSmall = dotRadius(minN, maxN, compact);
-    const w = Math.round(2 * rBig + 2 * rSmall + 14);
-    const h = Math.round(2 * rBig + 4);
-    const sample = svg(
-      'svg',
-      { class: 'legend-svg', width: w, height: h, viewBox: `0 0 ${w} ${h}`, 'aria-hidden': 'true', focusable: 'false' },
-      svg('circle', { class: 'dot r3', cx: rSmall + 2, cy: h / 2, r: rSmall }),
-      svg('circle', { class: 'dot r3', cx: 2 * rSmall + 10 + rBig, cy: h / 2, r: rBig }),
-    );
-    return el('div', { class: 'legend-row' }, sample, el('span', null, t.lejantBoyut(fmtInt(minN), fmtInt(maxN))));
-  }
-
-  function hiddenKey() {
-    if (!airports.some((a) => a.gizleme_nedeni)) return null;
-    const sample = svg(
-      'svg',
-      { class: 'legend-svg', width: 20, height: 20, viewBox: '0 0 20 20', 'aria-hidden': 'true', focusable: 'false' },
-      svg('g', { class: 'pt hidden-pt' }, svg('circle', { class: 'dot', cx: 10, cy: 10, r: 7 })),
-    );
-    return el('div', { class: 'legend-row' }, sample, el('span', null, t.lejantYok));
-  }
-
-  function arcKey() {
-    if (!arcState || !arcState.items.length) return null;
-    const counts = arcState.items.map((i) => i.n);
-    const maxN = Math.max(...counts);
-    const minN = Math.min(...counts);
-    const wMin = arcWidth(minN, maxN);
-    const wMax = arcWidth(maxN, maxN);
-    const sample = svg(
-      'svg',
-      { class: 'legend-svg', width: 64, height: 20, viewBox: '0 0 64 20', 'aria-hidden': 'true', focusable: 'false' },
-      svg('path', { class: 'arc-case', d: 'M2 14Q16 2 30 14', 'stroke-width': (wMin + 1.8).toFixed(1) }),
-      svg('path', { class: 'arc-line rs3', d: 'M2 14Q16 2 30 14', 'stroke-width': wMin.toFixed(1) }),
-      svg('path', { class: 'arc-case', d: 'M34 14Q48 2 62 14', 'stroke-width': (wMax + 1.8).toFixed(1) }),
-      svg('path', { class: 'arc-line rs3', d: 'M34 14Q48 2 62 14', 'stroke-width': wMax.toFixed(1) }),
-    );
-    const sameScale = RATE_KEYS.has(metric.key);
-    return el(
-      'div',
-      { class: 'legend-group' },
-      el('div', { class: 'legend-row' }, sample, el('span', null, t.lejantYay(fmtInt(minN), fmtInt(maxN)))),
-      sameScale
-        ? el('p', { class: 'note' }, t.lejantYayRenk)
-        : el('div', { class: 'legend-row legend-col' }, el('span', { class: 'legend-title' }, t.lejantBaslik(t.olcutler.gozlenen_arrdel15_orani)), strip(edgeLabels(RISK_EDGES))),
-    );
-  }
-
   function renderLegend() {
     const sc = scaleOf();
+    const compact = isCompact(mapHolder.clientWidth || 600);
     fill(
       legendHolder,
       el('div', { class: 'legend-row legend-col' }, el('span', { class: 'legend-title' }, t.lejantBaslik(metric.label)), strip(sc.labels)),
-      sizeKey(),
-      hiddenKey(),
-      arcKey(),
+      sizeKey(airports, compact),
+      hiddenKey(airports),
+      arcState ? arcKey(arcState.items, compact, RATE_KEYS.has(metric.key), t.olcutler.gozlenen_arrdel15_orani) : null,
     );
   }
 
@@ -266,14 +209,21 @@ export async function mount(root, params, opts = {}) {
   renderLegend();
   renderDetail();
 
-  fill(
-    root,
-    el('div', { class: 'controls' }, metricField.wrap),
-    el('div', { class: 'map-layout' }, el('div', { class: 'stack' }, mapHolder, arcNote, legendHolder), detail),
-    el('p', { class: 'note' }, states ? t.haritaNotu : t.haritaNotuEyaletsiz),
-    hiddenNotes,
-    el('details', { class: 'fold' }, el('summary', null, t.tabloBaslik), el('div', { class: 'fold-body' }, table.element)),
+  // Tam genişlik bant: harita + köşelerde yarı saydam paneller (dar ekranda haritanın altında).
+  const band = el(
+    'div',
+    { class: 'map-band' },
+    mapHolder,
+    el(
+      'div',
+      { class: 'map-overlays' },
+      el('div', { class: 'map-panel ov-left' }, el('div', { class: 'controls' }, metricField.wrap), legendHolder),
+      el('div', { class: 'map-panel ov-right' }, detail),
+      el('div', { class: 'map-panel ov-bottom' }, arcNote, el('p', { class: 'note' }, states ? t.haritaNotu : t.haritaNotuEyaletsiz), hiddenNotes),
+    ),
   );
+
+  fill(root, band, el('details', { class: 'fold' }, el('summary', null, t.tabloBaslik), el('div', { class: 'fold-body' }, table.element)));
 
   return {
     /** data: {origin, items: [{iata, ad, enlem, boylam, n, rate}], missing: sayı, failed: boolean} ya da null */

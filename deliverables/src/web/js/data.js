@@ -1,11 +1,12 @@
-// Veri erişimi. Sonuç dosyaları ./veri/ altındadır, harita dosyası ./harita/ altındadır
-// (göreli yollar: GitHub Pages'te /<depo>/ altında da çalışır).
+// Veri erişimi. Sonuç dosyaları veri/ altındadır, harita dosyası harita/ altındadır. Yollar sayfanın
+// değil bu modülün konumuna göre çözülür (import.meta.url): hem detay sitesi (/<depo>/) hem sunum
+// sitesi (/<depo>/sunum/) aynı dosyaları okur ve GitHub Pages'te depo yolu altında da çalışır.
 // Sonuç dosyalarının listesi manifest.json'dan okunur; aşağıdaki adlar sitenin okuduklarıdır.
 
 import { T } from './metin.js';
 
-const BASE = './veri/';
-const HARITA = './harita/';
+const BASE = new URL('../veri/', import.meta.url).href;
+const HARITA = new URL('../harita/', import.meta.url).href;
 
 export const FILES = Object.freeze({
   manifest: 'manifest.json',

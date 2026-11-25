@@ -1,0 +1,47 @@
+/* Harita bandı: sayfa genişliğinin tamamı, belirgin rota yayları (detay sitesi Keşfet ve sunum harita slaydı).
+   Renk skalası (--risk-1 ... --risk-5) style.css'tedir ve değişmez; burada yalnızca yerleşim ve yay
+   görünümü vardır. Dış kaynak yok: parlama süzgeci (SVG filter) harita betiği tarafından satır içi kurulur. */
+
+body { overflow-x: clip; }
+
+/* Tam genişlik: ana içerik genişliği sınırının dışına taşar. */
+.map-band { position: relative; width: 100vw; margin-left: calc(50% - 50vw); background: var(--sea); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.map-band .map-box { border: 0; }
+
+/* Dar ekran: paneller haritanın altında, normal akışta. */
+.map-overlays { display: grid; gap: 0.75rem; padding: 0.75rem 1rem 1rem; background: var(--bg); }
+.map-panel { background: var(--surface); border: 1px solid var(--line); padding: 0.6rem 0.8rem; min-width: 0; }
+.map-panel .detail { border: 0; padding: 0; background: none; }
+.map-panel .map-legend { border: 0; padding: 0.4rem 0 0; background: none; }
+.map-panel .controls { margin: 0; }
+.map-panel .field { min-width: 0; }
+
+/* Geniş ekran: harita ~70vh yüksekliğinde; paneller köşelerde yarı saydam. */
+@media (min-width: 75rem) {
+  .map-band .map-box { height: clamp(28rem, 70vh, 56rem); }
+  .map-band .map-box .chart-fill, .map-band .map-box .map { width: 100%; height: 100%; }
+  .map-overlays { position: absolute; inset: 0; display: block; padding: 0; background: none; pointer-events: none; }
+  .map-panel { position: absolute; pointer-events: auto; max-height: calc(100% - 1.5rem); overflow-y: auto; font-size: 0.88rem; background: color-mix(in srgb, var(--surface) 84%, transparent); }
+  .ov-left { top: 0.75rem; left: 0.75rem; width: 16.5rem; }
+  .ov-right { top: 0.75rem; right: 0.75rem; width: 16.5rem; }
+  .ov-bottom { bottom: 0.75rem; left: 0.75rem; width: 22rem; }
+  .map-panel .risk-strip { max-width: none; }
+  .map-panel .sw-label { font-size: 0.7rem; }
+}
+
+/* Yaylar: kalın, opak; açık temada ince koyu kontur (arc-case), koyu temada hafif parlama (arc-glow). */
+.arc { transition: opacity 0.15s; }
+.arcs.has-active .arc:not(.active) { opacity: 0.16; }
+.arc.active .arc-case { stroke-opacity: 1; }
+.arc.active .arc-end { stroke-opacity: 1; stroke-width: 2; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .arc-case { stroke: var(--sea); stroke-opacity: 0.85; }
+  :root:not([data-theme="light"]) .arc-glow { display: inline; stroke-opacity: 0.6; }
+}
+:root[data-theme="dark"] .arc-case { stroke: var(--sea); stroke-opacity: 0.85; }
+:root[data-theme="dark"] .arc-glow { display: inline; stroke-opacity: 0.6; }
+
+/* Yay çizilirken seçili olmayan havalimanı noktaları solar; üzerine gelince ya da odakta geri döner. */
+.map.has-arcs .pt:not(.sel) { opacity: 0.55; }
+.map.has-arcs .pt:not(.sel):hover, .map.has-arcs .pt:not(.sel):focus { opacity: 1; }

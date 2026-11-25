@@ -16,6 +16,7 @@ import { txt } from './fmt.js';
 import { sorumlulukReddi } from './yerel.js';
 import { authorLinkNodes } from './yazar.js';
 import { icon } from './simgeler.js';
+import { readLangParam, readStoredLang, storeLang, syncUrlLang, currentMode, applyMode, nextMode } from './kabuk.js';
 
 const VIEWS = ['story', 'results', 'explore', 'buffers', 'method', 'sozluk'];
 const DEFAULT_VIEW = 'story';
@@ -135,43 +136,7 @@ function show(userNavigation) {
 }
 
 // ---------------------------------------------------------------------- dil
-function readLangParam() {
-  try {
-    const value = new URLSearchParams(window.location.search).get('lang');
-    return value === 'en' || value === 'tr' ? value : null;
-  } catch (err) {
-    return null;
-  }
-}
-
-function readStoredLang() {
-  try {
-    const value = window.localStorage.getItem('lang');
-    return value === 'en' || value === 'tr' ? value : null;
-  } catch (err) {
-    return null;
-  }
-}
-
-function storeLang(lang) {
-  try {
-    window.localStorage.setItem('lang', lang);
-  } catch (err) {
-    // Depolama kullanılamayabilir; seçim yalnızca bu ziyaret boyunca geçerli olur.
-  }
-}
-
-function syncUrlLang(lang) {
-  if (readLangParam() === null) return;
-  try {
-    const params = new URLSearchParams(window.location.search);
-    params.set('lang', lang);
-    window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}${window.location.hash}`);
-  } catch (err) {
-    // Adres güncellenemezse seçim yine localStorage'da kalır.
-  }
-}
-
+// Dil ve tema okuma/yazma işlevleri kabuk.js içindedir (sunum sitesiyle ortak).
 function lookup(path) {
   return path.split('.').reduce((node, key) => (node === undefined || node === null ? undefined : node[key]), T);
 }
@@ -215,13 +180,7 @@ function initLang() {
 }
 
 // ---------------------------------------------------------------------- tema: otomatik (sistem) -> açık -> koyu
-const MODES = ['auto', 'light', 'dark'];
 const modeName = (mode) => ({ auto: T.tema.otomatik, light: T.tema.acik, dark: T.tema.koyu })[mode];
-
-function currentMode() {
-  const attr = document.documentElement.getAttribute('data-theme');
-  return attr === 'light' || attr === 'dark' ? attr : 'auto';
-}
 
 function refreshThemeButton() {
   const button = document.getElementById('theme-toggle');
@@ -230,24 +189,11 @@ function refreshThemeButton() {
   button.setAttribute('aria-label', T.temaEtiketi(name));
 }
 
-function applyMode(mode) {
-  const root = document.documentElement;
-  if (mode === 'auto') root.removeAttribute('data-theme');
-  else root.setAttribute('data-theme', mode);
-  try {
-    if (mode === 'auto') window.localStorage.removeItem('theme');
-    else window.localStorage.setItem('theme', mode);
-  } catch (err) {
-    // Depolama kullanılamayabilir; seçim yalnızca bu ziyaret boyunca geçerli olur.
-  }
-  refreshThemeButton();
-}
-
 function initTheme() {
   refreshThemeButton();
   document.getElementById('theme-toggle').addEventListener('click', () => {
-    const next = MODES[(MODES.indexOf(currentMode()) + 1) % MODES.length];
-    applyMode(next);
+    applyMode(nextMode());
+    refreshThemeButton();
   });
 }
 

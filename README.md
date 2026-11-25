@@ -1,15 +1,18 @@
 # Flight delay risk and schedule buffers (US domestic, BTS data)
 
 [![CI](https://github.com/Slmnbal/flight-delay-forecasting/actions/workflows/ci.yml/badge.svg)](https://github.com/Slmnbal/flight-delay-forecasting/actions/workflows/ci.yml)
-[![Live demo](https://img.shields.io/badge/live%20demo-GitHub%20Pages-1f6feb)](https://slmnbal.github.io/flight-delay-forecasting/)
+[![Presentation](https://img.shields.io/badge/presentation-GitHub%20Pages-1f6feb)](https://slmnbal.github.io/flight-delay-forecasting/sunum/)
 ![Python 3.12](https://img.shields.io/badge/python-3.12-3776ab)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-**Live demo:** <https://slmnbal.github.io/flight-delay-forecasting/> (English; Turkish: [`?lang=tr`](https://slmnbal.github.io/flight-delay-forecasting/?lang=tr)). Start with the *Story* tab for a plain-language walkthrough.
+**Presentation (start here):** <https://slmnbal.github.io/flight-delay-forecasting/sunum/> — an 11-slide executive walkthrough with simple charts (arrow keys to navigate; Turkish: [`?lang=tr`](https://slmnbal.github.io/flight-delay-forecasting/sunum/?lang=tr)).  
+**Detailed site:** <https://slmnbal.github.io/flight-delay-forecasting/> — results, interactive map and route tables, buffer optimisation, methods and glossary.
 
 > Based on public data; not affiliated with any airline.
 
-[![Story page of the web interface: three headline findings and a ROC-AUC chart](deliverables/docs/img/site-story.png)](https://slmnbal.github.io/flight-delay-forecasting/)
+[![Presentation cover: the question, three headline findings and 100 flights with 26 late](deliverables/docs/img/presentation-cover.png)](https://slmnbal.github.io/flight-delay-forecasting/sunum/)
+
+[![Presentation map slide: late-arrival rate by airport with route arcs from Chicago O'Hare](deliverables/docs/img/presentation-map.png)](https://slmnbal.github.io/flight-delay-forecasting/sunum/#3)
 
 **Problem.** Given only the schedule, past statistics and weather observed 2 hours before departure, how well can we
 predict whether a US domestic flight arrives 15+ minutes late (ArrDel15), how large the arrival delay will be
