@@ -36,7 +36,7 @@ Zamana göre bölme; sızıntı incelemesi (permütasyon + zaman yolculuğu, ş�
 - Kantiller tamamlanan uçuşlara koşulludur; iptal zamanı bilinmez. Model test başında 6–12 ay eskidir; test dönemi rötar oranı (0,2626) erken durdurma dönemine göre (0,2228) yüksektir.
 - Havayolu iç sistemleriyle kıyas yapılmadı. Havayolu sıralaması, logo, taşıyıcı bazlı sonuç tablosu ya da kuyruk numarası yayımlanmaz. Tek taşıyıcının payı %90'ı aşan hücreler için tampon önerisi yayımlanmaz
   (test döneminde 24.765 hücrenin 7.094'ü yayımlanabilir).
-- Çalıştırma talimatları temiz ortamda henüz denenmedi. Kod lisansı: MIT. Web arayüzü (Türkçe) `deliverables/src/web/` klasöründe.
+- Kurulum ve testler her push'ta temiz bir ortamda GitHub Actions ile çalıştırılıyor. Kod lisansı: MIT. Sunum ve etkileşimli site GitHub Pages'te (İngilizce ve Türkçe).
 
 ## Bağlantılar
 

@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **Presentation (start here):** <https://slmnbal.github.io/flight-delay-forecasting/sunum/> — an 11-slide executive walkthrough with simple charts (arrow keys to navigate; Turkish: [`?lang=tr`](https://slmnbal.github.io/flight-delay-forecasting/sunum/?lang=tr)).  
-**Detailed site:** <https://slmnbal.github.io/flight-delay-forecasting/> — results, interactive map and route tables, buffer optimisation, methods and glossary.
+**Detailed site:** <https://slmnbal.github.io/flight-delay-forecasting/> — results, interactive map and route tables, buffer optimization, methods and glossary.
 
 > Based on public data; not affiliated with any airline.
 
@@ -121,7 +121,7 @@ flowchart LR
 | `src/flight_delay/modeling/` | baselines, LightGBM, calibration, conformal, bootstrap, permutation review, final test and lock |
 | `src/flight_delay/optimization/` | newsvendor, allocation, policies, Pyomo LP / MILP, plots |
 | `src/flight_delay/mlops/` | reproducibility helpers, MLflow settings |
-| `tests/unit/` | unit tests (613 passed in the last run) |
+| `tests/unit/` | unit tests (714 pass; run on every push by GitHub Actions CI) |
 | `data/LAYER_SCHEMA.md`, `data/quality-report.md` | table schema and data quality report |
 | `docs/` | model card, methodology, optimization, Turkish summary |
 
@@ -130,8 +130,9 @@ not versioned.
 
 ## Reproduce
 
-Not tested in a clean environment yet. The commands below follow the code's command-line interfaces; run them from the
-project root (`projects/havayolu-ds/` in the working tree) and check `--help` first. Several steps download data (BTS, IEM).
+Installation and the test suite are checked in a clean environment on every push (GitHub Actions CI, badge above). The
+pipeline commands below follow the code's command-line interfaces; run them from the repository root and check `--help`
+first. Several steps download data (BTS, IEM) and the full pipeline takes hours.
 
 ```bash
 # Environment: Python 3.12 (3.12.13 used); key versions: pandas 3.1.1, lightgbm 4.7.0, scikit-learn 1.9.1,
