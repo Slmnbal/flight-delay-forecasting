@@ -5,9 +5,11 @@
     var saved = window.localStorage.getItem('theme');
     if (saved === 'light' || saved === 'dark') {
       root.setAttribute('data-theme', saved);
+    } else if (saved !== 'auto') {
+      root.setAttribute('data-theme', 'light'); // default: the light corporate theme
     }
   } catch (e) {
-    // Storage can be unavailable (private mode); the theme then follows the system setting.
+    root.setAttribute('data-theme', 'light'); // storage unavailable: light default
   }
   root.classList.add('js');
 })();

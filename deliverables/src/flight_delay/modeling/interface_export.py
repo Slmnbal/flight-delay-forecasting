@@ -955,6 +955,7 @@ def build_ozet(
     version: str,
     extra_notes: Sequence[str] = (),
     extra_notes_en: Sequence[str] = (),
+    data_counts: Mapping[str, Any] | None = None,
     sample: bool = False,
 ) -> dict[str, Any]:
     """``ozet.json`` from the final-test results (no number is computed here except rounding)."""
@@ -985,6 +986,8 @@ def build_ozet(
         "test_ucus_sayisi": int(_get(block, "rows", "classifiers", fe.ROLE_CANCELLED_PLAN, "n")),
         "test_gun_sayisi": int(_get(block, "days", "n")),
     }
+    if data_counts:  # data-layer row counts per split and feature counts (see run_interface_export.data_counts)
+        payload["kapsam"].update(copy.deepcopy(dict(data_counts)))
     payload["bolme"] = {
         "egitim": _period(fit["start"], fit["end"]),
         "dogrulama_a": _period(VAL_A.start, VAL_A.end),

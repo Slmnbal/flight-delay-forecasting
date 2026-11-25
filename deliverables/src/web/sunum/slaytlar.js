@@ -99,6 +99,8 @@ export function slideProblem(ctx) {
     { label: p.testUcus, value: fmtInt(ozet.kapsam.test_ucus_sayisi) },
     { label: p.tanim, value: p.tanimDeger(fmtInt(LATE_AFTER)) },
   ];
+  if (typeof ozet.kapsam.egitim_ucus_sayisi === 'number') keys.push({ label: p.egitimUcus, value: fmtInt(ozet.kapsam.egitim_ucus_sayisi) });
+  if (typeof ozet.kapsam.toplam_ucus_sayisi === 'number') keys.push({ label: p.toplamUcus, value: fmtInt(ozet.kapsam.toplam_ucus_sayisi) });
   if (monthRows.length >= 2) {
     const hi = monthRows.reduce((a, b) => (b.v > a.v ? b : a));
     const lo = monthRows.reduce((a, b) => (b.v < a.v ? b : a));

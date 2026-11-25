@@ -41,8 +41,8 @@ export function syncUrlLang(lang) {
   }
 }
 
-// Tema: otomatik (sistem) -> açık -> koyu
-export const MODES = ['auto', 'light', 'dark'];
+// Tema: açık (varsayılan) -> koyu -> otomatik (sistem)
+export const MODES = ['light', 'dark', 'auto'];
 
 export function currentMode() {
   const attr = document.documentElement.getAttribute('data-theme');
@@ -54,8 +54,7 @@ export function applyMode(mode) {
   if (mode === 'auto') root.removeAttribute('data-theme');
   else root.setAttribute('data-theme', mode);
   try {
-    if (mode === 'auto') window.localStorage.removeItem('theme');
-    else window.localStorage.setItem('theme', mode);
+    window.localStorage.setItem('theme', mode); // 'auto' is stored too: no stored value means the light default
   } catch (err) {
     // Depolama kullanılamayabilir; seçim yalnızca bu ziyaret boyunca geçerli olur.
   }

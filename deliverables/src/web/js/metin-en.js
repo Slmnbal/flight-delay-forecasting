@@ -337,6 +337,8 @@ export const EN = {
       dogrulamaB: 'Validation B (calibration)',
       test: 'Final test',
       modeller: 'Models compared',
+      ucus: 'Flights',
+      veriNotu: (toplam, plan, t2) => `${toplam} scheduled flights in total. The plan model uses ${plan} inputs (features), the T2 model ${t2}.`,
     },
   },
 
@@ -769,6 +771,8 @@ export const EN = {
     kapakSayfa: { kisaca: 'In short' },
     s1: {
       testUcus: 'Test flights',
+      egitimUcus: 'Flights the model learned from (training)',
+      toplamUcus: 'All data',
       tanim: 'Counted as late',
       tanimDeger: (esik) => `${esik}+ min after schedule`,
       enYuksekAy: 'Month with the most late arrivals',

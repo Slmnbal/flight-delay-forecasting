@@ -427,7 +427,9 @@ def test_no_external_resources():
         assert not re.search(r"""(?:src|href)\s*=\s*["']//""", text), path.name
         assert not re.search(r"""["'`]//[A-Za-z]""", text) or path.suffix == ".css", path.name
         assert "@import" not in text, path.name
-        assert not re.search(r"url\(\s*[\"']?(?!#)", text) or path.suffix != ".css", path.name
+        # CSS may only reference the bundled font files (../fonts/*.woff2), never another site or file.
+        urls = re.findall(r"url\(\s*[\"']?([^\"')]+)", text) if path.suffix == ".css" else []
+        assert all(re.fullmatch(r"\.\./fonts/[a-z0-9-]+\.woff2", u) for u in urls), (path.name, urls)
 
 
 def test_no_unsafe_dom_apis():

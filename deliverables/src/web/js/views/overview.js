@@ -3,7 +3,7 @@
 
 import { el, fill, sozlukLink } from '../dom.js';
 import { loadOzet, loadHava, metricOf } from '../data.js';
-import { fmtMetricValue, fmtInterval, fmtPct, NA } from '../fmt.js';
+import { fmtMetricValue, fmtInterval, fmtPct, fmtInt, NA } from '../fmt.js';
 import { T } from '../metin.js';
 import { modelAciklamasi, kabulAciklamasi } from '../yerel.js';
 import { icon } from '../simgeler.js';
@@ -120,12 +120,14 @@ function acceptance(ozet) {
 function trust(ozet) {
   const g = T.genel.guven;
   const b = ozet.bolme;
+  const k = ozet.kapsam;
   const splits = [
-    [g.egitim, b.egitim],
-    [g.dogrulamaA, b.dogrulama_a],
-    [g.dogrulamaB, b.dogrulama_b],
-    [g.test, b.test],
+    [g.egitim, b.egitim, k.egitim_ucus_sayisi],
+    [g.dogrulamaA, b.dogrulama_a, k.dogrulama_a_ucus_sayisi],
+    [g.dogrulamaB, b.dogrulama_b, k.dogrulama_b_ucus_sayisi],
+    [g.test, b.test, k.test_ucus_sayisi],
   ];
+  const nf = k.ozellik_sayisi || {};
   const split = el(
     'div',
     { class: 'table-wrap' },
@@ -133,9 +135,12 @@ function trust(ozet) {
       'table',
       { class: 'data' },
       el('caption', null, g.bolmeBaslik),
-      el('thead', null, el('tr', null, el('th', { scope: 'col' }, g.kume), el('th', { scope: 'col' }, g.baslangic), el('th', { scope: 'col' }, g.bitis))),
-      el('tbody', null, splits.map(([name, d]) => el('tr', null, el('th', { scope: 'row' }, name), el('td', null, d.baslangic), el('td', null, d.bitis)))),
+      el('thead', null, el('tr', null, el('th', { scope: 'col' }, g.kume), el('th', { scope: 'col' }, g.baslangic), el('th', { scope: 'col' }, g.bitis), el('th', { scope: 'col', class: 'num' }, g.ucus))),
+      el('tbody', null, splits.map(([name, d, n]) => el('tr', null, el('th', { scope: 'row' }, name), el('td', null, d.baslangic), el('td', null, d.bitis), el('td', { class: 'num' }, typeof n === 'number' ? fmtInt(n) : NA)))),
     ),
+    typeof k.toplam_ucus_sayisi === 'number' && nf.plan && nf.T2
+      ? el('p', { class: 'note' }, g.veriNotu(fmtInt(k.toplam_ucus_sayisi), fmtInt(nf.plan), fmtInt(nf.T2)))
+      : null,
   );
   const modelList = el('dl', { class: 'stack' }, ozet.modeller.flatMap((md) => [el('dt', null, el('strong', null, md.kimlik)), el('dd', null, modelAciklamasi(ozet, md))]));
   return el(

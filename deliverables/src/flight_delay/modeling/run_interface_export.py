@@ -71,6 +71,8 @@ from flight_delay.modeling.splits import (
     FINAL_TEST,
     FINAL_TEST_LOCK_FILE,
     SPLIT_DATE_COLUMN,
+    TRAIN,
+    VAL_A,
     VAL_B,
     Period,
     assert_no_final_test,
@@ -140,6 +142,32 @@ def airport_records(targets: Sequence[str], airports_csv: Path, tz_overrides: Pa
     if problems:
         raise ie.ExportError("airport information incomplete (give --tz-overrides for zones): " + "; ".join(problems))
     return out
+
+
+def data_counts(plan: Preflight, base: Path = PROJECT_ROOT) -> dict[str, Any]:
+    """Rows per split from the data-layer quality report and feature counts from the locked model specs."""
+    report = json.loads((DATA_DIR / "quality-report.json").read_text(encoding="utf-8"))
+    rows = {(int(m["year"]), int(m["month"])): int(m["rows"]) for m in report["months"]}
+
+    def within(period: Any) -> int:
+        lo = (period.start.year, period.start.month)
+        hi = (period.end.year, period.end.month)
+        return sum(n for ym, n in rows.items() if lo <= ym <= hi)
+
+    # The headline delay models only (the calendar cancellation model is a comparison and uses more inputs).
+    roles = {"plan": fe.ROLE_ARR_DEL15_PLAN, "T2": fe.ROLE_ARR_DEL15_T2}
+    features: dict[str, int] = {}
+    for contract, role in roles.items():
+        entry = plan.manifest.entries[role]
+        spec = json.loads((base / entry.spec.path).read_text(encoding="utf-8"))
+        features[contract] = len(spec["feature_names"])
+    return {
+        "toplam_ucus_sayisi": sum(rows.values()),
+        "egitim_ucus_sayisi": within(TRAIN),
+        "dogrulama_a_ucus_sayisi": within(VAL_A),
+        "dogrulama_b_ucus_sayisi": within(VAL_B),
+        "ozellik_sayisi": features,
+    }
 
 
 def destination_records(codes: Sequence[str], airports_csv: Path) -> tuple[list[dict[str, Any]], list[str]]:
@@ -573,6 +601,7 @@ def build_payloads(
             version=version,
             extra_notes=notes,
             extra_notes_en=notes_en,
+            data_counts=data_counts(plan),
         ),
         ie.FILE_PATHS["optimizasyon"]: ie.build_optimizasyon(
             json.loads((PROJECT_ROOT / ie.OR_RESULTS).read_text(encoding="utf-8")),

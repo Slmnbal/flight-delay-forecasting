@@ -349,6 +349,8 @@ const TR = {
       dogrulamaB: 'Doğrulama B (kalibrasyon)',
       test: 'Son test',
       modeller: 'Karşılaştırılan modeller',
+      ucus: 'Uçuş',
+      veriNotu: (toplam, plan, t2) => `Toplam ${toplam} tarifeli uçuş. Plan modeli ${plan}, T2 modeli ${t2} bilgi (özellik) kullanıyor.`,
     },
   },
 
@@ -781,6 +783,8 @@ const TR = {
     kapakSayfa: { kisaca: 'Kısaca' },
     s1: {
       testUcus: 'Test uçuşu',
+      egitimUcus: 'Modelin öğrendiği uçuş (eğitim)',
+      toplamUcus: 'Toplam veri',
       tanim: 'Geç sayılma ölçüsü',
       tanimDeger: (esik) => `tarifeden ${esik}+ dk sonra`,
       enYuksekAy: 'En çok geç varış olan ay',
